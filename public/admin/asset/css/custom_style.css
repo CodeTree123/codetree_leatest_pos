@@ -1,0 +1,88 @@
+:root{
+    --web-primary: #4ab00a;
+    --web-secondary-yellow: #ecc100;
+    --web-secondary-orange: #ffa200;
+    --web-secondary-violet: #80379b;
+    --web-secondary-cyan: #3db7e4;
+    --web-secondary-lime: #c8d600;
+    --web-secondary-grey: #4d4f53;
+    --web-secondary-teal: #007162;
+    --web-secondary-plum: #97005d;
+    --t-white: #ffffff;
+}
+/* font-family: Arial ;  
+*/
+.btn:hover{
+    color: #ffffff;
+}
+.bg_p_primary{
+    background-color: var(--web-primary);
+    color: var(--t-white); 
+}
+.bg_secondary_yellow{
+    background-color: var(--web-secondary-yellow);
+    color: var(--t-white); 
+}
+.bg_secondary_orange{
+    background-color: var(--web-secondary-orange);
+    color: var(--t-white); 
+}
+.bg_secondary_violet{
+    background-color: var(--web-secondary-violet);
+    color: var(--t-white); 
+}
+.bg_secondary_cyan{
+    background-color: var(--web-secondary-cyan);
+    color: var(--t-white); 
+}
+.bg_secondary_lime{
+    background-color: var(--web-secondary-lime);
+    color: var(--t-white); 
+}
+.bg_secondary_grey{
+    background-color: var(--web-secondary-grey);
+    color: var(--t-white); 
+}
+.bg_secondary_teal{
+    background-color: var(--web-secondary-teal);
+    color: var(--t-white); 
+}
+.bg_secondary_plum{
+    background-color: var(--web-secondary-plum);
+    color: var(--t-white); 
+}
+.text_p_primary{
+    color: var(--web-primary) !important;
+}
+.text_secondary_yellow{
+    color: var(--web-secondary-yellow);
+}
+.text_secondary_orange{
+    color: var(--web-secondary-orange);
+}
+.text_secondary_violet{
+    color: var(--web-secondary-violet);
+}
+.text_secondary_cyan{
+    color: var(--web-secondary-cyan);
+}
+.text_secondary_lime{
+    color: var(--web-secondary-lime);
+}
+.text_secondary_grey{
+    color: var(--web-secondary-grey);
+}
+.text_secondary_teal{
+    color: var(--web-secondary-teal);
+}
+.text_secondary_plum{
+    color: var(--web-secondary-plum);
+}
+.task-label, .task-icon, .active-slink, a {
+    color: var(--web-primary);
+}
+.dropdown-menu > li a:hover, .dropdown-menu > li.show{
+    background-color: var(--web-primary);
+    color: var(--t-white); 
+}
+ 
