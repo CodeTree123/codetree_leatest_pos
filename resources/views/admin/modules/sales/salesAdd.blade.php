@@ -94,7 +94,9 @@ Add Sale- Admin Dashboard
                             <label>Customer *</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text customerReset"><i class="fa fa-edit"></i></span>
+                                    <div class="input-group-text customerReset p-0" style="margin-top:-3px;">
+                                        <p class="btn bg_p_primary mb-0 py-1 proAddBtn" style="border-radius:0px;font-size:20px;cursor:pointer;">Reset</p>
+                                    </div>
                                 </div>
                                 <select class="custom-select" id="customerId" name="customer_id">
                                     @if (session('customer'))
@@ -118,17 +120,13 @@ Add Sale- Admin Dashboard
                             <label>Products</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text" style=""><i class="fa fa-barcode"></i></span>
+                                    <div class="input-group-text p-0" style="margin-top:-3px;">
+                                        <p class="btn bg_p_primary mb-0 py-1 proAddBtn" style="border-radius:0px;font-size:20px;cursor:pointer;">+</p>
+                                    </div>
                                 </div>
                                 <select class="custom-select" id="pro_id">
-                                    <option selected>Select Product</option>
-                                    @foreach ($products as $product)
-                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                    @endforeach
+                                    <option selected value="">Select Product</option>
                                 </select>
-                                <div class="input-group-append">
-                                    <span class="input-group-text proAddBtn" style=""><b>+</b></span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -383,9 +381,26 @@ Add Sale- Admin Dashboard
 <script>
     $(document).ready(function() {
 
-        // $('#pro_id').select2({
-        //     theme: "bootstrap"
-        // });
+        $('#pro_id').select2({
+            theme: "bootstrap",
+            ajax: {
+                url: '/sales/get-products',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term // search term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data // select2 expects an array of {id, text} objects
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 1 // start searching after 1 character
+        });
 
         $('#customerId').select2({
             theme: "bootstrap",

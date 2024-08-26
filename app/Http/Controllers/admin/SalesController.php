@@ -61,6 +61,20 @@ class SalesController extends Controller
     return response()->json($formattedCustomers);
   }
 
+  public function getProducts(Request $request)
+  {
+    $search = $request->input('q');
+    $products = Products::where('name', 'like', "%$search%")
+      ->limit(10)
+      ->get();
+
+    $formattedProducts = $products->map(function ($product) {
+      return ['id' => $product->id, 'text' => $product->name];
+    });
+
+    return response()->json($formattedProducts);
+  }
+
 
   //set customer
   public function setCustomer(Request $request)

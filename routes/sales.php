@@ -8,7 +8,8 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::get('/salesList', 'SalesController@salesList')->middleware('permission:sales list')->name('admin.salesList');
 	Route::get('/posSale', 'SalesController@posSale')->name('admin.posSale');
 	Route::get('/salesAdd', 'SalesController@salesAdd')->middleware('permission:Add sale')->name('admin.salesAdd');
-	Route::get('/get-customers', 'SalesController@getCustomers')->middleware('permission:Add sale')->name('admin.salesAdd.select2');
+	Route::get('/get-customers', 'SalesController@getCustomers')->middleware('permission:Add sale')->name('admin.customers.select2');
+	Route::get('/get-products', 'SalesController@getProducts')->middleware('permission:Add sale')->name('admin.products.select2');
 	Route::post('/sales-sales-details', 'SalesController@salesDetails')->name('admin.sales.salesDetails');
 	Route::post('/search-sale-by-code', 'SalesController@searchSalesByCode')->name('admin.sales.searchSales');
 	Route::post('/search-sale-by-date', 'SalesController@searchSalesByDate')->name('admin.sales.searchSaledate');
