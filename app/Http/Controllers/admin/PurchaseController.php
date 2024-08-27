@@ -48,12 +48,11 @@ class PurchaseController extends Controller
 
   public function productAddTopurchase(Request $request)
   {
-
-    //Products::findOrfail('id',$request->pro_id);
-    $product_name = DB::table('products')->where('id', $request->pro_id)->value('name');
-    $product_id = DB::table('products')->where('id', $request->pro_id)->value('id');
-    $purchase_price = DB::table('products')->where('id', $request->pro_id)->value('purchase_price');
-    Cart::add($product_id, $product_name, 1, $purchase_price);
+    $product = DB::table('products')
+      ->select('id', 'name', 'purchase_price')
+      ->where('id', $request->pro_id)
+      ->first();
+    Cart::add($product->id, $product->name, 1, $product->purchase_price);
     return 1;
   }
 

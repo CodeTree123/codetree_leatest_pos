@@ -473,6 +473,10 @@
                             <a href="{{ route('admin.report.customerReport') }}" class="dropdown-item"
                                 href="">Customer Report</a>
                         </li>
+                        <li>
+                            <a href="{{ route('admin.report.profitReport') }}" class="dropdown-item"
+                                href="">Profit Report</a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown ">

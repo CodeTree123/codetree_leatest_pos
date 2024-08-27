@@ -4,8 +4,8 @@ Customer report- Admin Dashboard
 @endsection
 @section('adminContent')
 <style>
-	.search_link{
-		padding:5px;
+	.search_link {
+		padding: 5px;
 		border-bottom: 1px solid gray;
 	}
 
@@ -13,23 +13,25 @@ Customer report- Admin Dashboard
 		border-color: inherit;
 		-webkit-box-shadow: none;
 		box-shadow: none;
-		height:28px;
+		height: 28px;
 		font-size: inherit;
 		border-color: rgba(229, 103, 23, 0.8);
 		outline-color: gray;
 		font-size: 15px;
 		text-transform: none;
 	}
-	a:hover{
+
+	a:hover {
 		text-decoration: none;
-		color:white;
+		color: white;
 	}
 </style>
 <?php
+
 use App\Http\Controllers\report\CustomerReportController;
 ?>
 <div class="col-md-12 mt-5 pt-3 border-bottom">
-	<div class="text-dark px-0" >
+	<div class="text-dark px-0">
 		<p class="mb-1"><a href="{{ route('admin.dashboard') }}"><i class="fa fa-home"></i> Dashboard / </a><a href="" class="active-slink">Customer Report</a><span class="top-date">Total Customers : {{$customers->total()}}</span></p>
 
 	</div>
@@ -52,7 +54,7 @@ use App\Http\Controllers\report\CustomerReportController;
 		</div>
 		<div class="box-content">
 			<div class="row">
-				<div class="col-lg-12">					
+				<div class="col-lg-12">
 					<p class="introtext mb-0">Please use the table below to navigate or filter the results. You can download the table as excel and pdf.</p>
 					<div class="row">
 						<div class="col-8">
@@ -82,15 +84,15 @@ use App\Http\Controllers\report\CustomerReportController;
 							</tr>
 						</thead>
 						<tbody id="table-data">
-							<?php $counter=0;?>
+							<?php $counter = 0; ?>
 							@foreach($customers as $customer)
-							<?php $counter++; 
-							$totalAmount=CustomerReportController::getTotalAmount($customer->id);
-							$getTotalShopping=CustomerReportController::getTotalShopping($customer->id);
-							$getTotalPaid=CustomerReportController::getTotalPaid($customer->id);
-							$getStartBalance=CustomerReportController::getStartBalance($customer->id);
-							$balance=$totalAmount-$getTotalPaid;
-							$totalBalance=$balance+$getStartBalance;
+							<?php $counter++;
+							$totalAmount = CustomerReportController::getTotalAmount($customer->id);
+							$getTotalShopping = CustomerReportController::getTotalShopping($customer->id);
+							$getTotalPaid = CustomerReportController::getTotalPaid($customer->id);
+							$getStartBalance = CustomerReportController::getStartBalance($customer->id);
+							$balance = $totalAmount - $getTotalPaid;
+							$totalBalance = $balance + $getStartBalance;
 							?>
 							<tr>
 								<td>{{$counter}}</td>
@@ -111,13 +113,13 @@ use App\Http\Controllers\report\CustomerReportController;
 								<td style="text-align:right;">{{number_format($totalBalance,2)}}</td>
 								<td style="width:120px;">
 									<div class="dropdown" style="width:90px;float:right;">
-										<a href="{{route('admin.customer.customerDetails',$customer->id)}}" class="action-btn p-2" >
+										<a href="{{route('admin.customer.customerDetails',$customer->id)}}" class="btn btn-danger p-2">
 											Details
 										</a>
 									</div>
 								</td>
 							</tr>
-						@endforeach
+							@endforeach
 						</tbody>
 					</table>
 					<br>
@@ -131,26 +133,28 @@ use App\Http\Controllers\report\CustomerReportController;
 </div>
 
 <script>
-	$(document).ready(function(){
-		$("#customerSearchKey").on('keyup',function(){
-			var key=$(this).val();
-       
-			if(key==''){
+	$(document).ready(function() {
+		$("#customerSearchKey").on('keyup', function() {
+			var key = $(this).val();
+
+			if (key == '') {
 				$("#customer_list").html('');
-			}else{
+			} else {
 				$.ajax({
 					headers: {
 						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 					},
-					url:"{{route('admin.report.searchCustomer')}}",
-					type:"POST",
-					data:{'key':key},
-						//dataType:'json',
-						success:function(data){
-							$("#table-data").html(data);
-							$(".p-link").css('display','none');
-						},
-						error:function(){
+					url: "{{route('admin.report.searchCustomer')}}",
+					type: "POST",
+					data: {
+						'key': key
+					},
+					//dataType:'json',
+					success: function(data) {
+						$("#table-data").html(data);
+						$(".p-link").css('display', 'none');
+					},
+					error: function() {
 						// toastr.error("Something went Wrong, Please Try again.");
 					}
 				});
@@ -159,4 +163,3 @@ use App\Http\Controllers\report\CustomerReportController;
 	});
 </script>
 @endsection
-

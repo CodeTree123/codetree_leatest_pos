@@ -212,7 +212,7 @@ $(document).ready(function(){
 				}
 			},
 			error:function(){
-				alert("error occured");
+				alert("Select a product first!");
 			}
 		});
 	});

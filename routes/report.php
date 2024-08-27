@@ -19,4 +19,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'report'], function (
     //customer report
     Route::get('/customer-report', 'CustomerReportController@customerReport')->name('admin.report.customerReport');
     Route::post('customer-search-report', 'CustomerReportController@searchCustomer')->name('admin.report.searchCustomer');
+    //customer report
+    Route::get('/profit-report', 'ProfitReportController@profitReport')->name('admin.report.profitReport');
+    Route::post('profit-search-report', 'ProfitReportController@searchProfit')->name('admin.report.searchProfit');
 });

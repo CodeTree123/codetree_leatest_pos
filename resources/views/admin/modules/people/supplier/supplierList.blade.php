@@ -62,7 +62,7 @@ Supplier List- Admin Dashboard
 								<td>{{$supplier->city}}</td>
 								<td style="width:120px;">
 									<div class="dropdown" style="width:90px;float:right;">
-									 <a href="{{route('admin.supplier.supplierDetails',$supplier->id)}}" class="action-btn p-1 m-1 mt-1" >
+									 <a href="{{route('admin.supplier.supplierDetails',$supplier->id)}}" class="btn btn-danger p-1 m-1 mt-1" >
 									   Details
 									  </a>
 									</div>

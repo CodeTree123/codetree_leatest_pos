@@ -97,7 +97,7 @@
 					</td>
 					<td style="width:120px;">
 						<div class="dropdown" style="width:90px;float:right;">
-							<p class="action-btn sale_details" data-salesid="{{$sale->id}}">
+							<p class="btn btn-danger sale_details" data-salesid="{{$sale->id}}">
 							Details
 							</p>
 						</div>
