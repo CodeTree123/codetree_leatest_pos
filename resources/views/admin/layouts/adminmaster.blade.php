@@ -385,7 +385,10 @@
                         <li>
                             <a class="dropdown-item" href="{{ route('admin.userList') }}">Users</a>
                         </li>
-
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.employeeList') }}">Employee</a>
+                        </li>
+                       
                         <li>
                             <a class="dropdown-item" href="{{ route('admin.people.listBiller') }}">Billers</a>
                         </li>
@@ -484,9 +487,6 @@
                         Attendence
                     </a>
                     <ul class="dropdown-menu p-0" id="dropdown-background">
-                        <li>
-                            <a href="{{ route('admin.attendence_list') }}" class="dropdown-item">Attendence List</a>
-                        </li>
                         <li>
                             <a href="{{ route('admin.attendence') }}" class="dropdown-item"
                                 href="">Attendence</a>

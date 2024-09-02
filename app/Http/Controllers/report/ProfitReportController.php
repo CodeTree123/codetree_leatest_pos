@@ -30,9 +30,11 @@ class ProfitReportController extends Controller
 
         $profits = SalesProducts::with('products')->paginate(15);
 
+        $revenue = SalesProducts::sum('product_revenue');
 
         return view('admin.modules.report.profitReport')->with([
             'profits' => $profits,
+            'revenue' => $revenue,
             'todayRevenue' => $todayRevenue,
             'monthRevenue' => $monthRevenue,
             'yearRevenue' => $yearRevenue,

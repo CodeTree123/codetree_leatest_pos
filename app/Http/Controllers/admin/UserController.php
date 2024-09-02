@@ -128,7 +128,7 @@ class UserController extends Controller
     );
     try {
       DB::table('admins')->where('id', $request->id)->delete();
-      Toastr::success('product deleted successfully');
+      Toastr::success('User deleted successfully');
       return redirect()->route('admin.userList');
     } catch (\Exception $e) {
       session()->flash('error-message', $e->getMessage());

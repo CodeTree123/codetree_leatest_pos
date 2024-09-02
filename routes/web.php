@@ -75,12 +75,12 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     Route::post('/website/product-delete', 'WebproController@deleteProduct')->name('webpro.deleteProduct');
 
     Route::get('/attendence', 'HomeController@attendence')->name('attendence');
-    Route::get('/attendence_list', 'HomeController@attendence_list')->name('attendence_list');
     Route::get('/attendence/data', 'HomeController@attendenceData')->name('attendenceData');
     Route::post('/add_attendence', 'HomeController@add_attendence')->name('add_attendence');
 });
 
 //store attendence
+Route::post('/attendance/toggle-status/{id}', 'AttendenceController@toggleStatus')->name('attendance.toggleStatus');
 
 Route::post('/admin/store/attendence', 'AttendenceController@storeAttendence')->name('storeAttend');
 

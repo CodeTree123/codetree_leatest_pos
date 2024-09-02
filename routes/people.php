@@ -4,6 +4,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function () {
 
+	//people/employee
+	Route::get('/employeeList', 'EmployeeController@employeeList')->middleware('permission:add user')->name('admin.employeeList');
+	Route::post('/employeeAdd', 'EmployeeController@employeeAdd')->middleware('permission:add user')->name('admin.employeeAdd');
+	Route::get('/employee-view/{id}', 'EmployeeController@viewEmployee')->name('admin.people.viewEmployee');
+	Route::get('/employee-edit/{id}', 'EmployeeController@editEmployee')->name('admin.people.editEmployee');
+	Route::put('/employee-update', 'EmployeeController@employeeUpdate')->name('admin.people.employeeUpdate');
+	Route::post('/employee-delete', 'EmployeeController@deleteEmployee')->name('admin.people.deleteEmployee');
 
 	//peaple/user
 	Route::get('/userList', 'UserController@userList')->middleware('permission:user list')->name('admin.userList');

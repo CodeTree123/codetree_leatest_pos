@@ -10,7 +10,7 @@ class AttendenceController extends Controller
     //
     public function storeAttendence(Request $request)
     {
-        
+
         $count = count($request->employee_id);
         $date = date("d/m/Y");
         $check = StoreAttendence::where('date', $date)->first();
@@ -32,5 +32,20 @@ class AttendenceController extends Controller
 
             return back()->with('Success', 'data update successfully!');
         }
+    }
+    public function toggleStatus($id)
+    {
+        // Find the attendance record by ID
+        $attendance = StoreAttendence::find($id);
+
+        // Toggle the status
+        if ($attendance) {
+            $attendance->status = $attendance->status == 1 ? 0 : 1;
+            $attendance->save();
+
+            return response()->json(['status' => 'success', 'newStatus' => $attendance->status]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Attendance record not found'], 404);
     }
 }

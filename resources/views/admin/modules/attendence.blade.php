@@ -42,20 +42,20 @@ Attendence
           </tr>
         </thead>
         <tbody>
-          @foreach($attendence as $key=>$att)
+          @foreach($attendance as $key=>$att)
           <tr>
-              <th scope="row">{{$key +1}}</th>
-              <td><input type="text" class="d-none" name="employee_name[]" value="{{$att->name}}">{{$att->name}}</td>
-              <td><input type="text" class="d-none" name="employee_id[]" value="{{$att->emp_id}}">{{$att->emp_id}}</td>
-              <td>
+            <th scope="row">{{$key +1}}</th>
+            <td><input type="text" class="d-none" name="employee_name[]" value="{{@$att->name}}">{{@$att->name}}</td>
+            <td><input type="text" class="d-none" name="employee_id[]" value="{{@$att->id}}">{{@$att->em_id}}</td>
+            <td>
 
-                <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="status[]">
-                  <option value="1">Present</option>
-                  <option value="0">Absent</option>
-                </select>
+              <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" name="status[]">
+                <option value="1">Present</option>
+                <option value="0">Absent</option>
+              </select>
 
 
-              </td>
+            </td>
           </tr>
           @endforeach
         </tbody>

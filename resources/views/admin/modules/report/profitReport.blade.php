@@ -29,7 +29,7 @@ Profit report- Admin Dashboard
 
 <div class="col-md-12 mt-5 pt-3 border-bottom">
     <div class="text-dark px-0">
-        <p class="mb-1"><a href="{{ route('admin.dashboard') }}"><i class="fa fa-home"></i> Dashboard / </a><a href="" class="active-slink">Profit Report</a><span class="top-date">Total Profits : {{$profits->total()}}</span></p>
+        <p class="mb-1"><a href="{{ route('admin.dashboard') }}"><i class="fa fa-home"></i> Dashboard / </a><a href="" class="active-slink">Profit Report</a><span class="top-date">Total Profits : {{$revenue}}</span></p>
 
     </div>
 </div>
@@ -41,7 +41,7 @@ Profit report- Admin Dashboard
                     Weekly Revenue
                 </div>
                 <div class="car-body text-center">
-                    <h2>{{$weeklyRevenue}}.৳</h2>
+                    <h2 class="m-3">{{$weeklyRevenue}}.৳</h2>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@ Profit report- Admin Dashboard
                     Todays Revenue
                 </div>
                 <div class="car-body text-center">
-                    <h2>{{$todayRevenue}}.৳</h2>
+                    <h2 class="m-3">{{$todayRevenue}}.৳</h2>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@ Profit report- Admin Dashboard
                     Current Month
                 </div>
                 <div class="car-body text-center">
-                    <h2>{{$monthRevenue}}.৳</h2>
+                    <h2 class="m-3">{{$monthRevenue}}.৳</h2>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@ Profit report- Admin Dashboard
                     Current Year
                 </div>
                 <div class="car-body text-center">
-                    <h2>{{$yearRevenue}}.৳</h2>
+                    <h2 class="m-3">{{$yearRevenue}}.৳</h2>
                 </div>
             </div>
         </div>
