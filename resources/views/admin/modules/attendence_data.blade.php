@@ -7,9 +7,13 @@ Attendence
   <div class="p-4 align-self-start">
     <img src="logo.png" alt="" width="100">
   </div>
-  <div class=" card header bg_p_primary">
-    <input type="search" name="search" class="form-control" placeholder="Search by name/id">
+  <div class="card header bg_p_primary">
+    <form action="{{ route('admin.attendance.employee.search') }}" method="GET">
+      @csrf
+      <input type="search" name="search" class="form-control" placeholder="Search by name/id" value="{{ request('search') }}">
+    </form>
   </div>
+
   <div class=" card header bg_p_primary">
     <h3 class="m-3">
       Employee Attendence Data
@@ -35,7 +39,7 @@ Attendence
         <tr>
           <th scope="row">{{$key +1}}</th>
           <td>{{$att->employee_name}}</td>
-          <td>{{$att->employee_id}}</td>
+          <td>{{$att->employee->em_id}}</td>
           <td>
             <button class="btn toggle-attendance {{ $att->status == 1 ? 'bg_p_primary' : 'btn-danger' }}" data-id="{{ $att->id }}">
               {{ $att->status == 1 ? 'Present' : 'Absent' }}
@@ -52,14 +56,11 @@ Attendence
 </section>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Attach click event to buttons with class 'toggle-attendance'
     document.querySelectorAll('.toggle-attendance').forEach(function(button) {
       button.addEventListener('click', function() {
-        // Get the attendance ID from data-id attribute
         var attendanceId = this.getAttribute('data-id');
         var button = this;
 
-        // Send AJAX request to toggle status
         fetch('/attendance/toggle-status/' + attendanceId, {
             method: 'POST',
             headers: {
@@ -70,11 +71,14 @@ Attendence
           .then(response => response.json())
           .then(data => {
             if (data.status === 'success') {
-              // Update the button text based on new status
               if (data.newStatus == 1) {
                 button.textContent = 'Present';
+                button.classList.remove('btn-danger');
+                button.classList.add('bg_p_primary');
               } else {
                 button.textContent = 'Absent';
+                button.classList.remove('bg_p_primary');
+                button.classList.add('btn-danger');
               }
             } else {
               alert(data.message);
@@ -85,5 +89,4 @@ Attendence
     });
   });
 </script>
-
 @stop

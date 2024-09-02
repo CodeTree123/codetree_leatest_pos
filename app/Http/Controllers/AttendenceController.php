@@ -35,10 +35,8 @@ class AttendenceController extends Controller
     }
     public function toggleStatus($id)
     {
-        // Find the attendance record by ID
         $attendance = StoreAttendence::find($id);
 
-        // Toggle the status
         if ($attendance) {
             $attendance->status = $attendance->status == 1 ? 0 : 1;
             $attendance->save();
