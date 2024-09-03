@@ -508,10 +508,26 @@
                             <a href="{{ route('admin.leave.create') }}" class="dropdown-item">Create</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.leave.index') }}" class="dropdown-item">Index</a>
+                            <a href="{{ route('admin.leave.index') }}" class="dropdown-item">Data List</a>
                         </li>
 
 
+                    </ul>
+                </li>
+                <li class="nav-item dropdown ">
+                    <a class="nav-link text-dark dropdown-toggle" href="#" data-toggle="dropdown">
+                        Payroll
+                    </a>
+                    <ul class="dropdown-menu p-0" id="dropdown-background">
+                        <li>
+                            <a href="{{ route('admin.payroll.index') }}" class="dropdown-item">Data List</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.payroll.index') }}" class="dropdown-item">Deduction</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.payroll.bonus') }}" class="dropdown-item">Bonus</a>
+                        </li>
                     </ul>
                 </li>
                 <!--<li class="nav-item dropdown p-1 ml-5" style="background:#78cd51 !important">-->
@@ -669,12 +685,12 @@
     <script src="{{ asset('admin/asset/js/toastr.min.js') }}"></script>
     {!! Toastr::message() !!}
     <script>
-    @if(count($errors) > 0)
-        @foreach($errors->all() as $error)
-            toastr.error("{{ $error }}");
+        @if(count($errors) > 0)
+        @foreach($errors-> all() as $error)
+        toastr.error("{{ $error }}");
         @endforeach
-    @endif
-</script>
+        @endif
+    </script>
 
     <script>
         // document.addEventListener("contextmenu",function(hide){

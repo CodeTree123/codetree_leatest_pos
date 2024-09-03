@@ -31,7 +31,7 @@ Leave
             <textarea name="reason" class="form-control" rows="3" required></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn bg_p_primary w-100">Submit</button>
     </form>
 </div>
 @endsection

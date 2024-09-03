@@ -84,6 +84,12 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     // Admin leave management routes
     Route::get('/leave/requests', 'LeaveController@index')->name('leave.index');
     Route::put('/leave/update/{id}', 'LeaveController@update')->name('leave.update');
+    //payroll
+    Route::get('/payroll', 'PayrollController@index')->name('payroll.index');
+    Route::post('/payroll/generate/{employee}', 'PayrollController@generatePayrollForEmployee')->name('payroll.generate');
+    Route::post('/payroll/generate-all', 'PayrollController@generatePayrollForAllEmployees')->name('payroll.generate.all');
+    Route::get('/payroll/bonus', 'PayrollController@bonus')->name('payroll.bonus');
+
 });
 
 // Route::middleware(['auth','namespace' => 'admin'])->group(function () {

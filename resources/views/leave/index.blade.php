@@ -5,8 +5,8 @@ Leave
 @section('adminContent')
 <div class="container mt-2">
     <h2>Manage Leave Requests</h2>
-    <table class="table table-bordered">
-        <thead>
+    <table class="table table-bordered table-hover">
+        <thead class="bg_p_primary">
             <tr>
                 <th>Employee Name</th>
                 <th>Start Date</th>
@@ -32,13 +32,13 @@ Leave
                         @csrf
                         @method('PUT')
 
-                        <select name="status" class="form-control" required>
+                        <select name="status" class="form-control bg_p_primary" required>
                             <option value="1" {{ $leave->status == 1 ? 'selected' : '' }}>Approve</option>
                             <option value="0" {{ $leave->status == 0 ? 'selected' : '' }}>Reject</option>
                         </select>
 
 
-                        <button type="submit" class="btn btn-primary mt-2">Update</button>
+                        <button type="submit" class="btn bg_p_primary mt-2">Update</button>
                     </form>
                 </td>
             </tr>
