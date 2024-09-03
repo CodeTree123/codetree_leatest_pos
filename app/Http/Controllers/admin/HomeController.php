@@ -25,7 +25,7 @@ class HomeController extends Controller
 
    public function attendenceData()
    {
-      $data = StoreAttendence::with('employee')->orderBy('id', 'DESC')->get();
+      $data = StoreAttendence::with('employee')->orderBy('id', 'DESC')->paginate(20);
       return view('admin.modules.attendence_data', compact('data'));
    }
 
@@ -38,7 +38,7 @@ class HomeController extends Controller
       $data = StoreAttendence::whereHas('employee', function ($query) use ($searchTerm) {
          $query->where('name', 'like', '%' . $searchTerm . '%')
             ->orWhere('em_id', 'like', '%' . $searchTerm . '%');
-      })->get();
+      })->orderBy('id', 'DESC')->paginate(20);
 
       // Return the Blade file with search results
       return view('admin.modules.attendence_data', compact('data'));

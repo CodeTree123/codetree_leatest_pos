@@ -50,8 +50,9 @@ Attendence
         </tr>
         @endforeach
       </tbody>
-    </table>
+      {{$data->links() }}
 
+    </table>
   </div>
 </section>
 <script>

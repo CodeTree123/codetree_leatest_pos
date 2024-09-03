@@ -78,7 +78,19 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     Route::get('/attendence/data', 'HomeController@attendenceData')->name('attendenceData');
     Route::post('/add_attendence', 'HomeController@add_attendence')->name('add_attendence');
     Route::get('/admin/attendance/employee/search', 'HomeController@search')->name('attendance.employee.search');
+    // Employee leave application routes
+    Route::get('/leave/apply', 'LeaveController@create')->name('leave.create');
+    Route::post('/leave/store', 'LeaveController@store')->name('leave.store');
+    // Admin leave management routes
+    Route::get('/leave/requests', 'LeaveController@index')->name('leave.index');
+    Route::put('/leave/update/{id}', 'LeaveController@update')->name('leave.update');
 });
+
+// Route::middleware(['auth','namespace' => 'admin'])->group(function () {
+//         // Employee leave application routes
+//         Route::get('/leave/apply', 'LeaveController@create')->name('leave.create');
+//         Route::post('/leave/store', 'LeaveController@store')->name('leave.store');
+// });
 
 //store attendence
 Route::post('/attendance/toggle-status/{id}', 'AttendenceController@toggleStatus')->name('attendance.toggleStatus');

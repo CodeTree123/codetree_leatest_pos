@@ -280,7 +280,9 @@
 
 <body>
     <?php
+
     use App\Http\Controllers\admin\StockController;
+
     $lowStock = StockController::numberOfLowStockProduct();
     ?>
     <nav class="navbar navbar-expand-lg shadow navbar-light bg-light " id="navbar" style="padding:1px; ">
@@ -388,7 +390,7 @@
                         <li>
                             <a class="dropdown-item" href="{{ route('admin.employeeList') }}">Employee</a>
                         </li>
-                       
+
                         <li>
                             <a class="dropdown-item" href="{{ route('admin.people.listBiller') }}">Billers</a>
                         </li>
@@ -401,7 +403,7 @@
                     </a>
                     <ul class="dropdown-menu p-0" id="dropdown-background">
                         <li>
-                            <a href="{{ route('admin.product.promotion') }}"class="dropdown-item">Add Promotion</a>
+                            <a href="{{ route('admin.product.promotion') }}" class="dropdown-item">Add Promotion</a>
                         </li>
                         <li>
                             <a href="{{ route('admin.product.promotionlist') }}" class="dropdown-item"
@@ -459,7 +461,7 @@
                     </a>
                     <ul class="dropdown-menu p-0" id="dropdown-background">
                         <li>
-                            <a href="{{ route('admin.report.dailySalesReport') }}"class="dropdown-item">Sales
+                            <a href="{{ route('admin.report.dailySalesReport') }}" class="dropdown-item">Sales
                                 Report</a>
                         </li>
                         <li>
@@ -497,6 +499,21 @@
                         </li>
                     </ul>
                 </li>
+                <li class="nav-item dropdown ">
+                    <a class="nav-link text-dark dropdown-toggle" href="#" data-toggle="dropdown">
+                        Leave
+                    </a>
+                    <ul class="dropdown-menu p-0" id="dropdown-background">
+                        <li>
+                            <a href="{{ route('admin.leave.create') }}" class="dropdown-item">Create</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.leave.index') }}" class="dropdown-item">Index</a>
+                        </li>
+
+
+                    </ul>
+                </li>
                 <!--<li class="nav-item dropdown p-1 ml-5" style="background:#78cd51 !important">-->
                 <!--	<a class="nav-link text-dark" href="{{ route('admin.posModule') }}"><i class="fa fa-th-large"></i>-->
                 <!--		POS-->
@@ -527,9 +544,9 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link text-dark" href="#" data-toggle="dropdown" id="user-profile">
                             @if (!empty(Auth::user()->image))
-                                <img src="{{ asset(Auth::user()->image) }}">
+                            <img src="{{ asset(Auth::user()->image) }}">
                             @else
-                                <img src="{{ asset('admin/defaultIcon/user.png') }}">
+                            <img src="{{ asset('admin/defaultIcon/user.png') }}">
                             @endif
                         </a>
                         <ul class="dropdown-menu p-0" id="user-profile-dropdown">
@@ -572,51 +589,51 @@
                     <div style="text-align: center;">
                         <table class="table">
                             <tr>
-                                <td colspan="3"><input class="form-control"type="text" id="result"/
+                                <td colspan="3"><input class="form-control" type="text" id="result" /
                                         style="text-align:right;" readonly=""></td>
-                                <td><input type="button" value="Clear" onclick="clr()"/ class="cal_btn clear">
+                                <td><input type="button" value="Clear" onclick="clr()" / class="cal_btn clear">
                                 </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="1" onclick="dis('1')"/ class="cal_btn number">
+                                <td><input type="button" value="1" onclick="dis('1')" / class="cal_btn number">
                                 </td>
                                 <td>
-                                    <input type="button" value="2" onclick="dis('2')"/ class="cal_btn number">
+                                    <input type="button" value="2" onclick="dis('2')" / class="cal_btn number">
 
                                 </td>
-                                <td><input type="button" value="3" onclick="dis('3')"/ class="cal_btn number">
+                                <td><input type="button" value="3" onclick="dis('3')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="/" onclick="dis('/')"/
+                                <td><input type="button" value="/" onclick="dis('/')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="4" onclick="dis('4')"/ class="cal_btn number">
+                                <td><input type="button" value="4" onclick="dis('4')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="5" onclick="dis('5')"/ class="cal_btn number">
+                                <td><input type="button" value="5" onclick="dis('5')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="6" onclick="dis('6')"/ class="cal_btn number">
+                                <td><input type="button" value="6" onclick="dis('6')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="-" onclick="dis('-')"/
+                                <td><input type="button" value="-" onclick="dis('-')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="7" onclick="dis('7')"/ class="cal_btn number">
+                                <td><input type="button" value="7" onclick="dis('7')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="8" onclick="dis('8')"/ class="cal_btn number">
+                                <td><input type="button" value="8" onclick="dis('8')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="9" onclick="dis('9')"/ class="cal_btn number">
+                                <td><input type="button" value="9" onclick="dis('9')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="+" onclick="dis('+')"/
+                                <td><input type="button" value="+" onclick="dis('+')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="." onclick="dis('.')"/ class="cal_btn number">
+                                <td><input type="button" value="." onclick="dis('.')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="0" onclick="dis('0')"/ class="cal_btn number">
+                                <td><input type="button" value="0" onclick="dis('0')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="=" onclick="solve()"/ class="cal_btn equal">
+                                <td><input type="button" value="=" onclick="solve()" / class="cal_btn equal">
                                 </td>
-                                <td><input type="button" value="*" onclick="dis('*')"/
+                                <td><input type="button" value="*" onclick="dis('*')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                         </table>
@@ -652,12 +669,13 @@
     <script src="{{ asset('admin/asset/js/toastr.min.js') }}"></script>
     {!! Toastr::message() !!}
     <script>
-        @if (count($errors) > 0)
-            @foreach ($errors->all() as $error)
-                toastr.error("{{ $error }}");
-            @endforeach
-        @endif
-    </script>
+    @if(count($errors) > 0)
+        @foreach($errors->all() as $error)
+            toastr.error("{{ $error }}");
+        @endforeach
+    @endif
+</script>
+
     <script>
         // document.addEventListener("contextmenu",function(hide){
         // hide.preventDefault();
