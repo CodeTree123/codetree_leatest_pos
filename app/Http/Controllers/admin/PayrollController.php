@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 use App\Payroll;
 use App\Employee;
 use App\Bonus;
+use Brian2694\Toastr\Facades\Toastr;
 
 class PayrollController extends Controller
 {
-    public function calculatePayroll($employeeId)
+    public function calculatePayroll($employeeId, $value)
     {
         $employee = Employee::find($employeeId);
 
@@ -21,9 +22,14 @@ class PayrollController extends Controller
         $deduction = $employee->deductions;
         $basicSalary = $employee->basic_salary;
 
-        // Safely handle null deductions
         $totalDeductions = ($deduction->tax ?? 0) + ($deduction->social_security ?? 0) + ($deduction->other_deductions ?? 0);
-        $totalBonuses = ($employee->bonuses()->sum('amount') ?? 0);
+        if ($value->bonus == 1) {
+            $latestBonus = $employee->bonuses()->latest()->first();
+            $totalBonuses = $latestBonus->amount ?? 0;
+        } elseif ($value->bonus == 0) {
+            $latestBonus = 0;
+            $totalBonuses = $latestBonus->amount ?? 0;
+        }
 
         $netSalary = $basicSalary + $totalBonuses - $totalDeductions;
 
@@ -44,24 +50,37 @@ class PayrollController extends Controller
         return view('admin.payroll.index', compact('payrolls'));
     }
 
-    public function generatePayrollForAllEmployees()
+    public function generatePayrollForAllEmployees(Request $value)
     {
         $employees = Employee::all();
         foreach ($employees as $employee) {
-            $this->calculatePayroll($employee->id);
+            $this->calculatePayroll($employee->id, $value);
         }
         return redirect()->back()->with('success', 'Payroll calculated successfully.');
     }
 
     public function generatePayrollForEmployee($employeeId)
     {
-        $this->calculatePayroll($employeeId);
+        $this->calculatePayroll($employeeId, 0);
         return redirect()->back()->with('success', 'Payroll generated successfully.');
     }
 
     public function bonus()
     {
         $bonuses = Bonus::with('employee')->get();
-        return view('admin.payroll.bonus', compact('bonuses'));
+        $employees = Employee::where('status', 1)->get();
+        return view('admin.payroll.bonus', compact('bonuses', 'employees'));
+    }
+
+    public function addBonus(Request $data)
+    {
+        $bonus = new Bonus();
+        $bonus->employee_id = $data->employee_id;
+        $bonus->amount = $data->amount;
+        $bonus->description = $data->description;
+        $bonus->date_given = $data->date_given;
+        $bonus->save();
+        Toastr::success('Employee Bonus Updated successfully.');
+        return redirect()->route('admin.payroll.bonus');
     }
 }

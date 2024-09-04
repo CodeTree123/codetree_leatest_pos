@@ -89,6 +89,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     Route::post('/payroll/generate/{employee}', 'PayrollController@generatePayrollForEmployee')->name('payroll.generate');
     Route::post('/payroll/generate-all', 'PayrollController@generatePayrollForAllEmployees')->name('payroll.generate.all');
     Route::get('/payroll/bonus', 'PayrollController@bonus')->name('payroll.bonus');
+    Route::post('/payroll/bonus/add', 'PayrollController@addBonus')->name('employeeBonus.add');
 
 });
 

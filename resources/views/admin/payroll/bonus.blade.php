@@ -41,8 +41,9 @@ Employee Bonus
                                 <th class="font-weight-bold" scope="col">Employee ID</th>
                                 <th class="font-weight-bold" scope="col">Name</th>
                                 <th class="font-weight-bold" scope="col">Email</th>
-                                <th class="font-weight-bold" scope="col">Basic Salary</th>
                                 <th class="font-weight-bold" scope="col">Bonus Amount</th>
+                                <th class="font-weight-bold" scope="col">Description</th>
+                                <th class="font-weight-bold" scope="col">Given Date</th>
                                 <th class="font-weight-bold" scope="col">Actions</th>
                             </tr>
                         </thead>
@@ -52,10 +53,12 @@ Employee Bonus
                             <?php $counter++; ?>
                             <tr>
                                 <td>{{$counter}}</td>
-                                <td>{{$user->employee->employee_id}}</td>
+                                <td>{{$user->employee->em_id}}</td>
                                 <td>{{$user->employee->name}}</td>
                                 <td>{{$user->employee->email}}</td>
-                                <td>{{$user->employee->basic_salary}}</td>
+                                <td>{{$user->amount}}</td>
+                                <td>{{$user->description}}</td>
+                                <td>{{$user->date_given}}</td>
                                 <td style="width:120px;">
                                     <button class="btn  bg_secondary_teal p-1 px-2 mb-0 v-btn" style="font-size: 13px;cursor:pointer;" title="User Details" value="{{$user->id}}"> <i class="fa-fw fa fa-eye"></i></button>
                                     <button class="btn bg_p_primary p-1 mb-0 px-2 edit-btn" value="{{$user->id}}" style="font-size: 13px;cursor:pointer;" title="Edit User"> <i class="fa fa-edit"></i></button>
@@ -100,34 +103,38 @@ Employee Bonus
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="exampleModalLabel">Add New Employee</h2>
+                <h2 class="modal-title" id="exampleModalLabel">Add New Bonus</h2>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
             <div class="modal-body p-3">
-                <form method="post" action="{{route('admin.employeeAdd')}}">
+                <form method="post" action="{{route('admin.employeeBonus.add')}}">
                     @csrf
                     <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" class="form-control" placeholder="Name" name="name">
+                        <label>Select Employee</label>
+                        <select name="employee_id" class="form-control" id="">
+                            @foreach($employees as $emp)
+                            <option value="{{$emp->id}}">{{$emp->name}}({{$emp->email}})</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" placeholder="Email" name="email">
+                        <label>Amount</label>
+                        <input type="numeric" class="form-control" placeholder="Amount" name="amount">
                     </div>
                     <div class="form-group">
-                        <label>Position</label>
-                        <input type="text" class="form-control" placeholder="Position" name="position">
+                        <label>Description</label>
+                        <textarea name="description" class="form-control" id=""></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Hire Date</label>
+                        <label>Date</label>
                         @php
                         $date = \Carbon\Carbon::now()->format('Y-m-d');
                         @endphp
-                        <input type="text" class="form-control" value="{{$date}}" name="hire_date">
+                        <input type="text" class="form-control" value="{{$date}}" name="date_given">
                     </div>
             </div>
             <div class="modal-footer">
-                <input type="submit" class="btn bg_p_primary" value="Add New Employee">
+                <input type="submit" class="btn bg_p_primary" value="Add New Employee Bonus">
                 </form>
             </div>
         </div>

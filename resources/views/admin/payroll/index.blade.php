@@ -11,7 +11,12 @@
     <div class="p-4">
         <form action="{{ route('admin.payroll.generate.all') }}" method="POST">
             @csrf
-            <button type="submit" class="btn bg_p_primary">Generate Payroll for All Employees</button>
+            <select name="bonus" class="form-control bg_p_primary my-2" id="" required>
+                <option value="">Select</option>
+                <option value="1">with bonus</option>
+                <option value="0">with out bonus</option>
+            </select>
+            <button type="submit" class="btn bg_p_primary my-2">Generate Payroll for All Employees</button>
         </form>
     </div>
 
