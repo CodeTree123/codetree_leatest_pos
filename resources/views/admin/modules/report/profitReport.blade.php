@@ -115,7 +115,11 @@ Profit report- Admin Dashboard
                             @foreach($profits as $profit)
                             <tr>
                                 <td>{{$profit->id}}</td>
+                                @if(empty($profit->products->code))
+                                <td>COD</td>
+                                @else
                                 <td>{{@$profit->products->code}}</td>
+                                @endif
                                 <td>{{$profit->product_revenue}}.৳</td>
                             </tr>
                             @endforeach

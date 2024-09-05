@@ -26,9 +26,8 @@ class PayrollController extends Controller
         if ($value->bonus == 1) {
             $latestBonus = $employee->bonuses()->latest()->first();
             $totalBonuses = $latestBonus->amount ?? 0;
-        } elseif ($value->bonus == 0) {
-            $latestBonus = 0;
-            $totalBonuses = $latestBonus->amount ?? 0;
+        } else {
+            $totalBonuses = 0;
         }
 
         $netSalary = $basicSalary + $totalBonuses - $totalDeductions;
@@ -61,7 +60,8 @@ class PayrollController extends Controller
 
     public function generatePayrollForEmployee($employeeId)
     {
-        $this->calculatePayroll($employeeId, 0);
+        $value = (object) ['bonus' => 0];
+        $this->calculatePayroll($employeeId, $value);
         return redirect()->back()->with('success', 'Payroll generated successfully.');
     }
 

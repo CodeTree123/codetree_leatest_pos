@@ -90,7 +90,7 @@ a:hover{
 								@if(!empty($customer->image))
 								<img src="{{ asset($customer->image) }}" alt="{{ $customer->name }}" class="img-rounded" style="width:35px;height:35px;">
 								@else
-								<img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="No-image" class="img-rounded" style="width:35px;height:35px;">
+								<img src="{{ asset('admin/defaultIcon/user.png')}}" alt="No-image" class="img-rounded" style="width:35px;height:35px;">
 								@endif
 								</td>
 								<td>{{ $customer->name }}</td>

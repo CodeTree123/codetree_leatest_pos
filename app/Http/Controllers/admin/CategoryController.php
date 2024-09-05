@@ -22,15 +22,16 @@ class CategoryController extends Controller
   protected function imageUpload($request)
   {
     $productImage = $request->file('image');
-    $imageName = $productImage->getClientOriginalName();
-    $directory = 'uploads/category_image/';
-    $imageUrl = $directory . $imageName;
+
+    $imageName = time() . '-' . Str::random(10) . '.' . $productImage->getClientOriginalExtension();
+    $directory = public_path('uploads/category_image/');
+    $imageUrl = 'uploads/category_image/' . $imageName;
 
     if (!file_exists($directory)) {
       mkdir($directory, 0755, true);
     }
 
-    Image::make($productImage)->resize(80, 80)->save($imageUrl);
+    Image::make($productImage)->resize(80, 80)->save($directory . $imageName);
 
     return $imageUrl;
   }
