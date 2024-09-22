@@ -288,7 +288,7 @@ class SalesController extends Controller
       ->select('sales_products.*', 'products.name')
       ->where('sales_products.sale_id', $id)
       ->get();
-    return view('admin.modules.sales.salesDetails')->with(['billInfo' => $billInfo, 'billProduct' => $billProduct]);
+    return view('admin.modules.sales.salesDetails')->with(['billInfo' => $billInfo, 'billProduct' => $billProduct, 'billerName' =>$request->billerName]);
   }
   public function updateTax(Request $request)
   {

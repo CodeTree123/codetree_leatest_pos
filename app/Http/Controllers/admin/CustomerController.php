@@ -41,6 +41,7 @@ class CustomerController extends Controller
       $customer->address = $request->address;
       $customer->company = $request->company;
       $customer->start_balance = $request->start_balance;
+      $customer->nominee= $request->nominee;
       try {
          $customer->save();
          Toastr::success('Customer added successfully', 'success');

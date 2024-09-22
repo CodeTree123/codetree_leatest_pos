@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('profits', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('customers', function (Blueprint $table) {
+            // Add the nominee column
+            $table->string('nominee')->nullable(); // Adding nullable nominee column
         });
     }
+
 
     /**
      * Reverse the migrations.
@@ -26,6 +27,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profits');
+        Schema::table('customers', function (Blueprint $table) {
+            // Drop the nominee column if the migration is rolled back
+            $table->dropColumn('nominee');
+        });
     }
 };

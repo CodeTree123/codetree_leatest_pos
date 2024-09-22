@@ -77,6 +77,7 @@ a:hover{
 								<th class="font-weight-bold" scope="col">Phone</th>
 								<th class="font-weight-bold" scope="col">Group</th>
 								<th class="font-weight-bold" scope="col">Deposit</th>
+								<th class="font-weight-bold" scope="col">Nominee</th>
 								<th class="font-weight-bold" scope="col">Actions</th>
 							</tr>
 						</thead>
@@ -99,6 +100,7 @@ a:hover{
 								<td><p class="badge  bg_secondary_teal">{{ $customer->mobile }}</p></td>
 								<td><p class="badge badge-info">{{ $customer->groupName['name'] }}</p></td>
 								<td></td>
+								<td>{{ $customer->nominee }}</td>
 								<td style="width:120px;">
 									<div class="dropdown" style="width:90px;float:right;">
 									  <a href="{{ route('admin.customer.customerDetails', $customer->id) }}" class="action-btn bg_p_primary p-2">
@@ -157,7 +159,13 @@ a:hover{
 					<label>Stating Balance</label>
 					<input type="number" class="form-control" name="start_balance" placeholder="Starting balance">
 				</div>
+				<div class="form-group col-md-6">
+                   <label>Nominee</label>
+                   <input type="text" class="form-control" name="nominee" placeholder="Enter Nominee Name">
+                </div>
 			</div>
+
+
 			<div class="form-row">
 				<div class="form-group col-md-12">
 					<label>Address</label>

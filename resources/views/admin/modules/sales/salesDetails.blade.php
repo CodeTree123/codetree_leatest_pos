@@ -18,7 +18,8 @@
        <div>
         
          <p class="bill-p mb-0">Customer Name: {{$billInfo->name}}</p>
-         <p class="bill-p">Customer Mobile: {{$billInfo->mobile}}</p>
+         <p class="bill-p mb-0">Customer Mobile: {{$billInfo->mobile}}</p>
+         <p class="bill-p">Biller: {{$billerName}}</p>
          <br>
        </div>
 <table class="table table-bordered">
