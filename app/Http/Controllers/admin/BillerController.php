@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Sales;
 use App\Biller;
 use Brian2694\Toastr\Facades\Toastr;
 
@@ -44,6 +45,23 @@ public function listBiller()
    $billers=Biller::all();
    return view('admin.modules.people.biller.billerList')->with(['billers'=>$billers]);
 }
+
+public function billerBills($id)
+{
+    
+   // Get the specific biller and its sales records
+   $biller = Biller::findOrFail($id); // Find the biller by ID
+   $sales = Sales::where('biller_id', $id)->paginate(10); // Fetch sales by biller ID
+
+   return view('admin.modules.people.biller.billerBills')->with([
+      'biller' => $biller, // Pass the biller info
+      'sales' => $sales     // Pass the filtered sales
+   ]);
+}
+
+
+
+
 public function viewBiller($id)
 {
    $billers=Biller::find($id);

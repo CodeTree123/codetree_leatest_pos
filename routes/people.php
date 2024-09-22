@@ -46,6 +46,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::get('/biller-add', 'BillerController@addBiller')->name('admin.people.addBiller');
 	Route::post('/biller-save', 'BillerController@billerSave')->name('admin.biller.billerSave');
 	Route::get('/biller-lists', 'BillerController@listBiller')->name('admin.people.listBiller');
+	Route::get('/biller-bills/{id}', 'BillerController@billerBills')->name('admin.people.billerBills');
 	Route::get('/biller-view/{id}', 'BillerController@viewBiller')->name('admin.people.viewBiller');
 	Route::get('/biller-edit/{id}', 'BillerController@editBiller')->name('admin.people.editBiller');
 	Route::put('/biller-update', 'BillerController@billerUpdate')->name('admin.biller.billerUpdate');
