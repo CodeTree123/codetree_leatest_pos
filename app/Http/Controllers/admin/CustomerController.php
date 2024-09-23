@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\CustomerGroup;
 use App\Customer;
+use App\Nominee;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
@@ -19,7 +20,8 @@ class CustomerController extends Controller
    public function customerList()
    {
       $customerGroups = CustomerGroup::all();
-      $customers = Customer::paginate(10);
+      $customers = Customer::with('nominee')->paginate(10);
+
       return view('admin.modules.people.customer.customerList')->with(['customers' => $customers, 'customerGroups' => $customerGroups]);
    }
    public function customerAdd()
@@ -30,27 +32,71 @@ class CustomerController extends Controller
 
    public function customerSave(Request $request)
    {
-      $request->validate([
-         'mobile' => 'required|numeric|unique:customers',
-      ]);
-      $customer = new Customer;
-      $customer->mobile = $request->mobile;
-      $customer->name = $request->name;
-      $customer->group = $request->group;
-      $customer->email = $request->email;
-      $customer->address = $request->address;
-      $customer->company = $request->company;
-      $customer->start_balance = $request->start_balance;
-      $customer->nominee= $request->nominee;
-      try {
-         $customer->save();
-         Toastr::success('Customer added successfully', 'success');
-         return redirect()->route('admin.customerList');
-      } catch (\Exception $e) {
-         session()->flash('error-message', $e->getMessage());
-         return redirect()->back();
-      }
+       try {
+           $request->validate([
+               'mobile' => 'required|numeric|unique:customers',
+           ]);
+       } catch (\Exception $e) {
+           session()->flash('error-message', 'Validation error: ' . $e->getMessage());
+           return redirect()->back();
+       }
+   
+       // Step 2: Create new instances of Customer and Nominee
+       $customer = new Customer;
+       $nominee = new Nominee;
+   
+       // Step 3: Set the properties for the Customer
+       try {
+           $customer->mobile = $request->mobile;
+           $customer->name = $request->name;
+           $customer->group = $request->group;
+           $customer->email = $request->email;
+           $customer->address = $request->address;
+           $customer->company = $request->company;
+           $customer->start_balance = $request->start_balance;
+       } catch (\Exception $e) {
+           session()->flash('error-message', 'Error setting customer properties: ' . $e->getMessage());
+           return redirect()->back();
+       }
+       // Step 4: Set the properties for the Nominee
+       try {
+           $nominee->name = $request->nominee_name;
+           $nominee->email = $request->nominee_email;
+           $nominee->phone = $request->nominee_phone;
+           $nominee->address = $request->nominee_address;
+       } catch (\Exception $e) {
+           session()->flash('error-message', 'Error setting nominee properties: ' . $e->getMessage());
+           return redirect()->back();
+       }
+       // Step 5: Attempt to save the Nominee
+       try {
+           $nominee->save();
+       } catch (\Exception $e) {
+           session()->flash('error-message', 'Failed to save nominee: ' . $e->getMessage());
+           return redirect()->back();
+       }
+   
+       // Step 6: Assign the saved nominee's ID to the customer
+       try {
+           $customer->nominee_id = $nominee->id;
+       } catch (\Exception $e) {
+           session()->flash('error-message', 'Failed to assign nominee ID: ' . $e->getMessage());
+           return redirect()->back();
+       }
+   
+       // Step 7: Attempt to save the Customer
+       try {
+           $customer->save();
+       } catch (\Exception $e) {
+           session()->flash('error-message', 'Failed to save customer: ' . $e->getMessage());
+           return redirect()->back();
+       }
+   
+       // Step 8: If all went well, show success message
+       Toastr::success('Customer added successfully', 'success');
+       return redirect()->route('admin.customerList');
    }
+   
    public function customerGroup()
    {
       $customerGroups = CustomerGroup::paginate(10);
