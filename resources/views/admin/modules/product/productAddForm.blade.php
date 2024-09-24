@@ -74,9 +74,17 @@ Add New Product- Admin Dashboard
 							</div>
 							<div class="form-group col-6">
 								<label>Product Code *</label>
-							
-								<input type="text" class="form-control" name="code" readonly value="{{$productCode}}-{{$lastId}}">
+							    <input type="text" class="form-control mb-2" name="code" placeholder="Product Barcode">
+								<button type="button" class="btn btn-primary" id="scan-btn"><i class="fa fa-camera"></i></button>
+								<button type="button" id="cancel-btn" class="btn btn-danger">
+                                    <i class="fa fa-times"></i>
+                                </button>
+								<!-- <input type="text" class="form-control" name="code" readonly value="{{$productCode}}-{{$lastId}}"> -->
 							</div>
+							<div id="qr-reader" style="width: 100%; max-width: 500px; display: none; position: relative;">
+								
+                            </div>
+
 							<div class="form-group col-6">
 								<label>Starting Inventory</label>
 								<input type="number" class="form-control" name="start_inventory" placeholder="Starting Inventory">
@@ -161,35 +169,64 @@ Add New Product- Admin Dashboard
 
 </div>
 <script>
-	$(document).ready(function(){
-		$("#category").on('change',function(){
-			var catId=$(this).val();
-         //ajax
+$(document).ready(function() {
 
-         $.ajax({
-         	headers: {
-         		'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-         	},
-         	url:"{{route('admin.subcategory.selectSubcategory')}}",
-         	type:"POST",
-         	data:{'catId':catId},
-         	dataType:'json',
-         	success:function(data){
-         		console.log(data);
-         		$('#subcategory').empty();
-         		$.each(data,function(index,subcatObj){
+	$('#cancel-btn').click(function() {
+    $('#qr-reader').hide(); // Hide the QR reader
+    html5QrCode.stop(); // Stop scanning if active
+    });
 
-         			$("#subcategory").append('<option value ="'+subcatObj.id+'">'+subcatObj.name+'</option>');
-         		});
+    $("#category").on('change', function() {
+        var catId = $(this).val();
+        // AJAX request to fetch subcategories
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{route('admin.subcategory.selectSubcategory')}}",
+            type: "POST",
+            data: { 'catId': catId },
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                $('#subcategory').empty();
+                $.each(data, function(index, subcatObj) {
+                    $("#subcategory").append('<option value ="' + subcatObj.id + '">' + subcatObj.name + '</option>');
+                });
+            },
+            error: function() {
+                alert("Error fetching subcategories.");
+            }
+        });
+    });
 
-         	},
-         	error:function(){
-         		alert("error ase");
-         	}
-         });
-     //endajax
- });
-	});
+    $('#scan-btn').click(function() {
+        $('#qr-reader').show(); // Show the QR reader
+        console.log("I am pressed");
+        
+        let html5QrCode = new Html5Qrcode("qr-reader");
+        let cameraMode = window.innerWidth <= 768 ? { facingMode: "environment" } : { facingMode: "user" };
+
+        html5QrCode.start(
+            cameraMode,
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            function(qrCodeMessage) {
+                $('#code').val(qrCodeMessage); // Set the scanned code to the input with ID "code"
+                html5QrCode.stop(); // Stop scanning
+                $('#qr-reader').hide(); // Hide the QR reader
+            },
+            function(errorMessage) {
+                console.log("Error scanning: ", errorMessage);
+            }
+        ).catch(function(err) {
+            console.log("Error initializing the camera: ", err);
+        });
+    });
+});
+
 </script>
 @stop
 
