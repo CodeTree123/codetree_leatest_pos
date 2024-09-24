@@ -92,6 +92,7 @@ class ProductController extends Controller
             'purchase_price' => 'required',
             'sell_price' => 'required',
             'unit' => 'required',
+            'bar_code' => 'required'
         ]);
 
         if ($request->file('image') !== null) {
