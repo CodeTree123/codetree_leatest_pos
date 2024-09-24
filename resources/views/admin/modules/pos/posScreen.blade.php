@@ -755,11 +755,11 @@ use App\Http\Controllers\admin\StockController;
       if (code == 13) // Enter key hit
       {
         // alert(barcode);
-        var pro_id = (barcode);
+        var bar_id = (barcode);
 
         // $(this).val('');
         // alert(pro_id);
-        addToCart(pro_id);
+        addToCartWithBar(bar_id);
         barcode = "";
       }
       // else if(code==9)// Tab key hit
@@ -805,6 +805,35 @@ use App\Http\Controllers\admin\StockController;
 
       //end ajax
     }
+
+      //product add to cart 
+      function addToCartWithBar(bar_id) {
+      // $("#posProduct").val('');
+      var barcode = "";
+      //ajax
+      $.ajax({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: "{{route('admin.pos.addToCartWithBar')}}",
+        type: "POST",
+        data: {
+          'bar_id': bar_id
+        },
+        //dataType:'json',
+        success: function(data) {
+          //  console.log(data);
+          $("#print").html(data);
+        },
+        error: function() {
+          toastr.error("Something went Wrong, Please Try again.");
+        }
+      });
+
+      //end ajax
+    }
+
+
     //quantiry update of cart items
     $(".qty_update_input").on('change', function() {
       var rowId = $(this).data('qty');

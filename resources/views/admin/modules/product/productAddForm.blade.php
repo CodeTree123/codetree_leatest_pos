@@ -73,13 +73,17 @@ Add New Product- Admin Dashboard
 								<input type="text" class="form-control" name="name" placeholder="Product Name">
 							</div>
 							<div class="form-group col-6">
-								<label>Product Code *</label>
-							    <input type="text" class="form-control mb-2" name="code" placeholder="Product Barcode">
+							    <label>Product Code *</label>
+							    <input type="text" class="form-control" name="code" readonly value="{{$productCode}}-{{$lastId}}">
+						    </div>
+							<div class="form-group col-6">
+								<label>Bar Code *</label>
+							    <input type="text" class="form-control mb-2" name="bar_code" placeholder="Product Barcode">
 								<button type="button" class="btn btn-primary" id="scan-btn"><i class="fa fa-camera"></i></button>
 								<button type="button" id="cancel-btn" class="btn btn-danger">
                                     <i class="fa fa-times"></i>
                                 </button>
-								<!-- <input type="text" class="form-control" name="code" readonly value="{{$productCode}}-{{$lastId}}"> -->
+								
 							</div>
 							<div id="qr-reader" style="width: 100%; max-width: 500px; display: none; position: relative;">
 								
@@ -214,7 +218,7 @@ $(document).ready(function() {
                 qrbox: 250
             },
             function(qrCodeMessage) {
-                $('#code').val(qrCodeMessage); // Set the scanned code to the input with ID "code"
+                $('#bar_code').val(qrCodeMessage); // Set the scanned code to the input with ID "code"
                 html5QrCode.stop(); // Stop scanning
                 $('#qr-reader').hide(); // Hide the QR reader
             },

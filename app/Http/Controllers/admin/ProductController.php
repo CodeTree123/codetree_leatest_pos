@@ -103,6 +103,7 @@ class ProductController extends Controller
         $product = new Products;
         $product->name = $request->name;
         $product->code = $request->code;
+        $product->bar_code = $request->bar_code;
         $product->slug = str::slug($request->name);
         $product->supplier = $request->supplier;
         $product->unit = $request->unit;
