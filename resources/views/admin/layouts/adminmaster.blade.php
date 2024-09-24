@@ -61,6 +61,7 @@
         @yield('adminTitle')
     </title>
     <script src="{{ asset('admin/asset/js/jquery-3.4.1.min.js') }}"></script>
+  
     <script>
         // function printContent(el) {
         //     var restorepage = document.body.innerHTML;
@@ -713,7 +714,7 @@
     @yield('adminContent')
 
     <!--js file-->
-
+    <script src="{{ asset('admin/asset/js/html5-qrcode.min.js') }}"></script>
     <script src="{{ asset('admin/asset/js/popper.min.js') }}"></script>
     <script src="{{ asset('admin/asset/js/bootstrap.min.js') }}"></script>
     <!--dropdown plugin file-->
