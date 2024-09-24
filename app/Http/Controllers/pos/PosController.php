@@ -90,6 +90,7 @@ class PosController extends Controller
         ->where('id', 'like', '%' . $request->key . '%')
         ->orWhere('name', 'like', '%' . $request->key . '%')
         ->orWhere('code', 'like', '%' . $request->key . '%')
+        ->orWhere('bar_code', 'like', '%' . $request->key . '%')
         ->get();
     } else {
       $result = Products::all();
@@ -109,6 +110,19 @@ class PosController extends Controller
     $product_name = DB::table('products')->where('id', $request->pro_id)->value('name');
     $product_id = DB::table('products')->where('id', $request->pro_id)->value('id');
     $purchase_price = DB::table('products')->where('id', $request->pro_id)->value('sell_price');
+    Cart::add($product_id, $product_name, 1, $purchase_price);
+    return view('admin.modules.pos.cartProduct');
+  }
+
+
+
+  public function addToCartWithBar(Request $request)
+  {
+    // Cart::setGlobalTax(0);
+    // Cart::setGlobalDiscount(0);
+    $product_name = DB::table('products')->where('bar_code', $request->bar_id)->value('name');
+    $product_id = DB::table('products')->where('bar_code', $request->bar_id)->value('id');
+    $purchase_price = DB::table('products')->where('bar_code', $request->bar_id)->value('sell_price');
     Cart::add($product_id, $product_name, 1, $purchase_price);
     return view('admin.modules.pos.cartProduct');
   }

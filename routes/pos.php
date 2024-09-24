@@ -11,6 +11,7 @@ Route::group(['middleware' => 'auth:admin','namespace'=>'pos'], function()
 	Route::post('pos-customerReset','PosController@customerReset')->name('admin.pos.customerReset');
 	Route::post('/search-product','PosController@searchProduct')->name('admin.pos.searchProduct');
 	Route::post('/add-to-cart','PosController@addToCart')->name('admin.pos.addToCart');
+	Route::post('/add-to-cart-with-bar','PosController@addToCartWithBar')->name('admin.pos.addToCartWithBar');
 
 	Route::post('/remove-item-from-pos','PosController@removeItem')->name('admin.pos.removeItem');
 	Route::get('/clear-pos','PosController@removeAllItem')->name('admin.pos.removeAllItem');
