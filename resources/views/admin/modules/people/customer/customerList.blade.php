@@ -77,7 +77,10 @@ a:hover{
 								<th class="font-weight-bold" scope="col">Phone</th>
 								<th class="font-weight-bold" scope="col">Group</th>
 								<th class="font-weight-bold" scope="col">Deposit</th>
-								<th class="font-weight-bold" scope="col">Nominee</th>
+								<th class="font-weight-bold" scope="col">Nominee Name</th>
+								<th class="font-weight-bold" scope="col">Nominee Email</th>
+								<th class="font-weight-bold" scope="col">Nominee address</th>
+								<th class="font-weight-bold" scope="col">Nominee Phone</th>
 								<th class="font-weight-bold" scope="col">Actions</th>
 							</tr>
 						</thead>
@@ -100,7 +103,10 @@ a:hover{
 								<td><p class="badge  bg_secondary_teal">{{ $customer->mobile }}</p></td>
 								<td><p class="badge badge-info">{{ $customer->groupName['name'] }}</p></td>
 								<td></td>
-								<td>{{ $customer->nominee }}</td>
+								<td>{{ $customer->nominee ? $customer->nominee->name : '' }}</td>
+                                <td>{{ $customer->nominee ? $customer->nominee->email : '' }}</td>
+                                <td>{{ $customer->nominee ? $customer->nominee->phone : '' }}</td>
+                                <td>{{ $customer->nominee ? $customer->nominee->address : '' }}</td>
 								<td style="width:120px;">
 									<div class="dropdown" style="width:90px;float:right;">
 									  <a href="{{ route('admin.customer.customerDetails', $customer->id) }}" class="action-btn bg_p_primary p-2">
@@ -122,62 +128,82 @@ a:hover{
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <div class="modal-content p-3">
-       <div class="modal-header">
-			<h2 class="modal-title" id="exampleModalLabel">Add New Customer</h2>
-			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-       </div>
-       <div class="modal-body">
-        	<form method="post" action="{{ route('admin.customer.customerSave') }}">
-			@csrf
-			<div class="form-row">
-				<div class="form-group col-md-6">
-					<label>Customer Group</label>
-					<select class="custom-select" name="group">
-						@foreach($customerGroups as $customerGroup)
-						<option value="{{ $customerGroup->id }}">{{ $customerGroup->name }}</option>
-						@endforeach
-					</select>
-				</div>
-				<div class="form-group col-md-6">
-					<label>Mobile *</label>
-					<input type="text" class="form-control" name="mobile" placeholder="Enter Customer Mobile">
-				</div>
-				<div class="form-group col-md-6">
-					<label>Name</label>
-					<input type="text" class="form-control" name="name" placeholder="Enter Customer Name">
-				</div>
-				<div class="form-group col-md-6">
-					<label>Email</label>
-					<input type="email" class="form-control" name="email" placeholder="Enter Customer Email Address">
-				</div>
-				<div class="form-group col-md-6">
-					<label>Company</label>
-					<input type="text" class="form-control" name="company" placeholder="Enter Customer Company Name">
-				</div>
-				<div class="form-group col-md-6">
-					<label>Stating Balance</label>
-					<input type="number" class="form-control" name="start_balance" placeholder="Starting balance">
-				</div>
-				<div class="form-group col-md-6">
-                   <label>Nominee</label>
-                   <input type="text" class="form-control" name="nominee" placeholder="Enter Nominee Name">
-                </div>
-			</div>
-
-
-			<div class="form-row">
-				<div class="form-group col-md-12">
-					<label>Address</label>
-					<textarea name="address" class="form-control" rows="3" placeholder="Enter Customer Address"></textarea> 
-				</div>
-			</div>
-      	</div>
-		<div class="modal-footer">
-			<input type="submit" class="btn btn-primary" value="Add Customer">
-			</form>
-		</div>
+  <div class="modal-content p-3">
+    <div class="modal-header">
+        <h2 class="modal-title" id="exampleModalLabel">Add New Customer</h2>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
     </div>
+    <div class="modal-body">
+        <form method="post" action="{{ route('admin.customer.customerSave') }}">
+            @csrf
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Customer Group</label>
+                    <select class="custom-select" name="group">
+                        @foreach($customerGroups as $customerGroup)
+                        <option value="{{ $customerGroup->id }}">{{ $customerGroup->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Mobile *</label>
+                    <input type="text" class="form-control" name="mobile" placeholder="Enter Customer Mobile">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Name</label>
+                    <input type="text" class="form-control" name="name" placeholder="Enter Customer Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="Enter Customer Email Address">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Company</label>
+                    <input type="text" class="form-control" name="company" placeholder="Enter Customer Company Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Starting Balance</label>
+                    <input type="number" class="form-control" name="start_balance" placeholder="Starting balance">
+                </div>
+            </div>
+			<div class="form-row">
+                <div class="form-group col-md-12">
+                    <label>Address</label>
+                    <textarea name="address" class="form-control" rows="3" placeholder="Enter Customer Address"></textarea>
+                </div>
+            </div>
+
+            <!-- New Section: Nominee Information -->
+           
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label>Nominee Name</label>
+                    <input type="text" class="form-control" name="nominee_name" placeholder="Enter Nominee Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Nominee Email</label>
+                    <input type="email" class="form-control" name="nominee_email" placeholder="Enter Nominee Email">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Nominee Phone</label>
+                    <input type="text" class="form-control" name="nominee_phone" placeholder="Enter Nominee Phone">
+                </div>
+            </div>
+			<div class="form-row">
+                <div class="form-group col-md-12">
+                    <label>Nominee Address</label>
+                    <textarea name="nominee_address" class="form-control" rows="3" placeholder="Enter Nominee Address"></textarea>
+                </div>
+            </div>
+
+
+    </div>
+    <div class="modal-footer">
+        <input type="submit" class="btn btn-primary" value="Add Customer">
+        </form>
+    </div>
+</div>
+
 </div>
 </div>
 

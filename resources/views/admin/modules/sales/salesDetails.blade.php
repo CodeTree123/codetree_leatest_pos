@@ -1,9 +1,18 @@
 
       <div class="modal-header">
+
+
+
         <h2 class="modal-title" id="exampleModalLabel">Sale Details</h2>
+        <div class="row">
+        <p class="task-btn text_p_primary ml-2" title="Print Report" onclick="printContent('saleDetailsModal')">
+        <i class="fa fa-print"></i> <!-- Print Icon -->
+        </p>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+
       </div>
-       <div class="modal-body">
+       <div class="modal-body" id="saleDetailsModal">
      
        <div class="row p-0 m-0 mt-2">
         <div class="col-6 pl-0">

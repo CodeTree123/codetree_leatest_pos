@@ -12,4 +12,11 @@ class Customer extends Model
     {
         return $this->belongsTo('App\CustomerGroup','group');
     }
+
+    // Define the one-to-one relationship with Nominee
+    public function nominee()
+    {
+        return $this->belongsTo('App\Nominee', 'nominee_id');
+    }
+    
 }

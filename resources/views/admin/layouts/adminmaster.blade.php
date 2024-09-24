@@ -62,26 +62,76 @@
     </title>
     <script src="{{ asset('admin/asset/js/jquery-3.4.1.min.js') }}"></script>
     <script>
+        // function printContent(el) {
+        //     var restorepage = document.body.innerHTML;
+        //     var printcontent = document.getElementById(el).innerHTML;
+        //     document.body.innerHTML = printcontent;
+        //     // document.body.classList.add("body_t");
+        //     var testt = document.querySelector(".testt");
+        //     testt.classList.remove("row");
+        //     testt.classList.remove("flex-column");
+        //     testt.classList.remove("align-content-center");
+        //     var test = document.querySelectorAll(".barcode_boxes_parent");
+        //     // console.log(test);
+        //     for (let i = 0; i < test.length; i++) {
+        //         // test[i].style.backgroundColor = "red";
+        //         test[i].classList.remove("col-4");
+        //         test[i].classList.add("barcode_boxes_print");
+        //     }
+        //     // test.style.color='red';
+        //     window.print();
+        //     document.body.innerHTML = restorepage;
+        // }
+
         function printContent(el) {
-            var restorepage = document.body.innerHTML;
-            var printcontent = document.getElementById(el).innerHTML;
-            document.body.innerHTML = printcontent;
-            // document.body.classList.add("body_t");
-            var testt = document.querySelector(".testt");
-            testt.classList.remove("row");
-            testt.classList.remove("flex-column");
-            testt.classList.remove("align-content-center");
-            var test = document.querySelectorAll(".barcode_boxes_parent");
-            // console.log(test);
-            for (let i = 0; i < test.length; i++) {
-                // test[i].style.backgroundColor = "red";
-                test[i].classList.remove("col-4");
-                test[i].classList.add("barcode_boxes_print");
-            }
-            // test.style.color='red';
-            window.print();
-            document.body.innerHTML = restorepage;
-        }
+    // Get the content to print
+    var printContent = document.getElementById(el).innerHTML;
+
+    // Create an iframe or a new window for printing
+    var printWindow = window.open('', '_blank', 'width=800,height=600');
+
+    // Write the content into the new window and apply specific styles for the table
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print</title>
+            <style>
+                @media print {
+                    body {
+                        font-family: Arial, sans-serif;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        border: 1px solid black;
+                    }
+                    table, th, td {
+                        border: 1px solid black;
+                        padding: 8px;
+                        text-align: left;
+                    }
+                    th, td {
+                        background-color: #f2f2f2;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${printContent}
+        </body>
+        </html>
+    `);
+
+    // Wait for the content to load and print it
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.onafterprint = function () {
+        printWindow.close();
+    };
+}
+
+
     </script>
     <style>
         .top-date {
