@@ -714,7 +714,7 @@
     @yield('adminContent')
 
     <!--js file-->
-    <script src="{{ asset('admin/asset/js/html5-qrcode.min.js') }}"></script>
+    <!-- <script src="{{ asset('admin/asset/js/html5-qrcode.min.js') }}"></script> -->
     <script src="{{ asset('admin/asset/js/popper.min.js') }}"></script>
     <script src="{{ asset('admin/asset/js/bootstrap.min.js') }}"></script>
     <!--dropdown plugin file-->

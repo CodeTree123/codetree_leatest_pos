@@ -177,21 +177,21 @@ a:hover{
            
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <label>Nominee Name</label>
+                    <label>Nominee Name *</label>
                     <input type="text" class="form-control" name="nominee_name" placeholder="Enter Nominee Name">
                 </div>
                 <div class="form-group col-md-6">
-                    <label>Nominee Email</label>
+                    <label>Nominee Email </label>
                     <input type="email" class="form-control" name="nominee_email" placeholder="Enter Nominee Email">
                 </div>
                 <div class="form-group col-md-6">
-                    <label>Nominee Phone</label>
+                    <label>Nominee Phone *</label>
                     <input type="text" class="form-control" name="nominee_phone" placeholder="Enter Nominee Phone">
                 </div>
             </div>
 			<div class="form-row">
                 <div class="form-group col-md-12">
-                    <label>Nominee Address</label>
+                    <label>Nominee Address *</label>
                     <textarea name="nominee_address" class="form-control" rows="3" placeholder="Enter Nominee Address"></textarea>
                 </div>
             </div>
