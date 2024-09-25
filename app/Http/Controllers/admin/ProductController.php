@@ -35,7 +35,7 @@ class ProductController extends Controller
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
         $products = Products::paginate(10);
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
-        $lastId = $lastId->id + 1;
+        $lastId = @$lastId->id + 1;
         return view('admin.modules.product.productlists')->with([
             'suppliers' => $suppliers,
             'units' => $units,
@@ -57,7 +57,7 @@ class ProductController extends Controller
         $brands = Brands::all();
         $products = Products::all();
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
-        $lastId = $lastId->id + 1;
+        $lastId = @$lastId->id + 1;
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
         return view('admin.modules.product.productAddForm')->with([
             'suppliers' => $suppliers,

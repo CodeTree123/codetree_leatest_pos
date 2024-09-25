@@ -55,6 +55,7 @@ Attendence
         @endforeach
       </tbody>
     </table>
+    {{$employees-> links()}}
   </div>
   <div class="text-center mt-5">
     <!-- <input type="submit" class="btn btn-success" value="Submit"> -->
