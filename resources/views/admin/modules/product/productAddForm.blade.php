@@ -78,7 +78,7 @@ Add New Product- Admin Dashboard
 						    </div>
 							<div class="form-group col-6">
 								<label>Bar Code *</label>
-							    <input type="text" class="form-control mb-2" name="bar_code" placeholder="Product Barcode">
+							    <input type="text" class="form-control mb-2" name="bar_code" id="bar_code" placeholder="Product Barcode">
 								<button type="button" class="btn btn-primary" id="scan-btn"><i class="fa fa-camera"></i></button>
 								<button type="button" id="cancel-btn" class="btn btn-danger">
                                     <i class="fa fa-times"></i>
@@ -172,13 +172,47 @@ Add New Product- Admin Dashboard
 	</div>
 
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js"></script>
 <script>
 $(document).ready(function() {
 
-	$('#cancel-btn').click(function() {
-    $('#qr-reader').hide(); // Hide the QR reader
-    html5QrCode.stop(); // Stop scanning if active
+    let scanner = null;
+
+    $('#scan-btn').click(function() {
+        if (scanner === null) {
+            scanner = new Html5QrcodeScanner('qr-reader', { 
+                qrbox: { width: 250, height: 250 }, 
+                fps: 20 
+            });
+
+            $('#qr-reader').show();
+
+            scanner.render(success, error);
+        }
     });
+
+    $('#cancel-btn').click(function() {
+        if (scanner !== null) {
+            scanner.clear();
+            scanner = null;
+            $('#qr-reader').hide();
+        }
+    });
+
+    function success(result) {
+        $('#bar_code').val(result);
+        if (scanner !== null) {
+            scanner.clear();
+            scanner = null;
+            $('#qr-reader').hide();
+        }
+    }
+
+    function error(err) {
+        console.error(err);
+    }
+
+
 
     $("#category").on('change', function() {
         var catId = $(this).val();
@@ -204,31 +238,7 @@ $(document).ready(function() {
         });
     });
 
-    $('#scan-btn').click(function() {
-        $('#qr-reader').show(); // Show the QR reader
-        console.log("I am pressed");
-        
-        let html5QrCode = new Html5Qrcode("qr-reader");
-        let cameraMode = window.innerWidth <= 768 ? { facingMode: "environment" } : { facingMode: "user" };
 
-        html5QrCode.start(
-            cameraMode,
-            {
-                fps: 10,
-                qrbox: 250
-            },
-            function(qrCodeMessage) {
-                $('#bar_code').val(qrCodeMessage); // Set the scanned code to the input with ID "code"
-                html5QrCode.stop(); // Stop scanning
-                $('#qr-reader').hide(); // Hide the QR reader
-            },
-            function(errorMessage) {
-                console.log("Error scanning: ", errorMessage);
-            }
-        ).catch(function(err) {
-            console.log("Error initializing the camera: ", err);
-        });
-    });
 });
 
 </script>
