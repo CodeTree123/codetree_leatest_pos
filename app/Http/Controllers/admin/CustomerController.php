@@ -35,6 +35,9 @@ class CustomerController extends Controller
        try {
            $request->validate([
                'mobile' => 'required|numeric|unique:customers',
+               'name' => 'required',
+               'phone' => 'required|numeric|unique:table,column,except,id',
+               'address' =>'required'
            ]);
        } catch (\Exception $e) {
            session()->flash('error-message', 'Validation error: ' . $e->getMessage());
