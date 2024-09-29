@@ -79,15 +79,7 @@ Add New Product- Admin Dashboard
 							<div class="form-group col-6">
 								<label>Bar Code *</label>
 							    <input type="text" class="form-control mb-2" name="bar_code" id="bar_code" placeholder="Product Barcode">
-								<button type="button" class="btn btn-primary" id="scan-btn"><i class="fa fa-camera"></i></button>
-								<button type="button" id="cancel-btn" class="btn btn-danger">
-                                    <i class="fa fa-times"></i>
-                                </button>
-								
 							</div>
-							<div id="qr-reader" style="width: 100%; max-width: 500px; display: none; position: relative;">
-								
-                            </div>
 
 							<div class="form-group col-6">
 								<label>Starting Inventory</label>
@@ -172,48 +164,8 @@ Add New Product- Admin Dashboard
 	</div>
 
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js"></script>
 <script>
 $(document).ready(function() {
-
-    let scanner = null;
-
-    $('#scan-btn').click(function() {
-        if (scanner === null) {
-            scanner = new Html5QrcodeScanner('qr-reader', { 
-                qrbox: { width: 250, height: 250 }, 
-                fps: 20 
-            });
-
-            $('#qr-reader').show();
-
-            scanner.render(success, error);
-        }
-    });
-
-    $('#cancel-btn').click(function() {
-        if (scanner !== null) {
-            scanner.clear();
-            scanner = null;
-            $('#qr-reader').hide();
-        }
-    });
-
-    function success(result) {
-        $('#bar_code').val(result);
-        if (scanner !== null) {
-            scanner.clear();
-            scanner = null;
-            $('#qr-reader').hide();
-        }
-    }
-
-    function error(err) {
-        console.error(err);
-    }
-
-
-
     $("#category").on('change', function() {
         var catId = $(this).val();
         // AJAX request to fetch subcategories
