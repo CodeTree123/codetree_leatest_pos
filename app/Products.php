@@ -27,4 +27,9 @@ class Products extends Model
    {
       return $this->belongsTo('App\Supplier','supplier','id');
    }
+
+   public function salesProducts()
+   {
+       return $this->hasMany(SalesProducts::class, 'pro_id', 'id');
+   }
 }
