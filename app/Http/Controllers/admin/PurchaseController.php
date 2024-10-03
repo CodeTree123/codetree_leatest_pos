@@ -87,9 +87,16 @@ class PurchaseController extends Controller
 
   public function purchaseSave(Request $request)
   {
+    if (Cart::content()->isEmpty()) {
+      return redirect()->back()->withErrors(['message' => 'Have you forgotten to select the product or click on the + button? ']);
+    }
     $request->validate([
       'purchase_date' => 'required',
       'supplier_id' => 'required',
+      'grand_total' => 'required|numeric|gt:0',
+
+    ], [
+      'supplier_id.required' => 'Please select a Supplier for the Products',
     ]);
 
     //generate purchase code
@@ -207,6 +214,47 @@ class PurchaseController extends Controller
       ->get();
     return view('admin.modules.purchase.purchaseDetails')->with(['billInfo' => $billInfo, 'billProduct' => $billProduct]);
   }
+
+
+  public function updatePurchase(Request $request)
+  {
+    // Validate the request
+    $request->validate([
+      'purchase_id' => 'required',
+      'newly_paid_amount' => 'required|numeric|min:0',
+    ]);
+
+    // Find the purchase record
+    $purchase = Purchase::findOrFail($request->purchase_id);
+    // Add the newly paid amount to the existing paid_amount
+    $purchase->paid_amount += $request->newly_paid_amount;
+
+    // Check if the total paid amount + discount equals grand_total
+    $total_paid = $purchase->paid_amount + $purchase->discount;
+
+
+    if ($total_paid >= $purchase->grand_total) {
+      $purchase->is_received = 1;  // Set status to 'Received'
+      $purchase->due = 0; // No due balance
+    } else {
+      $purchase->is_received = 2;  // Set status to 'Pending'
+      $purchase->due = $purchase->grand_total - $total_paid; // Calculate remaining due balance
+    }
+    try {
+      // Save the updated purchase
+      $purchase->save();
+
+      Toastr::success('Purchase bill updated successfully.');
+      return redirect()->route('admin.purchaseList');
+    } catch (\Exception $e) {
+
+      dd($e);
+      session()->flash('error-message', $e->getMessage());
+      return redirect()->back();
+    }
+  }
+
+
 
   //search sale by sale code or id
   public function searchPurchaseByCode(Request $request)

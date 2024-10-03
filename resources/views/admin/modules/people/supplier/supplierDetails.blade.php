@@ -6,22 +6,27 @@
 
 @section('adminContent')
 <style>
-	p{
-		margin-bottom:0px;
+	p {
+		margin-bottom: 0px;
 	}
-	.upper-action-btn{
-		 margin-top:-8px;margin-left: 30px;border-radius: 0px;padding: 2px 20px;cursor:pointer;
+
+	.upper-action-btn {
+		margin-top: -8px;
+		margin-left: 30px;
+		border-radius: 0px;
+		padding: 2px 20px;
+		cursor: pointer;
 	}
 </style>
 
 <div class="col-md-12 mt-5 pt-3 border-bottom">
-	<div class="text-dark px-0" >
-		<p class="mb-1"><a href="{{route('admin.dashboard')}}" ><i class="fa fa-home"></i> Dashboard /</a><a href="{{route('admin.supplierList')}}">Suppliers /</a><a class="active-slink">Supplier Details</a><span class="top-date">{{date('l, jS F Y')}}</span></p>
+	<div class="text-dark px-0">
+		<p class="mb-1"><a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> Dashboard /</a><a href="{{route('admin.supplierList')}}">Suppliers /</a><a class="active-slink">Supplier Details</a><span class="top-date">{{date('l, jS F Y')}}</span></p>
 	</div>
 </div>
 
-<div class="container-fluid p-3">                                                               
-   <div class="row p-1">
+<div class="container-fluid p-3">
+	<div class="row p-1">
 		<div class="col-2">
 			<center>
 				@if(!empty($supplierrInfo->image))
@@ -31,7 +36,7 @@
 				@endif
 			</center>
 		</div>
-			<div class="col-5 col-xs-12">
+		<div class="col-5 col-xs-12">
 			<h3 style="float: left;margin-bottom: 0px;font-weight:bold">Basic Information</h3>
 			<p class="btn btn-info edit-info" style=" margin-top:-8px;margin-left: 30px;border-radius: 0px;padding: 2px 20px;cursor:pointer;" data-supplierid="{{ $supplierrInfo->id }}">Edit</p>
 			<hr class="mt-0">
@@ -69,9 +74,9 @@
 					</tr>
 				</thead>
 				<tbody>
-					<?php $counter=0;?>
+					<?php $counter = 0; ?>
 					@foreach($purchaseHistory as $purchase)
-					<?php $counter++;?>
+					<?php $counter++; ?>
 					<tr>
 						<td>{{$counter}}</td>
 						<td>{{$purchase->purchase_date}}</td>
@@ -79,6 +84,8 @@
 						<td>
 							@if($purchase->is_received==1)
 							<p class="badge bg_secondary_teal">Received</p>
+							@elseif($purchase->is_received==2)
+							<p class="badge badge-danger">Partially received</p>
 							@else
 							<p class="badge badge-danger">Pending</p>
 							@endif
@@ -96,8 +103,8 @@
 						</td>
 						<td style="width:120px;">
 							<div class="dropdown" style="width:90px;float:right;">
-								<p class="btn btn-danger  purchaseDetails"  data-purchase_id="{{$purchase->id}}">
-								Details
+								<p class="btn btn-danger  purchaseDetails" data-purchase_id="{{$purchase->id}}">
+									Details
 								</p>
 							</div>
 						</td>
@@ -106,52 +113,56 @@
 				</tbody>
 			</table>
 		</div>
-   </div>
+	</div>
 </div>
 
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg purchase_details" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content p-3"></div>
-  </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content p-3"></div>
+	</div>
 </div>
 
 <script>
-	$(document).ready(function(){
-       $(".purchaseDetails").click(function(){
-      		var purchase_id=$(this).data('purchase_id');
+	$(document).ready(function() {
+		$(".purchaseDetails").click(function() {
+			var purchase_id = $(this).data('purchase_id');
 			$.ajax({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
 				url: "{{ route('admin.purchase.purchaseDetails') }}",
 				type: "POST",
-				data:{ 'purchase_id' : purchase_id },
-				success:function(data){
-					$(".modal-content").html(data);
-					$('.purchase_details').modal('show'); 
+				data: {
+					'purchase_id': purchase_id
 				},
-				error:function(){
+				success: function(data) {
+					$(".modal-content").html(data);
+					$('.purchase_details').modal('show');
+				},
+				error: function() {
 					toastr.error("Something went Wrong, Please Try again.");
 				}
 			});
 		});
 
-       //edit supplier  infomation
-       $(".edit-info").click(function(){
-    		var supplierid = $(this).data('supplierid');
+		//edit supplier  infomation
+		$(".edit-info").click(function() {
+			var supplierid = $(this).data('supplierid');
 			$.ajax({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
 				url: "{{route('admin.supplier.supplierInfo')}}",
 				type: "POST",
-				data: { 'supplierid' : supplierid },
-				success:function(data){
-					$(".modal-content").html(data);
-					$('.purchase_details').modal('show'); 
+				data: {
+					'supplierid': supplierid
 				},
-				error:function(){
+				success: function(data) {
+					$(".modal-content").html(data);
+					$('.purchase_details').modal('show');
+				},
+				error: function() {
 					toastr.error("Something went Wrong, Please Try again.");
 				}
 			});
@@ -159,4 +170,3 @@
 	});
 </script>
 @endsection
-
