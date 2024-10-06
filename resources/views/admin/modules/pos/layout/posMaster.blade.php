@@ -442,7 +442,7 @@
         <div class="collapse navbar-collapse" id="navbarcoll" style="padding-top:10px;">
             <ul class="navbar-nav mr-auto">
 
-                <li title="Dashboard"class="nav-item dropdown p-1 ml-1" style="background:blue !important">
+                <li title="Dashboard" class="nav-item dropdown p-1 ml-1" style="background:blue !important">
                     <a class="nav-link text-light" href="{{ route('admin.dashboard') }}">
                         <i class="fa fa-desktop"></i>
 
@@ -508,10 +508,10 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="#" data-toggle="dropdown" id="user-profile">
                                 @if (!empty(Auth::user()->image))
-                                    <img src="{{ asset(Auth::user()->image) }}">
+                                <img src="{{ asset(Auth::user()->image) }}">
                                 @else
-                                    <img src="{{ asset('admin/defaultIcon/user.png') }}"
-                                        style="height: 30px; width:30px;">
+                                <img src="{{ asset('admin/defaultIcon/user.png') }}"
+                                    style="height: 30px; width:30px;">
                                 @endif
                             </a>
                             <ul class="dropdown-menu p-0" id="user-profile-dropdown">
@@ -558,51 +558,51 @@
                     <div style="text-align: center;">
                         <table class="table">
                             <tr>
-                                <td colspan="3"><input class="form-control"type="text" id="result"/
+                                <td colspan="3"><input class="form-control" type="text" id="result" /
                                         style="text-align:right;" readonly=""></td>
-                                <td><input type="button" value="Clear" onclick="clr()"/ class="cal_btn clear">
+                                <td><input type="button" value="Clear" onclick="clr()" / class="cal_btn clear">
                                 </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="1" onclick="dis('1')"/ class="cal_btn number">
+                                <td><input type="button" value="1" onclick="dis('1')" / class="cal_btn number">
                                 </td>
                                 <td>
-                                    <input type="button" value="2" onclick="dis('2')"/ class="cal_btn number">
+                                    <input type="button" value="2" onclick="dis('2')" / class="cal_btn number">
 
                                 </td>
-                                <td><input type="button" value="3" onclick="dis('3')"/ class="cal_btn number">
+                                <td><input type="button" value="3" onclick="dis('3')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="/" onclick="dis('/')"/
+                                <td><input type="button" value="/" onclick="dis('/')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="4" onclick="dis('4')"/ class="cal_btn number">
+                                <td><input type="button" value="4" onclick="dis('4')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="5" onclick="dis('5')"/ class="cal_btn number">
+                                <td><input type="button" value="5" onclick="dis('5')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="6" onclick="dis('6')"/ class="cal_btn number">
+                                <td><input type="button" value="6" onclick="dis('6')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="-" onclick="dis('-')"/
+                                <td><input type="button" value="-" onclick="dis('-')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="7" onclick="dis('7')"/ class="cal_btn number">
+                                <td><input type="button" value="7" onclick="dis('7')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="8" onclick="dis('8')"/ class="cal_btn number">
+                                <td><input type="button" value="8" onclick="dis('8')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="9" onclick="dis('9')"/ class="cal_btn number">
+                                <td><input type="button" value="9" onclick="dis('9')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="+" onclick="dis('+')"/
+                                <td><input type="button" value="+" onclick="dis('+')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                             <tr>
-                                <td><input type="button" value="." onclick="dis('.')"/ class="cal_btn number">
+                                <td><input type="button" value="." onclick="dis('.')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="0" onclick="dis('0')"/ class="cal_btn number">
+                                <td><input type="button" value="0" onclick="dis('0')" / class="cal_btn number">
                                 </td>
-                                <td><input type="button" value="=" onclick="solve()"/ class="cal_btn equal">
+                                <td><input type="button" value="=" onclick="solve()" / class="cal_btn equal">
                                 </td>
-                                <td><input type="button" value="*" onclick="dis('*')"/
+                                <td><input type="button" value="*" onclick="dis('*')" /
                                         class="cal_btn operator"> </td>
                             </tr>
                         </table>
@@ -624,7 +624,7 @@
     </div>
 
     <!--To day's sale-->
-    <div class="modal fade bd-example-modal-lg todaysale_modal" tabindex="-1" role="dialog"aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg todaysale_modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-xl todaySalesContainer">
 
         </div>
@@ -646,7 +646,7 @@
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label>Date *</label>
-                                <input type="date" class="form-control" placeholder="Date" name="eDate">
+                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" placeholder="Date" name="eDate">
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Reference</label>
@@ -657,7 +657,7 @@
                                 <select class="custom-select">
 
                                     @foreach ($stores as $store)
-                                        <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                    <option value="{{ $store->id }}">{{ $store->name }}</option>
                                     @endforeach
 
                                 </select>
@@ -668,7 +668,7 @@
                                 <select class="custom-select" name="category">
                                     <option selected>Select Expense Category</option>
                                     @foreach ($expenseCats as $catlist)
-                                        <option value="{{ $catlist->id }}">{{ $catlist->name }}</option>
+                                    <option value="{{ $catlist->id }}">{{ $catlist->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -678,7 +678,7 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label>Attatchment</label>
-                                <input type="file" class="form-control-file"name="documents">
+                                <input type="file" class="form-control-file" name="documents">
                             </div>
 
 
@@ -774,10 +774,10 @@
     <script src="{{ asset('admin/asset/js/toastr.min.js') }}"></script>
     {!! Toastr::message() !!}
     <script>
-        @if (count($errors) > 0)
-            @foreach ($errors->all() as $error)
-                toastr.error("{{ $error }}");
-            @endforeach
+        @if(count($errors) > 0)
+        @foreach($errors -> all() as $error)
+        toastr.error("{{ $error }}");
+        @endforeach
         @endif
     </script>
 </body>

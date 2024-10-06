@@ -63,7 +63,7 @@ Sales List- Admin Dashboard
 						</div>
 						<div class="col-7 mt-1">
 							<label style="font-weight: normal;">Search by sale date</label>
-							<input type="date" class="col-4 m-1 mx-0" id="searchKeydate">
+							<input type="date" value="{{ date('Y-m-d') }}" class="col-4 m-1 mx-0" id="searchKeydate">
 
 							<input type="text" class="col-5 m-1 mx-0" id="searchKeycode" style="float: right;" placeholder="Search sales by code ">
 							<div id="search_list" class="col-5 px-0" style="position: absolute; margin-top: 0px;float: right;right:15px;z-index: 1;background: white;box-shadow: 0 0 15px 1px cadetblue;">
@@ -82,7 +82,7 @@ Sales List- Admin Dashboard
 
 								<th class="font-weight-bold" scope="col">Grand Total</th>
 								<th class="font-weight-bold" scope="col">Paid</th>
-								<th class="font-weight-bold" scope="col">Balance</th>
+								<th class="font-weight-bold" scope="col">Due Balance</th>
 								<th class="font-weight-bold" scope="col">Payment Status</th>
 
 								<th class="font-weight-bold" scope="col">Actions</th>

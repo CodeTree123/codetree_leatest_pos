@@ -103,13 +103,13 @@ Add New Promotion- Admin Dashboard
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="form-group col-6" >
+                            <div class="form-group col-6">
                                 <label>Starting Duration</label>
-                                <input type="date" class="form-control" name="promotion_start_duration" placeholder="Starting Time">
+                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promotion_start_duration" placeholder="Starting Time">
                             </div>
                             <div class="form-group col-6">
                                 <label>Ending Duration</label>
-                                <input type="date" class="form-control" name="promotion_end_duration" placeholder="Ending Time">
+                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promotion_end_duration" placeholder="Ending Time">
 
                             </div>
                             <div class="form-group col-6">
