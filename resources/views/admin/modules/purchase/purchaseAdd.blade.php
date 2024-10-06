@@ -146,9 +146,9 @@ Add Purchase- Admin Dashboard
 						<div class="form-row">
 							<div class="form-group col-md-4">
 								<label>Date *</label>
-								<input type="date" class="form-control" name="purchase_date" placeholder="Date">
+								<input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="purchase_date" placeholder="Date" value="{{ date('Y-m-d') }}">
 							</div>
-							<div class="form-group col-md-4">
+							<div class=" form-group col-md-4">
 								<label>Reference</label>
 								<input type="Text" class="form-control" name="reference" placeholder="Reference">
 							</div>
@@ -176,7 +176,7 @@ Add Purchase- Admin Dashboard
 									<option value="0">Not Received</option>
 									<option value="2">Partially Received</option>
 								</select>
-							</div>                                         
+							</div>
 							<div class="form-group col-md-6">
 								<label>Document</label>
 								<input type="file" class="form-control-file" name="documents">

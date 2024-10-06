@@ -71,13 +71,13 @@ Add New Promotion- Admin Dashboard
                                 <label>Promo Code Price / Discount*</label>
                                 <input type="number" class="form-control" name="discount" placeholder="Enter Discount  Price">
                             </div>
-                            <div class="form-group col-6" >
+                            <div class="form-group col-6">
                                 <label>Starting Duration</label>
-                                <input type="date" class="form-control" name="promocode_start_duration" placeholder="Starting Time">
+                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promocode_start_duration" placeholder="Starting Time">
                             </div>
                             <div class="form-group col-6">
                                 <label>Ending Duration</label>
-                                <input type="date" class="form-control" name="promocode_end_duration" placeholder="Ending Time">
+                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promocode_end_duration" placeholder="Ending Time">
                             </div>
                             <div class="form-group col-6">
                                 <label for="formGroupExampleInput2">Status <i class="fa-fw fa fa-plus-circle"></i></label>

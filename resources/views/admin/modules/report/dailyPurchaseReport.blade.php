@@ -53,12 +53,12 @@ Purchase List- Admin Dashboard
 				<div class="col-lg-12">
 					<div class="col-12 mt-1 px-0 py-1" style="border-bottom: 1px solid #dee2e6">
 						<label>Select date</label>
-						<input type="date" class="mx-0" id="purchaseDate">
+						<input type="date" value="{{ date('Y-m-d') }}" class="mx-0" id="purchaseDate">
 
 						<label class="offset-4">Start date</label>
-						<input type="date" class="mx-0" id="startDate">
+						<input type="date" value="{{ date('Y-m-d') }}" class="mx-0" id="startDate">
 						<label class="ml-5">End date</label>
-						<input type="date" class="mx-0" id="endDate">
+						<input type="date" value="{{ date('Y-m-d') }}" class="mx-0" id="endDate">
 					</div>
 
 				</div>

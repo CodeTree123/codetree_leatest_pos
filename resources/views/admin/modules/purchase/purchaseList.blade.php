@@ -64,7 +64,7 @@ Purchase List- Admin Dashboard
 						</div>
 						<div class="col-7 mt-1">
 							<label style="font-weight: normal;">Search by purchase date</label>
-							<input type="date" class="col-3 m-1 mx-0" id="searchKeydate">
+							<input type="date" value="{{ date('Y-m-d') }}" class="col-3 m-1 mx-0" id="searchKeydate">
 
 							<input type="text" class="col-5 m-1 mx-0" id="searchKeycode" style="float: right;" placeholder="Search purchase by code ">
 							<div id="search_list" class="col-4 px-0" style="position: absolute; margin-top: 0px;float: right;right:15px;z-index: 1;background: white;box-shadow: 0 0 15px 1px cadetblue;">
