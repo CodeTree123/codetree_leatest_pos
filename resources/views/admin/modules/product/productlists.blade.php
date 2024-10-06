@@ -93,6 +93,7 @@
                                     <th class="font-weight-bold" scope="col">Price</th>
                                     <th class="font-weight-bold" scope="col">Unit</th>
                                     <th class="font-weight-bold" scope="col">Alert Quantity</th>
+                                    <th class="font-weight-bold" scope="col">Total Sold</th>
                                     <th class="font-weight-bold" scope="col">Stock</th>
                                     <th class="font-weight-bold" scope="col">Actions</th>
 
@@ -124,8 +125,10 @@
                                         <td style="text-align: right;">{{ number_format(@$product->purchase_price) }}</td>
                                         <td style="text-align: right;">{{ number_format(@$product->sell_price) }}</td>
                                         <td>{{ @$product->unitInfo['name'] }}</td>
+                                        
 
                                         <td style="text-align: right;">{{ @$product->alert_qty }}</td>
+                                        <td>{{ number_format($product->total_qty) }}</td>
                                         <td style="text-align:center;">
                                             @if ($stock < @$product->alert_qty && $stock > 0)
                                                 <p class="badge badge-warning">{{ $stock }}</p>

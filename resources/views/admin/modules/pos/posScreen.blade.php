@@ -211,14 +211,21 @@ use App\Http\Controllers\admin\StockController;
         $stock = StockController::stock($products->id);
         $imgUrl = str_replace('public/', '', $products->image);
         ?>
-        <button class="btn-prni btn-default product pos-tip productItem" title="{{$products->name}}" data-pro_id="{{$products->id}}">
+        <button class="btn-prni btn-default product pos-tip productItem" title="{{$products->name}}" data-pro_id="{{$products->id}}" data-stock="{{$stock}}" >
           @if(!empty($products->image))
           <img src="{{ asset( $imgUrl ) }}" alt="{{$products->name}}" class="img-rounded">
           @else
           <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$products->name}}" class="img-rounded">
           @endif
           <p class="">{{$products->name}}</p>
-          <div class="">{{$stock}}</div>
+          <div class="">
+              @if($stock <= 0)
+                  <span style="color: red;">OutOfStock</span>
+              @else
+                  {{ $stock }}
+              @endif
+          </div>
+
         </button>
         @endforeach
       </div>
@@ -776,7 +783,12 @@ use App\Http\Controllers\admin\StockController;
     //add product to cart by clicking button
     $(".productItem").click(function() {
       var proId = $(this).data('pro_id');
-      addToCart(proId);
+      var stock = $(this).data('stock');
+      if(stock>0){
+        addToCart(proId);
+      }else{
+        toastr.error("Selected Product is out of stock.");
+      }
     });
 
     //product add to cart 

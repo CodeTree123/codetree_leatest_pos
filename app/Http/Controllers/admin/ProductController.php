@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
 
+
     public function productList()
     {
         $suppliers = Supplier::all();
@@ -33,9 +34,23 @@ class ProductController extends Controller
         $categories = Category::all();
         $brands = Brands::all();
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
-        $products = Products::paginate(10);
+
+        $products = Products::select('products.*', \DB::raw('summary.total_qty'))
+            ->leftjoin(
+                \DB::raw('(SELECT pro_id, SUM(qty) AS total_qty FROM sales_products GROUP BY pro_id) AS summary'),
+                'products.id',
+                '=',
+                'summary.pro_id'
+            )
+            ->orderBy('summary.total_qty', 'desc')->paginate(10);
+
+
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
-        $lastId = @$lastId->id + 1;
+        $lastId = $lastId ? $lastId->id + 1 : 1;
+
+
+
+
         return view('admin.modules.product.productlists')->with([
             'suppliers' => $suppliers,
             'units' => $units,
@@ -57,7 +72,7 @@ class ProductController extends Controller
         $brands = Brands::all();
         $products = Products::all();
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
-        $lastId = @$lastId->id + 1;
+        $lastId =@$lastId->id + 1;
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
         return view('admin.modules.product.productAddForm')->with([
             'suppliers' => $suppliers,
@@ -92,7 +107,6 @@ class ProductController extends Controller
             'purchase_price' => 'required',
             'sell_price' => 'required',
             'unit' => 'required',
-            'bar_code' => 'required'
         ]);
 
         if ($request->file('image') !== null) {

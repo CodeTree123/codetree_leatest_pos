@@ -392,4 +392,14 @@ class SalesController extends Controller
       return redirect()->back();
     }
   }
+
+
+  public function topSoldProducts()
+{
+    // Fetch all sales products along with their related products and sales information
+    $salesProducts = SalesProducts::with(['products', 'sales'])->get();
+
+    return view('sales.index', compact('salesProducts'));
+}
+
 }

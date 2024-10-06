@@ -7,6 +7,9 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	//puchase module
 	Route::get('/purchaseAdd', 'PurchaseController@purchaseAdd')->name('admin.purchaseAdd');
 	Route::get('/purchaseList', 'PurchaseController@purchaseList')->name('admin.purchaseList');
+
+	Route::put('/edit-purchase', 'PurchaseController@updatePurchase')->name('admin.purchase.updatePurchase');
+
 	Route::post('/add-product-to-purchase', 'PurchaseController@productAddTopurchase')->name('admin.purchase.productAddToPurchase');
 	Route::get('/remove-item/{id}', 'PurchaseController@removeItem')->name('admin.purchase.removeItem');
 	Route::get('/remove-all', 'PurchaseController@removeAllItem')->name('admin.purchase.removeAllItem');
