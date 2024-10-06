@@ -46,7 +46,7 @@ class ProductController extends Controller
 
 
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
-        $lastId = $lastId ? $lastId->id + 1 : 1;
+        $lastId = @$lastId ? $lastId->id + 1 : 1;
 
 
 
@@ -58,7 +58,7 @@ class ProductController extends Controller
             'brands' => $brands,
             'productCode' => $productCode,
             'products' => $products,
-            'lastId' => $lastId,
+            'lastId' => @$lastId,
         ]);
     }
 
@@ -72,7 +72,7 @@ class ProductController extends Controller
         $brands = Brands::all();
         $products = Products::all();
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
-        $lastId =@$lastId->id + 1;
+        $lastId = @$lastId->id + 1;
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
         return view('admin.modules.product.productAddForm')->with([
             'suppliers' => $suppliers,
@@ -81,7 +81,7 @@ class ProductController extends Controller
             'brands' => $brands,
             'productCode' => $productCode,
             'products' => $products,
-            'lastId' => $lastId,
+            'lastId' => @$lastId,
         ]);
     }
     protected function imageUpload($request)
