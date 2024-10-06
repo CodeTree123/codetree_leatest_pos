@@ -51,7 +51,6 @@ Attendence
         @endforeach
       </tbody>
       {{$data->links() }}
-
     </table>
   </div>
 </section>
