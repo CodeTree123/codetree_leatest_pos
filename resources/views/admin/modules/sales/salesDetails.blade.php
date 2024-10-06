@@ -12,7 +12,7 @@
         </div>
 
       </div>
-       <div class="modal-body" id="saleDetailsModal">
+<div class="modal-body" id="saleDetailsModal">
      
        <div class="row p-0 m-0 mt-2">
         <div class="col-6 pl-0">

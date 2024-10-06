@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::post('sales-update-price', 'SalesController@productPriceUpdate')->name('admin.sales.productPriceUpdate');
 	Route::post('sales-make-sale', 'SalesController@MakeSale')->name('admin.sales.MakeSale');
 	Route::get('sales-view-invoice/{id}', 'SalesController@invoiceView')->name('admin.sales.invoiceView');
+	Route::get('payment-view-invoice/{id}', 'SalesController@paymentView')->name('admin.modules.people.customer.customerPaymentView');
 	//delete sales
 	Route::post('/delete-sales', 'SalesController@deleteSale')->name('admin.sales.deleteSale');
 });
