@@ -34,20 +34,20 @@ class CustomerController extends Controller
    {
       try {
          $request->validate([
-            'mobile' => 'required|numeric|unique:customers',
+            'mobile' => 'required|unique:customers',
             'name' => 'required',
             'address' => 'required',
             // Nominee validation
             'nominee_name' => 'required|string',
             'nominee_email' => 'required|email',
-            'nominee_phone' => 'required|numeric',
+            'nominee_phone' => 'required',
             'nominee_address' => 'required|string',
          ]);
       } catch (\Exception $e) {
          session()->flash('error-message', 'Validation error: ' . $e->getMessage());
          return redirect()->back();
       }
-
+      
       // Step 2: Create new instances of Customer and Nominee
       $customer = new Customer;
       $nominee = new Nominee;
