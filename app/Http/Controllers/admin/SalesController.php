@@ -153,13 +153,26 @@ class SalesController extends Controller
   //make sale
   public function MakeSale(Request $request)
   {
+    if (Cart::content()->isEmpty()) {
+      return response()->json(['errors' => ['message' => 'Have you forgotten to select the product or click on the + button?']], 400);
+    }
+    $customMessages = [
+      'customer_id.required' => 'Customer was not selected.',
+
+      'biller_id.required' => 'Biller was not selected.',
+
+      'paid_amount.numeric' => 'Paid amount must be a numeric value.',
+      'sales_date.required' => 'Sales date is required.',
+    ];
+
 
     $request->validate([
       'paid_amount' => 'numeric',
       'customer_id' => 'required|numeric',
       'sales_date' => 'required',
+      'biller_id' => 'required|numeric',
 
-    ]);
+    ], $customMessages);
 
     $last_sale = count(Sales::all()) + 1;
     $prefix = System::where('id', 1)->value('invoiceCode');
@@ -251,10 +264,10 @@ class SalesController extends Controller
       $request->session()->forget('saleValue');
       $request->session()->forget('saleDiscount');
 
-      return route('admin.sales.invoiceView', $sales->id);
+      return response()->json(['url' => route('admin.sales.invoiceView', $sales->id)], 200);
     } catch (\Exception $e) {
 
-      return 1;
+      return response()->json(['errors' => [$e->getMessage()]], 500);
     }
   }
   //view the invoice details after make a sell
@@ -288,7 +301,7 @@ class SalesController extends Controller
       ->select('sales_products.*', 'products.name')
       ->where('sales_products.sale_id', $id)
       ->get();
-    return view('admin.modules.sales.salesDetails')->with(['billInfo' => $billInfo, 'billProduct' => $billProduct, 'billerName' =>$request->billerName]);
+    return view('admin.modules.sales.salesDetails')->with(['billInfo' => $billInfo, 'billProduct' => $billProduct, 'billerName' => $request->billerName]);
   }
   public function updateTax(Request $request)
   {
@@ -395,11 +408,10 @@ class SalesController extends Controller
 
 
   public function topSoldProducts()
-{
+  {
     // Fetch all sales products along with their related products and sales information
     $salesProducts = SalesProducts::with(['products', 'sales'])->get();
 
     return view('sales.index', compact('salesProducts'));
-}
-
+  }
 }

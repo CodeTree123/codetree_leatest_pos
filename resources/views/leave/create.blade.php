@@ -18,12 +18,12 @@ Leave
         </div>
         <div class="form-group">
             <label for="start_date">Start Date</label>
-            <input type="date" name="start_date" class="form-control" required>
+            <input type="date" value="{{ date('Y-m-d') }}" name="start_date" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label for="end_date">End Date</label>
-            <input type="date" name="end_date" class="form-control" required>
+            <input type="date" value="{{ date('Y-m-d') }}" name="end_date" class="form-control" required>
         </div>
 
         <div class="form-group">

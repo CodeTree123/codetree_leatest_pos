@@ -255,7 +255,7 @@ Add Sale- Admin Dashboard
                         </div>
                         <div class="form-group col-md-4">
                             <label>Date *</label>
-                            <input type="date" id="sales_date" name="sales_date" class="form-control">
+                            <input type="date" value="{{ date('Y-m-d') }}" id="sales_date" name="sales_date" class="form-control" value="{{ date('Y-m-d') }}">
                         </div>
                     </div>
 
@@ -423,6 +423,7 @@ Add Sale- Admin Dashboard
             minimumInputLength: 1 // start searching after 1 character
         });
         //submit data
+        //submit data
         $("#submit-data").click(function() {
             var sales_type = $("#saleType").val();
             var customer_id = $("#customerId").val();
@@ -457,25 +458,25 @@ Add Sale- Admin Dashboard
                 //dataType:'json',
                 success: function(data) {
 
+                    window.location = data.url;
 
-                    if (data == 1) {
-                        toastr.error('Something wrong.');
-                        location.reload(true);
-                    } else {
-                        window.location = data;
-                    }
                 },
                 error: function(err) {
-                    $.each(err.responseJSON.errors, function(key, value) {
-                        toastr.error(value);
-                    });
-
+                    // Display error messages
+                    if (err.responseJSON.errors) {
+                        $.each(err.responseJSON.errors, function(key, value) {
+                            toastr.error(value);
+                        });
+                    } else {
+                        toastr.error('Something went wrong. Please try again.');
+                    }
                 }
             });
 
             //end ajax
 
         });
+
         //tax add function
         $(".tax_add_btn").click(function() {
             var tax = $("#tax_input").val();

@@ -96,7 +96,7 @@ Attendence
 
           <div class="col-md-6">
             <label for="e_S_Date" class="form-label">Employee Starting Date</label>
-            <input type="date" class="form-control" id="e_S_Date" name="e_S_Date">
+            <input type="date" value="{{ date('Y-m-d') }}" class="form-control" id="e_S_Date" name="e_S_Date">
           </div>
 
           <!-- <div class="col-md-6">

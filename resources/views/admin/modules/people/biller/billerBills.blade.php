@@ -38,7 +38,7 @@ Billers List - Admin Dashboard
 						</div>
 						<div class="col-7 mt-1">
 							<label style="font-weight: normal;">Search by bill's date</label>
-							<input type="date" class="col-4 m-1 mx-0" id="searchKeydate">
+							<input type="date" value="{{ date('Y-m-d') }}" class="col-4 m-1 mx-0" id="searchKeydate">
 							<input type="text" class="col-5 m-1 mx-0" id="searchKeycode" style="float: right;" placeholder="Search Bills by code">
 							<div id="search_list" class="col-5 px-0" style="position: absolute; margin-top: 0px; float: right; right: 15px; z-index: 1; background: white; box-shadow: 0 0 15px 1px cadetblue;"></div>
 						</div>
@@ -74,14 +74,14 @@ Billers List - Admin Dashboard
 									@if($sale->due == 0)
 									<p class="badge bg_secondary_teal">Paid</p>
 									@elseif($sale->due < 0)
-									<p class="badge bg_secondary_teal">Change</p>
-									@else
-									<p class="badge bg_p_primary">Due</p>
-									@endif
+										<p class="badge bg_secondary_teal">Change</p>
+										@else
+										<p class="badge bg_p_primary">Due</p>
+										@endif
 								</td>
 								<td style="width: 120px;">
 									<p class="btn bg_secondary_teal p-1 px-2 mb-0 viewSale" data-biller_name="{{ $sale->billerInfo['name'] }}" data-sales_id="{{ $sale->id }}" style="font-size: 13px; cursor: pointer;" title="Sales Details"><i class="fa-fw fa fa-eye"></i></p>
-									
+
 									<!-- Delete Confirmation Modal -->
 									<div class="del-modal {{ 'modal' . $counter }}" style="right: 90px;">
 										<p><b>Record delete confirmation.</b></p>
@@ -93,7 +93,7 @@ Billers List - Admin Dashboard
 											<button class="btn bg_p_primary py-1">Confirm</button>
 										</form>
 									</div>
-									
+
 									<script>
 										$(document).ready(function() {
 											$(".{{ 'btn' . $counter }}").click(function() {
@@ -104,7 +104,7 @@ Billers List - Admin Dashboard
 											});
 										});
 									</script>
-									
+
 									<p class="btn bg_p_primary mb-0 p-1 px-2 del-btn {{ 'btn' . $counter }}" data-store_id="{{ $sale->id }}" style="font-size: 13px; cursor: pointer;" title="Delete Sale"><i class="fa fa-trash"></i></p>
 								</td>
 							</tr>

@@ -5,7 +5,7 @@
 <div class="modal-body">
 
     <form method="post" action="{{route('admin.product.updatePromotion')}}">
-        
+
         <div class="form-row">
             <div class="form-group col-6">
                 <label>Promo Code Name *</label>
@@ -17,11 +17,11 @@
             </div>
             <div class="form-group col-6">
                 <label>Starting Duration</label>
-                <input type="date" class="form-control" name="promocode_start_duration" placeholder="Starting Time" value="{{$promoCode->promocode_start_duration}}">
+                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promocode_start_duration" placeholder="Starting Time" value="{{$promoCode->promocode_start_duration}}">
             </div>
             <div class="form-group col-6">
                 <label>Ending Duration</label>
-                <input type="date" class="form-control" name="promocode_end_duration" placeholder="Ending Time" value="{{$promoCode->promocode_end_duration}}">
+                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promocode_end_duration" placeholder="Ending Time" value="{{$promoCode->promocode_end_duration}}">
             </div>
             <div class="form-group col-6">
                 <label for="formGroupExampleInput2">Status <i class="fa-fw fa fa-plus-circle"></i></label>
