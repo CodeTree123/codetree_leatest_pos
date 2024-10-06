@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
 
+
     public function productList()
     {
         $suppliers = Supplier::all();
@@ -60,6 +61,9 @@ class ProductController extends Controller
             'lastId' => $lastId,
         ]);
     }
+
+
+
     public function productAddForm()
     {
         $suppliers = Supplier::all();
@@ -103,7 +107,6 @@ class ProductController extends Controller
             'purchase_price' => 'required',
             'sell_price' => 'required',
             'unit' => 'required',
-            'bar_code' => 'required'
         ]);
 
         if ($request->file('image') !== null) {
