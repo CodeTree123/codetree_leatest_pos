@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Sales;
 use App\SalesProducts;
+use App\SalesDueReturn;
 use App\Store;
 use App\Customer;
 use App\Products;
@@ -287,6 +288,24 @@ class SalesController extends Controller
       ->get();
     return view('admin.modules.sales.invoiceView')->with(['billProduct' => $billProduct, 'billInfo' => $billInfo, 'system' => $system]);
   }
+
+  //view the invoice details after make a sell
+  public function paymentView($id)
+  {
+
+    SalesDueReturn::findorFail($id);
+
+    $system = System::first();
+    $billInfo = DB::table('sales_due_returns')
+      ->join('customers', 'customers.id', '=', 'sales_due_returns.customer_id')
+      ->select('sales_due_returns.*', 'customers.name', 'customers.email', 'customers.address', 'customers.mobile')
+      ->where('sales_due_returns.id', $id)
+      ->first();
+
+    return view('admin.modules.people.customer.customerPaymentView')->with(['billInfo' => $billInfo, 'system' => $system]);
+  }
+
+
   //sales details of a single sale
   public function salesDetails(Request $request)
   {

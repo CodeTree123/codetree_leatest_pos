@@ -202,7 +202,12 @@
 							<td style="text-align: right;">{{number_format($payhis->paid_amount,2)}}</td>
 							<td style="text-align: right;">{{number_format($payhis->current_due,2)}}</td>
 							<td style="text-align: right;">{{number_format($payhis->balance,2)}}</td>
-							<td>{{$payhis->payment_note}}</td>
+							<td>{{$payhis->payment_note}}
+								<a href="{{ route('admin.modules.people.customer.customerPaymentView', $payhis->id) }}" class="task-btn text_p_primary" title="Show Payment">
+									<i class="fa fa-print"></i>
+								</a>
+
+							</td>
 						</tr>
 						@endforeach
 					</tbody>
