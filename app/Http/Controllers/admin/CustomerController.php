@@ -47,7 +47,7 @@ class CustomerController extends Controller
          session()->flash('error-message', 'Validation error: ' . $e->getMessage());
          return redirect()->back();
       }
-      
+
       // Step 2: Create new instances of Customer and Nominee
       $customer = new Customer;
       $nominee = new Nominee;

@@ -96,8 +96,8 @@ Sales List- Admin Dashboard
 							<tr>
 								<td>{{$counter}}</td>
 								<td>{{$sale->sales_date}}</td>
-								<td>{{ $sale->billerInfo['name'] }}</td>
-								<td>{{$sale->customerInfo['name']}}</td>
+								<td>{{ @$sale->billerInfo['name'] }}</td>
+								<td>{{@$sale->customerInfo['name']}}</td>
 								<td style="text-align: right;">{{number_format($sale->grand_total)}}</td>
 
 								<td style="text-align: right;">{{number_format($sale->paid_amount)}}</td>
@@ -114,7 +114,7 @@ Sales List- Admin Dashboard
 
 								</td>
 								<td style="width:120px;">
-									<p class="btn bg_secondary_teal p-1 px-2 mb-0 viewSale" data-biller_name="{{$sale->billerInfo['name']}}" data-sales_id="{{$sale->id}}" style="font-size: 13px;cursor:pointer;" title="Sales Details"> <i class="fa-fw fa fa-eye"></i></p>
+									<p class="btn bg_secondary_teal p-1 px-2 mb-0 viewSale" data-biller_name="{{@$sale->billerInfo['name']}}" data-sales_id="{{$sale->id}}" style="font-size: 13px;cursor:pointer;" title="Sales Details"> <i class="fa-fw fa fa-eye"></i></p>
 
 									<div class="del-modal <?php echo 'modal' . $counter ?>" style="right: 90px;">
 										<p><b>Record delete confirmation.</b></p>
