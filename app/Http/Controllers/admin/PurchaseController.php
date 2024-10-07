@@ -9,6 +9,7 @@ use App\Supplier;
 use App\Products;
 use App\Purchase;
 use App\Stock;
+use App\System;
 use App\Store;
 use App\PurchaseProductList;
 use Illuminate\Support\Facades\DB;
@@ -183,7 +184,7 @@ class PurchaseController extends Controller
       Toastr::success('Purchase added Successfully.');
       Cart::destroy();
 
-      return redirect()->route('admin.purchaseList');
+      return redirect()->route('admin.modules.purchase.purchaseView', $purchase_id);
     } catch (\Exception $e) {
       session()->flash('error-message', $e->getMessage());
       return redirect()->back();
@@ -215,6 +216,36 @@ class PurchaseController extends Controller
     return view('admin.modules.purchase.purchaseDetails')->with(['billInfo' => $billInfo, 'billProduct' => $billProduct]);
   }
 
+
+  //view the invoice details after make a sell
+  public function purchaseView($id)
+  {
+
+    $system = System::first();
+    $billInfo = DB::table('purchases')
+      ->leftJoin('suppliers', 'suppliers.id', '=', 'purchases.supplier_id')
+      ->join('stores', 'stores.id', '=', 'purchases.store_id')
+      ->select(
+        'purchases.*',
+        'suppliers.name as supplier_name',
+        'suppliers.email',
+        'suppliers.address',
+        'suppliers.mobile',
+        'stores.name as store_name'  // Alias to avoid conflict
+      )
+      ->where('purchases.id', $id)
+      ->first();
+
+
+    $billProduct = DB::table('purchase_product_lists')
+      ->join('products', 'products.id', '=', 'purchase_product_lists.pro_id')
+      ->select('purchase_product_lists.*', 'products.name')
+      ->where('purchase_product_lists.purchase_id', $id)
+      ->get();
+
+    // return compact('system', 'billInfo', 'billProduct');
+    return view('admin.modules.purchase.purchaseView')->with(['system' => $system, 'billInfo' => $billInfo, 'billProduct' => $billProduct]);
+  }
 
   public function updatePurchase(Request $request)
   {

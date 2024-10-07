@@ -43,6 +43,7 @@ class ExpenseController extends Controller
         $request->validate([
             'eDate'=>'required',
             'cost'=>'required',
+            'category'=> 'required',
 
         ]);
         if($request->hasFile('documents'))
