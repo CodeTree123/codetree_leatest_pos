@@ -131,8 +131,6 @@ Purchase List- Admin Dashboard
 										<i class="fa-fw fa fa-edit"></i> <!-- Edit icon -->
 									</p>
 
-
-
 									<div class="del-modal <?php echo 'modal' . $counter ?>" style="right: 90px;">
 										<p><b>Record delete confirmation.</b></p>
 										<p>Are you want to really delete ?</p>
