@@ -39,7 +39,7 @@ Attendence
         <tr>
           <th scope="row">{{$key +1}}</th>
           <td>{{$att->employee_name}}</td>
-          <td>{{$att->employee->em_id}}</td>
+          <td>{{@$att->employee->em_id}}</td>
           <td>
             <button class="btn toggle-attendance {{ $att->status == 1 ? 'bg_p_primary' : 'btn-danger' }}" data-id="{{ $att->id }}">
               {{ $att->status == 1 ? 'Present' : 'Absent' }}
