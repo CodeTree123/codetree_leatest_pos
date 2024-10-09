@@ -91,7 +91,7 @@ Supplier List- Admin Dashboard
 											});
 										});
 									</script>
-									<p class="btn bg-danger mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px; cursor:pointer;" title="Delete Expense">
+									<p class="btn bg-danger m-2 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px; cursor:pointer;" title="Delete Expense">
 										<i class="fa fa-trash" style="color: white;"></i>
 									</p>
 
