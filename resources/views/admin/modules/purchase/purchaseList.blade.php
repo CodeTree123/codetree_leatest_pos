@@ -99,7 +99,7 @@ Purchase List- Admin Dashboard
 								<td>{{$counter}}</td>
 								<td>{{$purchase->purchase_date}}</td>
 								<td>{{$purchase->reference}}</td>
-								<td>{{$purchase->supplier['name']}}</td>
+								<td>{{$purchase->supplier['name']??''}}</td>
 								<td style="text-align: center;">
 									@if($purchase->is_received==1)
 									<p class="badge  bg_secondary_teal">Received</p>

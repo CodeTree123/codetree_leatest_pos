@@ -98,10 +98,12 @@ Expense List- Admin Dashboard
 									<p class="btn bg_secondary_teal mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px;relative;cursor:pointer;" title="Delete Expense"> <i class="fa fa-trash"></i></p>
 								</td>
 								<td class="text-center  text-white">
-									<p class="badge bg_danger">Print
-									
+								<p class="badge badge-danger">
+									<a href="{{ route('admin.expenseView', [$expense->id]) }}" class="text-white">Click Here</a>
 								</p>
+
 								</td>
+								
 
 							</tr>
 							@endforeach

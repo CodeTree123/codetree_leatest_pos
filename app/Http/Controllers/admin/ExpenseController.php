@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\ExpenseCategory;
 use Brian2694\Toastr\Facades\Toastr;
 use App\Expense;
+use App\System;
 use DB;
 use Auth;
 use App\Store;
@@ -89,13 +90,34 @@ class ExpenseController extends Controller
         $expense->save();
         $payment->save();
         Toastr::success('Expense Added Successfully.');
-        return redirect()->route('admin.expenseList');
+        return redirect()->route('admin.expenseView',[$expense->id]);
     }catch(\Exception $e){
         session()->flash('error-message',$e->getMessage());
         return redirect()->back();
 
     }
 }
+
+
+
+  //view the invoice details after make a sell
+  public function expenseView($id)
+  {
+
+    $system = System::first();
+    $billInfo = DB::table('expenses')->leftJoin('expense_categories', 'expense_categories.id', '=', 'expenses.category')
+    ->select(
+      'expenses.*',
+       'expense_categories.name'
+    )
+    ->where('expenses.id',$id)
+      ->first();
+
+    // return compact('system', 'billInfo', 'billProduct');
+    return view('admin.modules.expense.expenseView')->with(['system' => $system, 'billInfo' => $billInfo]);
+  }
+
+
 public function expensecategory()
 {  
     $ExpenseCode=DB::table('systems')->where('id','1')->value('expenseCategoryUnit');
@@ -124,6 +146,9 @@ public function expenseCategorySave(Request $request)
 
     }
 }
+
+
+
 //edit expense category
 public function editExCat(Request $request)
 {

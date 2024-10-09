@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::post('delete-purchase', 'PurchaseController@purchaseDelete')->name('admin.purchase.purchaseDelete');
 	//Purchaase /expense
 	Route::get('/expenseList', 'ExpenseController@expenseList')->name('admin.expenseList');
+	Route::get('/expenseView/{id}', 'ExpenseController@expenseView')->name('admin.expenseView');
 	Route::get('/expenseAdd', 'ExpenseController@expenseAdd')->name('admin.expenseAdd');
 	Route::post('/expense-add', 'ExpenseController@expenseSave')->name('admin.expense.expenseSave');
 	Route::post('/edit-expense', 'ExpenseController@editExpense')->name('admin.expense.editExpense');
