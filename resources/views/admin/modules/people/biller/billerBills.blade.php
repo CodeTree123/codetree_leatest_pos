@@ -66,7 +66,7 @@ Billers List - Admin Dashboard
 								<td>{{ $counter }}</td>
 								<td>{{ $sale->sales_date }}</td>
 								<td>{{ $sale->billerInfo['name'] }}</td>
-								<td>{{ $sale->customerInfo['name'] }}</td>
+								<td>{{ $sale->customerInfo['name'] ?? '' }}</td>
 								<td style="text-align: right;">{{ number_format($sale->grand_total) }}</td>
 								<td style="text-align: right;">{{ number_format($sale->paid_amount) }}</td>
 								<td style="text-align: right;">{{ number_format($sale->due) }}</td>

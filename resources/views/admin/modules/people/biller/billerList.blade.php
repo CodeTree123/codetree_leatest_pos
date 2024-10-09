@@ -62,44 +62,41 @@ Billers List- Admin Dashboard
 								<td>{{ $biller->email }}</td>
 								<td>{{ $biller->phone }}</td>
 								<td><p class="badge  bg_secondary_teal">{{$biller->city}}</p></td>
-								<td style="width:120px;">
+								<td style="width:160px;">
 									<button class="btn  bg_secondary_teal p-1 px-2 mb-0 v-btn viewBillerbtn"  style="font-size: 13px;cursor:pointer;" title="User Details" value="{{$biller->id}}"> <i class="fa-fw fa fa-eye"></i></button>
 									<button class="btn bg_p_primary p-1 mb-0 px-2 edit-btn editBillerbtn" value="{{$biller->id}}" style="font-size: 13px;cursor:pointer;" title="Edit User"> <i class="fa fa-edit" ></i></button>
-									<button class="btn  bg_secondary_teal p-1 px-2 mb-0 v-btn viewBillerBills"  style="font-size: 13px;cursor:pointer;" title="Biller's Bills " value="{{$biller->id}}"> <i class="fa fa-list"></i>
+									<button class="btn bg_secondary_teal p-1 px-2 mb-0 v-btn viewBillerBills" style="font-size: 13px; cursor:pointer;" title="Biller's Bills" onclick="window.location.href='{{ route('admin.people.billerBills', [$biller->id]) }}'">
+									<i class="fa fa-list"></i>
+								</button>
+
 									</button>
 
-									<div class="del-modal <?php echo 'modal'.$counter?>">
+									<div class="del-modal <?php echo 'modal' . $counter ?>">
 										<p><b>Record delete confirmation.</b></p>
 										<p>Are you want to really delete ?</p>
 
 										<button class="btn btn-info py-1 del-close" style="background-color: #808080a6;border-color: #808080a6;">Cancel</button>
-										<form method="post"  action="#" style="float:right;">
+										<form method="post" action="{{route('admin.biller.billerDelete')}}" style="float:right;">
 											@csrf
 											<input type="hidden" name="id" value="{{$biller->id}}">
 											<button class="btn btn-danger py-1">Confirm</button>
 										</form>
 									</div>
-
 									<script>
-										$(document).ready(function(){
-											$(".<?php echo 'btn'.$counter?>").click(function(){
-												$(".<?php echo 'modal'.$counter?>").show('fadeOut');
+										$(document).ready(function() {
+											$(".<?php echo 'btn' . $counter ?>").click(function() {
+												$(".<?php echo 'modal' . $counter ?>").show('fadeOut');
 
 											});
-											$(".del-close").click(function(){
+											$(".del-close").click(function() {
 												$(".del-modal").hide('fadeIn');
 
 											});
-
-											// Redirect to the view route on list button click
-											$(".viewBillerBills").click(function() {
-                                                var billerId = $(this).val(); // Get the biller ID
-                                                window.location.href = "{{ route('admin.people.billerBills', '') }}/" + billerId;
-                                            });
-
-
 										});
 									</script>
+									<p class="btn bg-danger mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px; cursor:pointer;" title="Delete Expense">
+										<i class="fa fa-trash" style="color: white;"></i>
+									</p>
 								</td>
 							</tr>
 							@endforeach

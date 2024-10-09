@@ -112,13 +112,40 @@ Customer List- Admin Dashboard
 								<td>{{ $customer->nominee ? $customer->nominee->email : '' }}</td>
 								<td>{{ $customer->nominee ? $customer->nominee->phone : '' }}</td>
 								<td>{{ $customer->nominee ? $customer->nominee->address : '' }}</td>
-								<td style="width:120px;">
-									<div class="dropdown" style="width:90px;float:right;">
+								<td style="width:140px;">
+									<div class="dropdown" style="width:80px;float:left; margin-left: 10px;">
 										<a href="{{ route('admin.customer.customerDetails', $customer->id) }}" class="action-btn bg_p_primary p-2">
 											Details
 										</a>
 									</div>
+									<div class="del-modal <?php echo 'modal' . $counter ?>">
+										<p><b>Record delete confirmation.</b></p>
+										<p>Are you want to really delete ?</p>
+
+										<button class="btn btn-info py-1 del-close" style="background-color: #808080a6;border-color: #808080a6;">Cancel</button>
+										<form method="post" action="{{route('admin.customer.customerDelete')}}" style="float:right;">
+											@csrf
+											<input type="hidden" name="id" value="{{$customer->id}}">
+											<button class="btn btn-danger py-1">Confirm</button>
+										</form>
+									</div>
+									<script>
+										$(document).ready(function() {
+											$(".<?php echo 'btn' . $counter ?>").click(function() {
+												$(".<?php echo 'modal' . $counter ?>").show('fadeOut');
+
+											});
+											$(".del-close").click(function() {
+												$(".del-modal").hide('fadeIn');
+
+											});
+										});
+									</script>
+									<p class="btn bg-danger mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px; cursor:pointer;" title="Delete Expense">
+										<i class="fa fa-trash" style="color: white;"></i>
+									</p>
 								</td>
+
 							</tr>
 							@endforeach
 						</tbody>

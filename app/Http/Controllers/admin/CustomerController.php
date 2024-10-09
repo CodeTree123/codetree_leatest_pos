@@ -106,6 +106,17 @@ class CustomerController extends Controller
       return redirect()->route('admin.customerList');
    }
 
+   public function customerDelete(Request $request){
+      try{
+         DB::table('customers')->where('id',$request->id)->delete();
+         Toastr::success('Customer Deleted');
+         return redirect()->route('admin.modules.people.customer.customerList');
+       }catch(\Exception $e)
+       {
+         session()->flash('error-message',$e->getMessage());
+             return redirect()->back();
+       }
+   }
    public function customerGroup()
    {
       $customerGroups = CustomerGroup::paginate(10);

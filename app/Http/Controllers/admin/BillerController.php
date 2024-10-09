@@ -40,6 +40,20 @@ class BillerController extends Controller
 
     }
 }
+
+
+public function billerDelete(Request $request){
+    try{
+       DB::table('billers')->where('id',$request->id)->delete();
+       Toastr::success('Biller Deleted');
+       return redirect()->route('admin.people.listBiller');
+     }catch(\Exception $e)
+     {
+       session()->flash('error-message',$e->getMessage());
+           return redirect()->back();
+     }
+ }
+
 public function listBiller()
 {
    $billers=Biller::all();
