@@ -77,7 +77,7 @@ Add New Product- Admin Dashboard
 							    <input type="text" class="form-control" name="code" readonly value="{{$productCode}}-{{$lastId}}">
 						    </div>
 							<div class="form-group col-6">
-								<label>Bar Code *</label>
+								<label>Bar Code </label>
 							    <input type="text" class="form-control mb-2" name="bar_code" id="bar_code" placeholder="Product Barcode">
 							</div>
 

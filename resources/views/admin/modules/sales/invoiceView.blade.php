@@ -186,7 +186,6 @@
         </div>
          <div class="col-6" style="text-align: left;">
           <p class="bill_p" style="font-size: 16px;font-weight: bold;margin-bottom:1px;">{{$system->siteEmail}}</p>
-          <p class="bill_p" style="font-size: 16px;font-weight: bold;">www.formula1waxbd.com</p>
         </div>
       </div>
        <div style="text-align: center;">

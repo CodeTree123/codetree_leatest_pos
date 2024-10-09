@@ -60,12 +60,42 @@ Supplier List- Admin Dashboard
 								<td>{{$supplier->mobile}}</td>
 								<td>{{$supplier->country}}</td>
 								<td>{{$supplier->city}}</td>
-								<td style="width:120px;">
-									<div class="dropdown" style="width:90px;float:right;">
-									 <a href="{{route('admin.supplier.supplierDetails',$supplier->id)}}" class="btn btn-danger p-1 m-1 mt-1" >
+								<td style="width:140px;">
+									<div class="dropdown" style="width:90px;float:left;">
+									 <a href="{{route('admin.supplier.supplierDetails',$supplier->id)}}" class="btn bg_p_primary p-1 m-1 mt-1" >
 									   Details
 									  </a>
 									</div>
+
+
+									<div class="del-modal <?php echo 'modal' . $counter ?>">
+										<p><b>Record delete confirmation.</b></p>
+										<p>Are you want to really delete ?</p>
+
+										<button class="btn btn-info py-1 del-close" style="background-color: #808080a6;border-color: #808080a6;">Cancel</button>
+										<form method="post" action="{{route('admin.supplier.supplierDelete')}}" style="float:right;">
+											@csrf
+											<input type="hidden" name="id" value="{{$supplier->id}}">
+											<button class="btn btn-danger py-1">Confirm</button>
+										</form>
+									</div>
+									<script>
+										$(document).ready(function() {
+											$(".<?php echo 'btn' . $counter ?>").click(function() {
+												$(".<?php echo 'modal' . $counter ?>").show('fadeOut');
+
+											});
+											$(".del-close").click(function() {
+												$(".del-modal").hide('fadeIn');
+
+											});
+										});
+									</script>
+									<p class="btn bg-danger mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px; cursor:pointer;" title="Delete Expense">
+										<i class="fa fa-trash" style="color: white;"></i>
+									</p>
+
+
 							    </td>
 							</tr>
 							@endforeach

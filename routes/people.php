@@ -33,6 +33,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::get('/customerList', 'CustomerController@customerList')->name('admin.customerList');
 	Route::get('/customerAdd', 'CustomerController@customerAdd')->name('admin.customerAdd');
 	Route::post('/customer-save', 'CustomerController@customerSave')->name('admin.customer.customerSave');
+	Route::post('/customer-delete', 'CustomerController@customerDelete')->name('admin.customer.customerDelete');
 	Route::get('customer-details/{id}', 'CustomerController@customerDetails')->name('admin.customer.customerDetails');
 	Route::post('/customer-search-customer', 'CustomerController@searchCustomer')->name('admin.customer.searchCustomer');
 	Route::post('/customer-info', 'CustomerController@customerInfo')->name('admin.customer.customerInfo');
@@ -45,6 +46,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	//people - biller
 	Route::get('/biller-add', 'BillerController@addBiller')->name('admin.people.addBiller');
 	Route::post('/biller-save', 'BillerController@billerSave')->name('admin.biller.billerSave');
+	Route::post('/biller-delete', 'BillerController@billerDelete')->name('admin.biller.billerDelete');
 	Route::get('/biller-lists', 'BillerController@listBiller')->name('admin.people.listBiller');
 	Route::get('/biller-bills/{id}', 'BillerController@billerBills')->name('admin.people.billerBills');
 	Route::get('/biller-view/{id}', 'BillerController@viewBiller')->name('admin.people.viewBiller');
@@ -54,7 +56,8 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	//people/supplier
 	Route::get('/supplierList', 'SupplierController@supplierList')->name('admin.supplierList');
 	Route::get('/supplierAdd', 'SupplierController@supplierAdd')->name('admin.supplierAdd');
-	Route::post('/sapplier-save', 'SupplierController@supplierSave')->name('admin.supplier.supplierSave');
+	Route::post('/supplier-save', 'SupplierController@supplierSave')->name('admin.supplier.supplierSave');
+	Route::post('/supplier-delete', 'SupplierController@supplierDelete')->name('admin.supplier.supplierDelete');
 	Route::get('/supplier-supplierDetails/{id}', 'SupplierController@supplierDetails')->name('admin.supplier.supplierDetails');
 	Route::post('/supplier-info', 'SupplierController@supplierInfo')->name('admin.supplier.supplierInfo');
 	Route::post('/update-supplier', 'SupplierController@updateSupplier')->name('admin.supplier.updateSupplier');

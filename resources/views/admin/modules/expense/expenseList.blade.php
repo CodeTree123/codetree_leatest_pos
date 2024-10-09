@@ -52,6 +52,7 @@ Expense List- Admin Dashboard
 								<th class="font-weight-bold" scope="col">Date</th>
 								<th class="font-weight-bold" scope="col">Added By</th>
 								<th class="font-weight-bold" scope="col">Actions</th>
+								<th class="font-weight-bold" scope="col">Print</th>
 
 							</tr>
 						</thead>
@@ -96,6 +97,14 @@ Expense List- Admin Dashboard
 									</script>
 									<p class="btn bg_secondary_teal mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px;relative;cursor:pointer;" title="Delete Expense"> <i class="fa fa-trash"></i></p>
 								</td>
+								<td class="text-center  text-white">
+								<p class="badge badge-danger">
+									<a href="{{ route('admin.expenseView', [$expense->id]) }}" class="text-white">Click Here</a>
+								</p>
+
+								</td>
+								
+
 							</tr>
 							@endforeach
 						</tbody>

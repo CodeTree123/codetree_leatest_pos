@@ -87,6 +87,7 @@ Purchase List- Admin Dashboard
 								<th class="font-weight-bold" scope="col">Payment Status</th>
 
 								<th class="font-weight-bold" scope="col">Actions</th>
+								<th class="font-weight-bold" scope="col">Print</th>
 
 							</tr>
 						</thead>
@@ -98,7 +99,7 @@ Purchase List- Admin Dashboard
 								<td>{{$counter}}</td>
 								<td>{{$purchase->purchase_date}}</td>
 								<td>{{$purchase->reference}}</td>
-								<td>{{$purchase->supplier['name']}}</td>
+								<td>{{$purchase->supplier['name']??''}}</td>
 								<td style="text-align: center;">
 									@if($purchase->is_received==1)
 									<p class="badge  bg_secondary_teal">Received</p>
@@ -156,6 +157,7 @@ Purchase List- Admin Dashboard
 									</script>
 									<p class="btn bg_p_primary mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" data-store_id="{{$purchase->id}}" style="font-size: 13px;relative;cursor:pointer;" title="Delete Purchase"> <i class="fa fa-trash"></i></p>
 								</td>
+								<td style="text-align: center;"><a class="badge badge-danger" href="{{url('purchase/purchase-view')}}/{{$purchase->id}}">Click here</a></td>
 
 							</tr>
 							@endforeach

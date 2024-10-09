@@ -86,6 +86,7 @@ Sales List- Admin Dashboard
 								<th class="font-weight-bold" scope="col">Payment Status</th>
 
 								<th class="font-weight-bold" scope="col">Actions</th>
+								<th class="font-weight-bold" scope="col">Print</th>
 
 							</tr>
 						</thead>
@@ -127,6 +128,7 @@ Sales List- Admin Dashboard
 											<button class="btn bg_p_primary py-1">Confirm</button>
 										</form>
 									</div>
+									
 									<script>
 										$(document).ready(function() {
 											$(".<?php echo 'btn' . $counter ?>").click(function() {
@@ -141,6 +143,13 @@ Sales List- Admin Dashboard
 									</script>
 									<p class="btn bg_p_primary mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" data-store_id="{{$sale->id}}" style="font-size: 13px;relative;cursor:pointer;" title="Delete Sale"> <i class="fa fa-trash"></i></p>
 								</td>
+								<td style="text-align: center;">
+								<p class="badge badge-danger">
+									<a href="{{ route('admin.sales.invoiceView', $sale->id) }}" class="text-white">click here</a>
+								</p>
+
+								</td>
+
 
 							</tr>
 							@endforeach

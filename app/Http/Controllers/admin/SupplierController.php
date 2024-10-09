@@ -49,6 +49,19 @@ class SupplierController extends Controller
     }
   }
 
+
+  public function supplierDelete(Request $request){
+    try{
+       DB::table('suppliers')->where('id',$request->id)->delete();
+       Toastr::success('Supplier Deleted');
+       return redirect()->route('admin.supplierList');
+     }catch(\Exception $e)
+     {
+       session()->flash('error-message',$e->getMessage());
+           return redirect()->back();
+     }
+ }
+
   //supplier details
   public function supplierDetails($id)
   {
