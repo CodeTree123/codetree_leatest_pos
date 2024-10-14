@@ -126,7 +126,7 @@ class CustomerController extends Controller
    public function customerGroupSave(Request $request)
    {
       $request->validate([
-         'name' => 'required',
+         'name' => 'required|unique:customer_groups,name',
       ]);
       $customerGroup = new CustomerGroup;
       $customerGroup->name = $request->name;
@@ -205,9 +205,11 @@ class CustomerController extends Controller
    public function updateCustomer(Request $request)
    {
       $request->validate([
-         'id' => 'required',
-
-      ]);
+         'id' => 'required|exists:customers,id',
+         'mobile' => 'unique:customers,mobile,' . $request->id,
+          
+     ]);
+     
 
       $customer_check = DB::table('customers')->where('id', $request->id)->first();
       //  dd($customer_check);
@@ -324,6 +326,9 @@ class CustomerController extends Controller
    //update customer group
    public function customerGroupUpdate(Request $request)
    {
+      $request->validate([
+         'name'=>'unique:customer_groups,name,' .$request->id
+      ]);
       DB::table('customer_groups')->where('id', $request->id)->update(['name' => $request->name, 'percentage' => $request->percentage]);
       Toastr::success('Group updated successfully');
       return 1;

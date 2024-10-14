@@ -63,7 +63,6 @@ class ProductController extends Controller
     }
 
 
-
     public function productAddForm()
     {
         $suppliers = Supplier::all();
@@ -107,6 +106,8 @@ class ProductController extends Controller
             'purchase_price' => 'required',
             'sell_price' => 'required',
             'unit' => 'required',
+            'category' => 'required',
+            'subcategory' => 'required'
         ]);
 
         if ($request->file('image') !== null) {

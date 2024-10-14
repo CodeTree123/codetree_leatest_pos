@@ -15,12 +15,18 @@ use Illuminate\Support\Str;
 class SubCategoryController extends Controller
 {
   public function managesSubCategory()
-  {
-    $categoryCode = DB::table('systems')->where('id', '1')->value('subCategoryCode');
-    $categories = Category::all();
-    $subcategories = SubCategory::all();
-    return view('admin.modules.setting.subcategory.subcategory')->with(['categories' => $categories, 'categoryCode' => $categoryCode, 'subcategories' => $subcategories]);
-  }
+    {
+        $categoryCode = DB::table('systems')->where('id', 1)->value('subCategoryCode');
+        $categories = Category::all();
+        $subcategories = SubCategory::latest()->paginate(20); // moved latest() before paginate()
+        
+        return view('admin.modules.setting.subcategory.subcategory', [
+            'categories' => $categories,
+            'categoryCode' => $categoryCode,
+            'subcategories' => $subcategories
+        ]);
+    }
+
   protected function imageUpload($request)
   {
     $productImage = $request->file('image');
@@ -69,6 +75,23 @@ class SubCategoryController extends Controller
   {
     $subcategory = DB::table('sub_categories')->where('parentId', $request->catId)->get();
     return response()->json($subcategory);
+  }
+
+  public function selectSubcategory2(Request $request)
+  {
+      $search = $request->input('q');
+      $categoryId = $request->input('category_id');
+
+      $subcategories = SubCategory::where('name', 'like', "%$search%")
+          ->where('parentId', $categoryId)
+          ->limit(5)
+          ->get();
+
+      $formattedSubcategories = $subcategories->map(function ($subcategory) {
+          return ['id' => $subcategory->id, 'text' => $subcategory->name];
+      });
+
+      return response()->json($formattedSubcategories);
   }
 
   //sub category details

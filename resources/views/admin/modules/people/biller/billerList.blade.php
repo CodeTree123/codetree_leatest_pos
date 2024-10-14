@@ -4,7 +4,7 @@ Billers List- Admin Dashboard
 @stop
 @section('adminContent')
 <div class="col-md-12 mt-5 pt-3 border-bottom">
-	<div class="text-dark px-0" >
+	<div class="text-dark px-0">
 		<p class="mb-1"><a href="{{route('admin.dashboard')}}"><i class="fa fa-home"></i> Dashboard / </a><a href="" class="active-slink">Billers</a><span class="top-date">{{date('l, jS F Y')}}</span></p>
 
 	</div>
@@ -47,7 +47,7 @@ Billers List- Admin Dashboard
 							</tr>
 						</thead>
 						<tbody>
-							<?php $counter=0;?>
+							<?php $counter = 0; ?>
 							@foreach($billers as $biller)
 							<?php $counter++; ?>
 							<tr>
@@ -61,13 +61,15 @@ Billers List- Admin Dashboard
 								<td>{{ $biller->name }}</td>
 								<td>{{ $biller->email }}</td>
 								<td>{{ $biller->phone }}</td>
-								<td><p class="badge  bg_secondary_teal">{{$biller->city}}</p></td>
+								<td>
+									<p class="badge  bg_secondary_teal">{{$biller->city}}</p>
+								</td>
 								<td style="width:160px;">
-									<button class="btn  bg_secondary_teal p-1 px-2 mb-0 v-btn viewBillerbtn"  style="font-size: 13px;cursor:pointer;" title="User Details" value="{{$biller->id}}"> <i class="fa-fw fa fa-eye"></i></button>
-									<button class="btn bg_p_primary p-1 mb-0 px-2 edit-btn editBillerbtn" value="{{$biller->id}}" style="font-size: 13px;cursor:pointer;" title="Edit User"> <i class="fa fa-edit" ></i></button>
+									<button class="btn  bg_secondary_teal p-1 px-2 mb-0 v-btn viewBillerbtn" style="font-size: 13px;cursor:pointer;" title="User Details" value="{{$biller->id}}"> <i class="fa-fw fa fa-eye"></i></button>
+									<button class="btn bg_p_primary p-1 mb-0 px-2 edit-btn editBillerbtn" value="{{$biller->id}}" style="font-size: 13px;cursor:pointer;" title="Edit User"> <i class="fa fa-edit"></i></button>
 									<button class="btn bg_secondary_teal p-1 px-2 mb-0 v-btn viewBillerBills" style="font-size: 13px; cursor:pointer;" title="Biller's Bills" onclick="window.location.href='{{ route('admin.people.billerBills', [$biller->id]) }}'">
-									<i class="fa fa-list"></i>
-								</button>
+										<i class="fa fa-list"></i>
+									</button>
 
 									</button>
 
@@ -94,7 +96,7 @@ Billers List- Admin Dashboard
 											});
 										});
 									</script>
-									<p class="btn bg-danger mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px; cursor:pointer;" title="Delete Expense">
+									<p class="btn bg-danger m-2 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" style="font-size: 13px; cursor:pointer;" title="Delete Expense">
 										<i class="fa fa-trash" style="color: white;"></i>
 									</p>
 								</td>
@@ -147,16 +149,16 @@ Billers List- Admin Dashboard
 						</div>
 						<div class="form-group col-md-12">
 							<label>Invoice Footer</label>
-							<textarea name="invoice_footer" class="form-control"></textarea> 
+							<textarea name="invoice_footer" class="form-control"></textarea>
 						</div>
 					</div>
-					
+
+			</div>
+			<div class="modal-footer">
+
+				<div class="form-group">
+					<input type="submit" class="btn btn-primary" value="Add Biller">
 				</div>
-				<div class="modal-footer">
-					
-					<div class="form-group">
-						<input type="submit" class="btn btn-primary" value="Add Biller">
-					</div>
 				</form>
 			</div>
 		</div>
@@ -227,17 +229,17 @@ Billers List- Admin Dashboard
 						</div>
 						<div class="form-group col-md-12">
 							<label>Invoice Footer</label>
-							<textarea name="invoice_footer" class="form-control" id="invoice_footer"></textarea> 
+							<textarea name="invoice_footer" class="form-control" id="invoice_footer"></textarea>
 						</div>
 						<input type="hidden" id="biller_id" value="" name="biller_ids">
 					</div>
-					
+
+			</div>
+			<div class="modal-footer">
+
+				<div class="form-group">
+					<input type="submit" class="btn btn-primary" value="Update">
 				</div>
-				<div class="modal-footer">
-					
-					<div class="form-group">
-						<input type="submit" class="btn btn-primary" value="Update">
-					</div>
 				</form>
 			</div>
 		</div>
@@ -248,49 +250,49 @@ Billers List- Admin Dashboard
 
 
 <script>
-	$(document).ready(function(){
-		$(document).on('click','.viewBillerbtn',function(){
+	$(document).ready(function() {
+		$(document).on('click', '.viewBillerbtn', function() {
 			var id = $(this).val();
-            // console.log(id);
+			// console.log(id);
 			$("#viewBillerModal").modal('show');
 			$.ajax({
-                    type:"GET",
-                    url: "biller-view/"+id,
-                    success: function(response){
-                        // console.log(response.biller);
-						$("#viewInfo").html(" ");
-						$("#viewInfo").append(
-							'<p>Name: '+response.biller.name+'</p>\
-							<p>Email: '+response.biller.email+'</p>\
-							<p>Phone: '+response.biller.phone+'</p>\
-							<p>Address: '+response.biller.address+'</p>\
-							<p>City: '+response.biller.city+'</p>\
-							<p>Postal Code: '+response.biller.postal_code+'</p>\
-							<p>Invoice Footer: '+response.biller.invoice_footer+'</p>'
-						);
-                        
-                    }
-                });
+				type: "GET",
+				url: "biller-view/" + id,
+				success: function(response) {
+					// console.log(response.biller);
+					$("#viewInfo").html(" ");
+					$("#viewInfo").append(
+						'<p>Name: ' + response.biller.name + '</p>\
+							<p>Email: ' + response.biller.email + '</p>\
+							<p>Phone: ' + response.biller.phone + '</p>\
+							<p>Address: ' + response.biller.address + '</p>\
+							<p>City: ' + response.biller.city + '</p>\
+							<p>Postal Code: ' + response.biller.postal_code + '</p>\
+							<p>Invoice Footer: ' + response.biller.invoice_footer + '</p>'
+					);
+
+				}
+			});
 		});
-		$(document).on('click','.editBillerbtn',function(){
+		$(document).on('click', '.editBillerbtn', function() {
 			var id = $(this).val();
-            // console.log(id);
+			// console.log(id);
 			$("#editBillerModal").modal('show');
 			$.ajax({
-                    type:"GET",
-                    url: "biller-edit/"+id,
-                    success: function(response){
-                        // console.log(response.biller);
-						$("#phone").val(response.biller_info.phone);
-						$("#name").val(response.biller_info.name);
-						$("#email").val(response.biller_info.email);
-						$("#city").val(response.biller_info.city);
-						$("#postal_code").val(response.biller_info.postal_code);
-						$("#address").val(response.biller_info.address);
-						$("#invoice_footer").val(response.biller_info.invoice_footer);
-						$("#biller_id").val(id);
-                    }
-                });
+				type: "GET",
+				url: "biller-edit/" + id,
+				success: function(response) {
+					// console.log(response.biller);
+					$("#phone").val(response.biller_info.phone);
+					$("#name").val(response.biller_info.name);
+					$("#email").val(response.biller_info.email);
+					$("#city").val(response.biller_info.city);
+					$("#postal_code").val(response.biller_info.postal_code);
+					$("#address").val(response.biller_info.address);
+					$("#invoice_footer").val(response.biller_info.invoice_footer);
+					$("#biller_id").val(id);
+				}
+			});
 		});
 
 
@@ -298,4 +300,3 @@ Billers List- Admin Dashboard
 </script>
 
 @stop
-

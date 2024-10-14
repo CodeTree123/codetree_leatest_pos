@@ -66,7 +66,7 @@ class SalesController extends Controller
   {
     $search = $request->input('q');
     $products = Products::where('name', 'like', "%$search%")
-      ->limit(10)
+      ->limit(5)
       ->get();
 
     $formattedProducts = $products->map(function ($product) {

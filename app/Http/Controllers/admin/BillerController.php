@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Sales;
 use App\Biller;
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Support\Facades\DB;
 
 class BillerController extends Controller
 {
@@ -18,7 +19,7 @@ class BillerController extends Controller
     {
       $request->validate([
          'name'=>'required',
-         'phone'=>'required',
+         'phone'=>'required|unique:billers,phone',
      ]);
 
       $biller=new Biller;
@@ -60,6 +61,21 @@ public function listBiller()
    return view('admin.modules.people.biller.billerList')->with(['billers'=>$billers]);
 }
 
+
+public function listBiller2(Request $request)
+{
+    $search = $request->input('q');
+    $products = Biller::where('name', 'like', "%$search%")
+      ->limit(5)
+      ->get();
+
+    $formattedProducts = $products->map(function ($product) {
+      return ['id' => $product->id, 'text' => $product->name];
+    });
+
+    return response()->json($formattedProducts);
+  
+}
 public function billerBills($id)
 {
     
@@ -99,7 +115,8 @@ public function billerUpdate(Request $request)
 {
       $request->validate([
      'name'=>'required',
-     'phone'=>'required',
+     'phone'=>'required|unique:billers,phone,' .$request->biller_ids,
+     'email'=>'nullable|unique:billers,email,' .$request->biller_ids,
  ]);
     $biller_id = $request->biller_ids;
     // dd($biller_id);

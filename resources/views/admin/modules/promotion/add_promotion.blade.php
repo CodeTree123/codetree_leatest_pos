@@ -67,40 +67,18 @@ Add New Promotion- Admin Dashboard
                                 <label>Promotion Name *</label>
                                 <input type="text" class="form-control" name="promotion_name" placeholder="promotion Name">
                             </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Category Name <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="promotion_category_name">
-                                    <option value="">Please Select Category</option>
-                                    @foreach($categories as $category)
-                                    <option value="{{$category->name}}">{{$category->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Sub Category Name <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="promotion_subcategory_name">
-                                    <option value="">Please Select Sub Category</option>
-                                    @foreach($subcategories as $subcategory)
-                                    <option value="{{$subcategory->name}}">{{$subcategory->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Product Name * <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="Promotion_product">
+
+                            <div class="form-group col-md-4">
+                                <label >Product Name * <i class="fa-fw fa fa-plus-circle"></i></label>
+                                <!-- <select class="custom-select" name="Promotion_product">
                                     <option value="">Please Select product</option>
                                     @foreach($products as $product)
                                     <option value="{{$product->name}}">{{$product->name}}</option>
                                     @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Product Code * <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="Promotion_product_code">
-                                    <option value="">Please Select Product Code</option>
-                                    @foreach($products as $product)
-                                    <option value="{{$product->code}}">{{$product->code}}</option>
-                                    @endforeach
+                                </select> -->
+
+                                <select class="custom-select" name="Promotion_product" id="promo_product">
+                                    <option selected value="">Select Product</option>
                                 </select>
                             </div>
                             <div class="form-group col-6">
@@ -140,4 +118,40 @@ $(function(){
 $('#datetimepicker').datetimepicker();
 });
 </script> -->
+<script>
+
+
+$(document).ready(function() {
+
+    // Initialize subcategory select2 and handle category change
+    $('#promo_product').select2({
+        theme: "bootstrap",
+        ajax: {
+            url: '/sales/get-products',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term, // search term
+                    
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data // select2 expects an array of {id, text} objects
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0
+    });
+
+
+
+
+
+
+});
+
+</script>
 @stop

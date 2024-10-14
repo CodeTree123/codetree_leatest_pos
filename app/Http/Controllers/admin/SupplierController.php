@@ -25,7 +25,7 @@ class SupplierController extends Controller
   public function supplierSave(Request $request)
   {
     $request->validate([
-      'name' => 'required',
+      'name' => 'required|unique:suppliers,name',
       'mobile' => 'required|numeric',
     ]);
     $supplier = new Supplier;
@@ -99,6 +99,7 @@ class SupplierController extends Controller
   public function updateSupplier(Request $request)
   {
     $request->validate([
+      'name' => 'required|unique:suppliers,name,'.$request->id,
       'id' => 'required',
     ]);
 

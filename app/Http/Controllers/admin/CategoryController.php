@@ -19,6 +19,23 @@ class CategoryController extends Controller
     $categories = Category::all();
     return view('admin.modules.setting.category.category')->with(['categories' => $categories, 'categoryCode' => $categoryCode]);
   }
+
+  public function manageCategory2(Request $request)
+  {
+    $search = $request->input('q');
+    $categories  = Category::where('name', 'like', "%$search%")
+      ->limit(5)
+      ->get();
+
+    $formattedCategories = $categories->map(function ($category) {
+      return ['id' => $category->id, 'text' => $category->name];
+    });
+
+    return response()->json($formattedCategories);
+
+  }
+  
+
   protected function imageUpload($request)
   {
     $productImage = $request->file('image');
