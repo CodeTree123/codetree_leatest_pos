@@ -133,7 +133,10 @@ Category -Admin Dashboard
 
 					</table>
 					<br>
-					{{ @$categories->links() }}
+					<div class="d-flex justify-content-end mt-2">
+
+					     {{ @$categories->links() }} 
+				    </div>
 				</div>
 			</div>
 		</div>

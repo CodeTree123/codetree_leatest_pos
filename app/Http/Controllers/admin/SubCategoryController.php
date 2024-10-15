@@ -18,7 +18,7 @@ class SubCategoryController extends Controller
     {
         $categoryCode = DB::table('systems')->where('id', 1)->value('subCategoryCode');
         $categories = Category::all();
-        $subcategories = SubCategory::latest()->paginate(10); // moved latest() before paginate()
+        $subcategories = SubCategory::latest()->paginate(20); // moved latest() before paginate()
 
         $lastCategory = SubCategory::orderBy('id', 'desc')->first();
         $lastId = $lastCategory ? $lastCategory->id + 1 : 1;  // Extract the 'id' from the object.
