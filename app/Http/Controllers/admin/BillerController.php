@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Sales;
 use App\Biller;
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Support\Facades\DB;
 
 class BillerController extends Controller
 {
@@ -18,7 +19,7 @@ class BillerController extends Controller
     {
       $request->validate([
          'name'=>'required',
-         'phone'=>'required',
+         'phone'=>'required|unique:billers,phone',
      ]);
 
       $biller=new Biller;
@@ -42,17 +43,29 @@ class BillerController extends Controller
 }
 
 
-public function billerDelete(Request $request){
-    try{
-       DB::table('billers')->where('id',$request->id)->delete();
-       Toastr::success('Biller Deleted');
-       return redirect()->route('admin.people.listBiller');
-     }catch(\Exception $e)
-     {
-       session()->flash('error-message',$e->getMessage());
-           return redirect()->back();
-     }
- }
+public function billerDelete(Request $request)
+{
+    try {
+        // Check if the biller has any associated sales records
+        $salesCount = DB::table('sales')->where('biller_id', $request->id)->count();
+
+        if ($salesCount > 0) {
+            // If sales records exist, don't allow deletion
+            Toastr::error('Biller cannot be deleted. Sales records are associated with this biller.');
+            return redirect()->back();
+        }
+
+        // If no sales records found, proceed with deletion
+        DB::table('billers')->where('id', $request->id)->delete();
+        Toastr::success('Biller Deleted');
+        return redirect()->route('admin.people.listBiller');
+    } catch (\Exception $e) {
+        // Handle any unexpected errors
+        session()->flash('error-message', $e->getMessage());
+        return redirect()->back();
+    }
+}
+
 
 public function listBiller()
 {
@@ -60,6 +73,21 @@ public function listBiller()
    return view('admin.modules.people.biller.billerList')->with(['billers'=>$billers]);
 }
 
+
+public function listBiller2(Request $request)
+{
+    $search = $request->input('q');
+    $products = Biller::where('name', 'like', "%$search%")
+      ->limit(5)
+      ->get();
+
+    $formattedProducts = $products->map(function ($product) {
+      return ['id' => $product->id, 'text' => $product->name];
+    });
+
+    return response()->json($formattedProducts);
+  
+}
 public function billerBills($id)
 {
     
@@ -99,7 +127,8 @@ public function billerUpdate(Request $request)
 {
       $request->validate([
      'name'=>'required',
-     'phone'=>'required',
+     'phone'=>'required|unique:billers,phone,' .$request->biller_ids,
+     'email'=>'nullable|unique:billers,email,' .$request->biller_ids,
  ]);
     $biller_id = $request->biller_ids;
     // dd($biller_id);

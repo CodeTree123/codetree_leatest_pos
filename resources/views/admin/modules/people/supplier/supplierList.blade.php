@@ -67,7 +67,6 @@ Supplier List- Admin Dashboard
 									  </a>
 									</div>
 
-
 									<div class="del-modal <?php echo 'modal' . $counter ?>">
 										<p><b>Record delete confirmation.</b></p>
 										<p>Are you want to really delete ?</p>

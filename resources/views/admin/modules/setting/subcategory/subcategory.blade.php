@@ -55,68 +55,77 @@ Sub category -Admin Dashboard
 							</tr>
 						</thead>
 						<tbody>
-							<?php
-                             $counter=0;
-							?>
-							@foreach($subcategories as $categoty)
-							<?php
-                             $counter++;
-							?>
-							<tr>
-								<td>{{$counter}}</td>
-								<td>
-									@if(!empty($categoty->image))
-									<img src="{{ asset($categoty->image) }}" alt="No-image" class="img-rounded" style="width:35px;height:35px;">
-									@else
-									
-									<img src="{{ asset('admin/defaultIcon/no_image.png') }}" alt="No-image" class="img-rounded" style="width:35px;height:35px;">
-						
-									@endif
-								</td>
-								<td>{{$categoty->name}}</td>
-								<td>{{$categoty->code}}</td>
-								<td>{{$categoty->category['name']}}</td>
-								<td>
-                                 @if($categoty->status==1)
-                                 <p class="badge  bg_secondary_teal">Active</p>
-                                 @else
-                                 <p class="badge badge-danger">Inactive</p>
-                                 @endif
-								 </td>
-								<td style="width:120px;" >
-									
-									<p class="btn  bg_secondary_teal p-1 px-2 mb-0 view"  style="font-size: 13px;cursor:pointer;" title="Category Details" data-vid="{{$categoty->id}}"> <i class="fa-fw fa fa-eye"></i></p>
-									<p class="btn bg_p_primary p-1 mb-0 px-2 edit" data-eid="{{$categoty->id}}" style="font-size: 13px;cursor:pointer;" title="Edit Category"> <i class="fa fa-edit" ></i></p>
+                    	@foreach($subcategories as $index => $category)
+                    	<tr>
+                    		<td>{{ $subcategories->firstItem() + $index }}</td>
+                    		<td>
+                    			@if(!empty($category->image))
+                    				<img src="{{ asset($category->image) }}" alt="No-image" class="img-rounded" style="width:35px;height:35px;">
+                    			@else
+                    				<img src="{{ asset('admin/defaultIcon/no_image.png') }}" alt="No-image" class="img-rounded" style="width:35px;height:35px;">
+                    			@endif
+                    		</td>
+                    		<td>{{ $category->name }}</td>
+                    		<td>{{ $category->code }}</td>
+                    		<td>{{ $category->category['name'] ?? 'N/A' }}</td> <!-- Handles if 'category' is null -->
+                    		<td>
+                    			@if($category->status == 1)
+                    				<p class="badge bg_secondary_teal">Active</p>
+                    			@else
+                    				<p class="badge badge-danger">Inactive</p>
+                    			@endif
+                    		</td>
+                    		<td style="width:120px;">
+                    			<!-- View Button -->
+                    			<p class="btn bg_secondary_teal p-1 px-2 mb-0 view" style="font-size: 13px; cursor:pointer;" title="Category Details" data-vid="{{ $category->id }}">
+                    				<i class="fa-fw fa fa-eye"></i>
+                    			</p>
+                    			
+                    			<!-- Edit Button -->
+                    			<p class="btn bg_p_primary p-1 mb-0 px-2 edit" data-eid="{{ $category->id }}" style="font-size: 13px; cursor:pointer;" title="Edit Category">
+                    				<i class="fa fa-edit"></i>
+                    			</p>
+                    
+                    			<!-- Delete Confirmation Modal -->
+                    			<div class="del-modal modal{{ $index + 1 }}" style="right: 55px;">
+                    				<p><b>Record delete confirmation.</b></p>
+                    				<p>Are you sure you want to delete?</p>
+                    
+                    				<button class="btn btn-info py-1 del-close" style="background-color: #808080a6; border-color: #808080a6;">Cancel</button>
+                    				<form method="post" action="{{ route('admin.setting.deletesubCategory') }}" style="float:right;">
+                    					@csrf
+                    					<input type="hidden" name="id" value="{{ $category->id }}">
+                    					<button class="btn btn-danger py-1">Confirm</button>
+                    				</form>
+                    			</div>
+                    
+                    			<!-- Delete Button -->
+                    			<p class="btn bg_secondary_grey mb-0 p-1 px-2 del-btn btn{{ $index + 1 }}" style="font-size: 13px; cursor:pointer;" title="Delete Category">
+                    				<i class="fa fa-trash"></i>
+                    			</p>
+                    		</td>
+                    	</tr>
+                    	@endforeach
+                    </tbody>
+                    
+                    <script>
+                    	$(document).ready(function() {
+                    		@foreach($subcategories as $index => $category)
+                    			$(".btn{{ $index + 1 }}").click(function() {
+                    				$(".modal{{ $index + 1 }}").show('fadeOut');
+                    			});
+                    			$(".del-close").click(function() {
+                    				$(".del-modal").hide('fadeIn');
+                    			});
+                    		@endforeach
+                    	});
+                    </script>
 
-									<div class="del-modal <?php echo 'modal'.$counter?>" style="right: 55px;">
-										<p><b>Record delete confirmation.</b></p>
-										<p>Are you want to really delete ?</p>
-
-										<button class="btn btn-info py-1 del-close" style="background-color: #808080a6;border-color: #808080a6;">Cancel</button>
-										<form method="post"  action="{{route('admin.setting.deletesubCategory')}}"style="float:right;">
-											@csrf
-											<input type="hidden" name="id" value="{{$categoty->id}}">
-											<button class="btn btn-danger py-1">Confirm</button>
-										</form>
-									</div>
-									<script>
-										$(document).ready(function(){
-											$(".<?php echo 'btn'.$counter?>").click(function(){
-												$(".<?php echo 'modal'.$counter?>").show('fadeOut');
-
-											});
-											$(".del-close").click(function(){
-												$(".del-modal").hide('fadeIn');
-
-											});
-										});
-									</script>
-									<p class="btn bg_secondary_grey mb-0 p-1 px-2 del-btn <?php echo 'btn'.$counter?>"  style="font-size: 13px;relative;cursor:pointer;" title="Delete Category"> <i class="fa fa-trash"></i></p>
-								</td>
-							</tr>
-							@endforeach
-						</tbody>
 					</table>
+					<div class="d-flex justify-content-center mt-2">
+                     {{ $subcategories->links() }}
+                    </div>
+
 				</div>
 			</div>
 		</div>
@@ -134,24 +143,18 @@ Sub category -Admin Dashboard
 			<form method="POST" action="{{route('admin.subcategory.subcategorySave')}}" enctype="multipart/form-data">
 				@csrf
 				<div class="form-group">
-					<label>Parent Category</label>
-					<select class="custom-select" name="parentId">
-						<option selected value="NULL">Select Parent category</option>
-						@foreach($categories as $category)
-						<option value="{{$category->id}}">{{$category->name}}</option>
-						@endforeach
+				<label class="d-block">Parent Category</label>
+					<select class="select2 form-control" name="parentId" id="subcategoryid">
+						<option selected value="" disabled>Select Parent category</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<label>Category Name *</label>
+					<label>Sub-Category Name *</label>
 					<input type="text" class="form-control" placeholder="Category Name" name="name">
 				</div>
 				<div class="form-group">
-					<label>Category Code *</label>
-					<?php
-					$count=count($subcategories)+1;
-					?>
-					<input type="text" class="form-control" name="code" value="{{$categoryCode}}-{{$count}}" readonly="">
+					<label>Sub-Category Code *</label>
+					<input type="text" class="form-control" name="code" value="{{$generatedCode}}" readonly="">
 				</div>
 				<div class="form-group">
 					<label>Description</label>
@@ -219,6 +222,29 @@ Sub category -Admin Dashboard
 		        }
 		    });
        });  
+
+
+	   $('#subcategoryid').select2({
+        ajax: {
+            url: '/setting/category2',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term // search term
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data // select2 expects an array of {id, text} objects
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0 // start searching after 1 character
+    });
+
+
    });
 </script>
 @endsection

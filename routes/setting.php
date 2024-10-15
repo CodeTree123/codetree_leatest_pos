@@ -16,6 +16,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 
 	//setting module /category
 	Route::get('/category', 'CategoryController@manageCategory')->name('admin.category');
+	Route::get('/category2', 'CategoryController@manageCategory2')->name('admin.category2');
 	Route::post('/saveCategory', 'CategoryController@saveCategory')->name('admin.category.categorySave');
 	Route::post('/category-details', 'CategoryController@categoryDetails')->name('admin.setting.categoryDetails');
 	Route::post('/edit-category', 'CategoryController@editCategory')->name('admin.setting.editCategory');
@@ -25,6 +26,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::get('/sub-category', 'SubCategoryController@managesSubCategory')->name('admin.subcategory');
 	Route::post('/save-sub-Category', 'SubCategoryController@saveSubCategory')->name('admin.subcategory.subcategorySave');
 	Route::post('/select-sub-Category', 'SubCategoryController@selectSubcategory')->name('admin.subcategory.selectSubcategory');
+	Route::get('/select-sub-Category2', 'SubCategoryController@selectSubcategory2')->name('admin.subcategory.selectSubcategory2');
 	Route::post('/subcategory-details', 'SubCategoryController@subcategoryDetails')->name('admin.setting.subcategoryDetails');
 	Route::post('/edit-sub-category', 'SubCategoryController@editsubCategory')->name('admin.setting.editsubCategory');
 	Route::post('/update-sub-category', 'SubCategoryController@updateSubCategory')->name('admin.category.updateSubCategory');
@@ -40,6 +42,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 
 	//setting/brands
 	Route::get('/brands', 'BrandsController@brands')->name('admin.brands');
+	Route::get('/brands2', 'BrandsController@brands2')->name('admin.brands2');
 	Route::post('/saveBrand', 'BrandsController@saveBrand')->name('admin.brands.brandSave');
 	Route::post('/brands-detaols', 'BrandsController@brandDetails')->name('admin.setting.brandDetails');
 	Route::post('/edit-brand', 'BrandsController@editBrand')->name('admin.setting.editBrand');

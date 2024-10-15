@@ -11,6 +11,9 @@ Add New Promotion- Admin Dashboard
     input['text'] {
         border-radius: 0px;
     }
+    .multipleSelect2{
+  width: 300px;
+}
 </style>
 <!-- date time picker -->
 
@@ -67,42 +70,16 @@ Add New Promotion- Admin Dashboard
                                 <label>Promotion Name *</label>
                                 <input type="text" class="form-control" name="promotion_name" placeholder="promotion Name">
                             </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Category Name <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="promotion_category_name">
-                                    <option value="">Please Select Category</option>
-                                    @foreach($categories as $category)
-                                    <option value="{{$category->name}}">{{$category->name}}</option>
-                                    @endforeach
-                                </select>
+
+                            <div class="form-group col-md-4">
+                            <label >Product Name * <i class="fa-fw fa fa-plus-circle"></i></label>
+
+                            <select class="select2 form-control" name="Promotion_product[]" id="promo_product"  multiple = true
+                            >
+                             <option value="1" disabled>Select Product</option>
+                            </select>
                             </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Sub Category Name <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="promotion_subcategory_name">
-                                    <option value="">Please Select Sub Category</option>
-                                    @foreach($subcategories as $subcategory)
-                                    <option value="{{$subcategory->name}}">{{$subcategory->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Product Name * <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="Promotion_product">
-                                    <option value="">Please Select product</option>
-                                    @foreach($products as $product)
-                                    <option value="{{$product->name}}">{{$product->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Product Code * <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="Promotion_product_code">
-                                    <option value="">Please Select Product Code</option>
-                                    @foreach($products as $product)
-                                    <option value="{{$product->code}}">{{$product->code}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+
                             <div class="form-group col-6">
                                 <label>Starting Duration</label>
                                 <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promotion_start_duration" placeholder="Starting Time">
@@ -124,6 +101,7 @@ Add New Promotion- Admin Dashboard
                                     <option value="Inactive">Inactive</option>
                                 </select>
                             </div>
+
                             <div class="form-group col-12">
                                 <input type="submit" class="btn bg_p_primary col-12" value="Add Product">
                             </div>
@@ -140,4 +118,33 @@ $(function(){
 $('#datetimepicker').datetimepicker();
 });
 </script> -->
+<script>
+
+
+$(document).ready(function() {
+    
+    $('#promo_product').select2({   
+        ajax: {
+            url: '/sales/get-products',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term // Search term input
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data // Select2 expects {id, text} objects
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0,  // Start searching from first character
+        placeholder: "Select Product", // Placeholder text
+    });
+
+});
+
+</script>
 @stop

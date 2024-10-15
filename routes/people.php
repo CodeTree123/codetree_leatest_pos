@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::post('/biller-save', 'BillerController@billerSave')->name('admin.biller.billerSave');
 	Route::post('/biller-delete', 'BillerController@billerDelete')->name('admin.biller.billerDelete');
 	Route::get('/biller-lists', 'BillerController@listBiller')->name('admin.people.listBiller');
+	Route::get('/biller-lists2', 'BillerController@listBiller2')->name('admin.people.listBiller2');
 	Route::get('/biller-bills/{id}', 'BillerController@billerBills')->name('admin.people.billerBills');
 	Route::get('/biller-view/{id}', 'BillerController@viewBiller')->name('admin.people.viewBiller');
 	Route::get('/biller-edit/{id}', 'BillerController@editBiller')->name('admin.people.editBiller');
@@ -55,10 +56,12 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 
 	//people/supplier
 	Route::get('/supplierList', 'SupplierController@supplierList')->name('admin.supplierList');
+	Route::get('/supplierList2', 'SupplierController@supplierList2')->name('admin.supplierList2');
 	Route::get('/supplierAdd', 'SupplierController@supplierAdd')->name('admin.supplierAdd');
 	Route::post('/supplier-save', 'SupplierController@supplierSave')->name('admin.supplier.supplierSave');
 	Route::post('/supplier-delete', 'SupplierController@supplierDelete')->name('admin.supplier.supplierDelete');
 	Route::get('/supplier-supplierDetails/{id}', 'SupplierController@supplierDetails')->name('admin.supplier.supplierDetails');
 	Route::post('/supplier-info', 'SupplierController@supplierInfo')->name('admin.supplier.supplierInfo');
 	Route::post('/update-supplier', 'SupplierController@updateSupplier')->name('admin.supplier.updateSupplier');
+
 });

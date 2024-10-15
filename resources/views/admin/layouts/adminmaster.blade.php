@@ -56,6 +56,13 @@
             width: 700px;
             margin-bottom: 35px;
         }
+
+        #loader {
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            width: 100vw;
+            height: 100vh;
+        }
+
     </style>
     <title>
         @yield('adminTitle')
@@ -637,6 +644,10 @@
             </span>
         </div>
     </nav>
+
+    <div id="loader" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
+    <img src="/loader.gif" alt="Loading..."  style="position: fixed; top: 50%; left: 50%;"/>
+    </div>
 
     <!--Calculator modal-->
     <div class="modal fade calculator_modal" tabindex="-1" role="dialog" aria-labelledby="calculator_modal"

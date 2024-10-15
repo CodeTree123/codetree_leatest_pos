@@ -106,17 +106,29 @@ class CustomerController extends Controller
       return redirect()->route('admin.customerList');
    }
 
-   public function customerDelete(Request $request){
-      try{
-         DB::table('customers')->where('id',$request->id)->delete();
-         Toastr::success('Customer Deleted');
-         return redirect()->route('admin.modules.people.customer.customerList');
-       }catch(\Exception $e)
-       {
-         session()->flash('error-message',$e->getMessage());
-             return redirect()->back();
+   public function customerDelete(Request $request)
+   {
+       try {
+           // Check if the customer has any sales records
+           $salesCount = DB::table('sales')->where('customer_id', $request->id)->count();
+   
+           if ($salesCount > 0) {
+               // If sales records exist, don't allow deletion
+               Toastr::error('Customer cannot be deleted. Sales records are associated with this customer.');
+               return redirect()->back();
+           }
+   
+           // If no sales records found, proceed with deletion
+           DB::table('customers')->where('id', $request->id)->delete();
+           Toastr::success('Customer Deleted');
+           return redirect()->route('admin.modules.people.customer.customerList');
+       } catch (\Exception $e) {
+           // Handle any unexpected errors
+           session()->flash('error-message', $e->getMessage());
+           return redirect()->back();
        }
    }
+   
    public function customerGroup()
    {
       $customerGroups = CustomerGroup::paginate(10);
@@ -126,7 +138,7 @@ class CustomerController extends Controller
    public function customerGroupSave(Request $request)
    {
       $request->validate([
-         'name' => 'required',
+         'name' => 'required|unique:customer_groups,name',
       ]);
       $customerGroup = new CustomerGroup;
       $customerGroup->name = $request->name;
@@ -205,9 +217,11 @@ class CustomerController extends Controller
    public function updateCustomer(Request $request)
    {
       $request->validate([
-         'id' => 'required',
-
-      ]);
+         'id' => 'required|exists:customers,id',
+         'mobile' => 'unique:customers,mobile,' . $request->id,
+          
+     ]);
+     
 
       $customer_check = DB::table('customers')->where('id', $request->id)->first();
       //  dd($customer_check);
@@ -324,6 +338,9 @@ class CustomerController extends Controller
    //update customer group
    public function customerGroupUpdate(Request $request)
    {
+      $request->validate([
+         'name'=>'unique:customer_groups,name,' .$request->id
+      ]);
       DB::table('customer_groups')->where('id', $request->id)->update(['name' => $request->name, 'percentage' => $request->percentage]);
       Toastr::success('Group updated successfully');
       return 1;

@@ -396,27 +396,40 @@
             });
 
             //product details
-            $(".productDetails").click(function() {
+            $(".productDetails").click(function () {
                 var pro_id = $(this).data('pro_id');
+
+                // Show the loader before the AJAX request starts
+                $("#loader").show();
+
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     url: "{{ route('admin.product.productDetails') }}",
                     type: "POST",
-                    data: {
-                        'pro_id': pro_id
-                    },
-                    success: function(data) {
+                    data: { 'pro_id': pro_id },
+                    success: function (data) {
                         console.log(data);
+
+                        // Populate the modal with data
                         $(".modal-data").html(data);
+
+                        // Hide the loader once the data is received
+                        $("#loader").hide();
+
+                        // Show the modal
                         $('.productModal').modal('show');
                     },
-                    error: function() {
+                    error: function () {
+                        // Hide the loader in case of error
+                        $("#loader").hide();
+
                         toastr.error("Something went Wrong, Please Try again.");
                     }
                 });
             });
+
         });
     </script>
 @endsection

@@ -245,13 +245,9 @@ Add Sale- Admin Dashboard
                         </div>
                         <div class="form-group col-md-4">
                             <label>Biller</label>
-                            <select class="form-control" name="biller_id" id="biller_id">
-                                @foreach ($billers as $biller)
-                                <option value="{{ $biller->id }}">{{ $biller->name }}</option>
-                                @endforeach
-
+                            <select class="custom-select" id="biller_id">
+                                    <option selected value="">Select Biller</option>
                             </select>
-
                         </div>
                         <div class="form-group col-md-4">
                             <label>Date *</label>
@@ -380,6 +376,27 @@ Add Sale- Admin Dashboard
 <!--End modal-->
 <script>
     $(document).ready(function() {
+
+        $('#biller_id').select2({
+            theme: "bootstrap",
+            ajax: {
+                url: '/people/biller-lists2',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term // search term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data // select2 expects an array of {id, text} objects
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 0 // start searching after 1 character
+        });
 
         $('#pro_id').select2({
             theme: "bootstrap",
