@@ -15,10 +15,35 @@ class CategoryController extends Controller
 {
   public function manageCategory()
   {
-    $categoryCode = DB::table('systems')->where('id', '1')->value('categoryCode');
-    $categories = Category::all();
-    return view('admin.modules.setting.category.category')->with(['categories' => $categories, 'categoryCode' => $categoryCode]);
+      // Get the category code from the 'systems' table.
+      $categoryCode = DB::table('systems')->where('id', '1')->value('categoryCode');
+  
+      // Fetch all categories.
+      $categories = Category::all();
+  
+      // Get the last ID from the 'categories' table. Handle the case where the table is empty.
+      $lastCategory = Category::orderBy('id', 'desc')->first();
+      $lastId = $lastCategory ? $lastCategory->id + 1 : 1;  // Extract the 'id' from the object.
+  
+      // Generate the initial code.
+      $code = "{$categoryCode}-{$lastId}";
+  
+      // Check if the generated code already exists in the 'categories' table.
+      while (Category::where('code', $code)->exists()) {
+          $lastId++;  // Increment the counter.
+          $code = "{$categoryCode}-{$lastId}";  // Generate a new code.
+      }
+  
+      // Pass the data to the view.
+      return view('admin.modules.setting.category.category')->with([
+          'categories' => $categories,
+          'categoryCode' => $categoryCode,
+          'lastId' => $lastId,  // The last ID for display or further use.
+          'generatedCode' => $code  // The unique code to display in the input field.
+      ]);
   }
+  
+  
 
   public function manageCategory2(Request $request)
   {

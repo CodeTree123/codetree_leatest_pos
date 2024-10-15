@@ -87,26 +87,15 @@ Add New Product- Admin Dashboard
 							</div>
 							<div class="form-group col-6">
 								<label for="formGroupExampleInput2">Product Category *</label>
-								<!-- <select class="custom-select" name="category" id="category">
-									<option>Select Category</option>
-									@foreach($categories as $category)
-									<option value="{{$category->id}}">{{$category->name}}</option>
-									@endforeach
-
-								</select> -->
-								<select class="custom-select" name="category" id="categoryid">
+								<select class="select2 form-control" name="category" id="categoryid">
                                     <option selected value="">Select Category</option>
                                 </select>
 
 							</div>
 							<div class="form-group col-6">
 								<label>Product Sub Category</label>
-								<!-- <select class="custom-select" name="subcategory" id="subcategory">
-									<option value="">Select Subcategory</option>
 
-								</select> -->
-
-								<select class="custom-select" name="subcategory" id="subcategory" >
+								<select class="select2 form-control" name="subcategory" id="subcategory" >
                                     <option selected value="">Select Subcategory</option>
                                 </select>
 							</div>
@@ -175,7 +164,7 @@ Add New Product- Admin Dashboard
 <script>
 $(document).ready(function() {
     $('#categoryid').select2({
-        theme: "bootstrap",
+        
         ajax: {
             url: '/setting/category2',
             dataType: 'json',
@@ -197,7 +186,7 @@ $(document).ready(function() {
 
     // Initialize subcategory select2 and handle category change
     $('#subcategory').select2({
-        theme: "bootstrap",
+        
         ajax: {
             url: '/setting/select-sub-Category2',
             dataType: 'json',

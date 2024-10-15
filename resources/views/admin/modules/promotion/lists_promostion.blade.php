@@ -82,9 +82,6 @@ All Promotions- Admin Dashboard
                             <tr>
                                 <th class="font-weight-bold" scope="col">#</th>
                                 <th class="font-weight-bold" scope="col">Name</th>
-                                <th class="font-weight-bold" scope="col">Category</th>
-                                <th class="font-weight-bold" scope="col">Sub-Category</th>
-                                <th class="font-weight-bold" scope="col">Product Name</th>
                                 <th class="font-weight-bold" scope="col">Product Name</th>
                                 <th class="font-weight-bold" scope="col">Start Date</th>
                                 <th class="font-weight-bold" scope="col">End Date</th>

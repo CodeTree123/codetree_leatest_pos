@@ -136,10 +136,7 @@ Category -Admin Dashboard
 					</div>
 					<div class="form-group">
 						<label>Category Code *</label>
-						<?php
-						$count=count($categories)+1;
-						?>
-						<input type="text" class="form-control" name="code" value="{{$categoryCode}}-{{$count}}" readonly="">
+						<input type="text" class="form-control" name="code" value="{{$generatedCode}}" readonly="">
 					</div>
 					<div class="form-group">
 						<label>Description</label>

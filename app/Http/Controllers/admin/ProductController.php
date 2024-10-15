@@ -67,19 +67,15 @@ class ProductController extends Controller
     {
         $suppliers = Supplier::all();
         $units = Units::all();
-        $categories = Category::all();
         $brands = Brands::all();
-        $products = Products::all();
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
         $lastId = @$lastId->id + 1;
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
         return view('admin.modules.product.productAddForm')->with([
             'suppliers' => $suppliers,
             'units' => $units,
-            'categories' => $categories,
             'brands' => $brands,
             'productCode' => $productCode,
-            'products' => $products,
             'lastId' => @$lastId,
         ]);
     }

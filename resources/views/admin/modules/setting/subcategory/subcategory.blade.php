@@ -122,8 +122,8 @@ Sub category -Admin Dashboard
                     </script>
 
 					</table>
-					<div class="d-flex justify-content-end mt-2">
-                        <p class="m-1">Click here to go to the next page:</p> {{ $subcategories->links() }}
+					<div class="d-flex justify-content-center mt-2">
+                     {{ $subcategories->links() }}
                     </div>
 
 				</div>
@@ -152,15 +152,12 @@ Sub category -Admin Dashboard
 					</select>
 				</div>
 				<div class="form-group">
-					<label>Category Name *</label>
+					<label>Sub-Category Name *</label>
 					<input type="text" class="form-control" placeholder="Category Name" name="name">
 				</div>
 				<div class="form-group">
-					<label>Category Code *</label>
-					@php
-                        $count = str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);  // Generates a 3-digit random number
-                    @endphp
-					<input type="text" class="form-control" name="code" value="{{$categoryCode}}-{{$count}}" readonly="">
+					<label>Sub-Category Code *</label>
+					<input type="text" class="form-control" name="code" value="{{$generatedCode}}" readonly="">
 				</div>
 				<div class="form-group">
 					<label>Description</label>

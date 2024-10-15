@@ -11,6 +11,9 @@ Add New Promotion- Admin Dashboard
     input['text'] {
         border-radius: 0px;
     }
+    .multipleSelect2{
+  width: 300px;
+}
 </style>
 <!-- date time picker -->
 
@@ -69,18 +72,14 @@ Add New Promotion- Admin Dashboard
                             </div>
 
                             <div class="form-group col-md-4">
-                                <label >Product Name * <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <!-- <select class="custom-select" name="Promotion_product">
-                                    <option value="">Please Select product</option>
-                                    @foreach($products as $product)
-                                    <option value="{{$product->name}}">{{$product->name}}</option>
-                                    @endforeach
-                                </select> -->
+                            <label >Product Name * <i class="fa-fw fa fa-plus-circle"></i></label>
 
-                                <select class="custom-select" name="Promotion_product" id="promo_product">
-                                    <option selected value="">Select Product</option>
-                                </select>
+                            <select class="select2 form-control" name="Promotion_product[]" id="promo_product"  multiple = true
+                            >
+                             <option value="1" disabled>Select Product</option>
+                            </select>
                             </div>
+
                             <div class="form-group col-6">
                                 <label>Starting Duration</label>
                                 <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promotion_start_duration" placeholder="Starting Time">
@@ -102,6 +101,7 @@ Add New Promotion- Admin Dashboard
                                     <option value="Inactive">Inactive</option>
                                 </select>
                             </div>
+
                             <div class="form-group col-12">
                                 <input type="submit" class="btn bg_p_primary col-12" value="Add Product">
                             </div>
@@ -122,34 +122,27 @@ $('#datetimepicker').datetimepicker();
 
 
 $(document).ready(function() {
-
-    // Initialize subcategory select2 and handle category change
-    $('#promo_product').select2({
-        theme: "bootstrap",
+    
+    $('#promo_product').select2({   
         ajax: {
             url: '/sales/get-products',
             dataType: 'json',
             delay: 250,
-            data: function(params) {
+            data: function (params) {
                 return {
-                    q: params.term, // search term
-                    
+                    q: params.term // Search term input
                 };
             },
-            processResults: function(data) {
+            processResults: function (data) {
                 return {
-                    results: data // select2 expects an array of {id, text} objects
+                    results: data // Select2 expects {id, text} objects
                 };
             },
             cache: true
         },
-        minimumInputLength: 0
+        minimumInputLength: 0,  // Start searching from first character
+        placeholder: "Select Product", // Placeholder text
     });
-
-
-
-
-
 
 });
 

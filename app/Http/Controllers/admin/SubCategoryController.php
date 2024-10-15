@@ -19,11 +19,25 @@ class SubCategoryController extends Controller
         $categoryCode = DB::table('systems')->where('id', 1)->value('subCategoryCode');
         $categories = Category::all();
         $subcategories = SubCategory::latest()->paginate(20); // moved latest() before paginate()
+
+        $lastCategory = SubCategory::orderBy('id', 'desc')->first();
+        $lastId = $lastCategory ? $lastCategory->id + 1 : 1;  // Extract the 'id' from the object.
+    
+        // Generate the initial code.
+        $code = "{$categoryCode}-{$lastId}";
+    
+        // Check if the generated code already exists in the 'categories' table.
+        while (SubCategory::where('code', $code)->exists()) {
+            $lastId++;  // Increment the counter.
+            $code = "{$categoryCode}-{$lastId}";  // Generate a new code.
+        }
         
         return view('admin.modules.setting.subcategory.subcategory', [
             'categories' => $categories,
             'categoryCode' => $categoryCode,
-            'subcategories' => $subcategories
+            'subcategories' => $subcategories,
+            'lastId' => $lastId,
+            'generatedCode' => $code
         ]);
     }
 
