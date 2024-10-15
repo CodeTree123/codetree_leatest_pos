@@ -82,58 +82,72 @@ All Promotions- Admin Dashboard
                             <tr>
                                 <th class="font-weight-bold" scope="col">#</th>
                                 <th class="font-weight-bold" scope="col">Name</th>
-                                <th class="font-weight-bold" scope="col">Product Name</th>
                                 <th class="font-weight-bold" scope="col">Start Date</th>
                                 <th class="font-weight-bold" scope="col">End Date</th>
                                 <th class="font-weight-bold" scope="col">Status</th>
+                                <th class="font-weight-bold" scope="col">Amount</th>
                                 <th class="font-weight-bold" scope="col">Actions</th>
+                                <th class="font-weight-bold" scope="col">Products</th>
 
                             </tr>
                         </thead>
                         <tbody id="table-data">
                             <?php $counter = 0; ?>
-                            @foreach($promotions as $key=>$promotion)
-                            <?php $counter++; ?>
-                            <tr>
-                                <td>{{$counter}}</td>
-                                <td>{{$promotion->promotion_name}}</td>
-                                <td>{{$promotion->promotion_category_name}}</td>
-                                <td>{{$promotion->promotion_subcategory_name}}</td>
-                                <td>{{$promotion->Promotion_product}}</td>
-                                <td>{{$promotion->Promotion_product_code}}</td>
-                                <td>{{$promotion->promotion_start_duration}}</td>
-                                <td>{{$promotion->promotion_end_duration}}</td>
-                                <td>{{$promotion->status}}</td>
-                                <td style="width:120px;">
-                                    <p class="btn bg_p_primary p-1 mb-0 px-2 edit-promotion" data-promotionid="{{$promotion->id}}" style="font-size: 13px;cursor:pointer;" title="Edit promotion"> <i class="fa fa-edit"></i></p>
-                                    <div class="del-modal <?php echo 'modal' . $counter ?>">
-                                        <p><b>Record delete confirmation.</b></p>
-                                        <p>Are you want to really delete ?</p>
+                            @foreach($promotions as $key => $promotion)
+                                <?php $counter++; ?>
+                                <tr>
+                                    <td>{{ $counter }}</td>
+                                    <td>{{ $promotion->promotion_name }}</td>
+                                    <td>{{ $promotion->promotion_start_duration }}</td>
+                                    <td>{{ $promotion->promotion_end_duration }}</td>
+                                    <td>{{ $promotion->status }}</td>
+                                    <td>{{ $promotion->promotion_ammount }}</td>
 
-                                        <button class="btn bg_p_primary py-1 del-close" style="background-color: #808080a6;border-color: #808080a6;">Cancel</button>
-                                        <form method="post" action="{{route('admin.product.promotionDelete')}}" style="float:right;">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{$promotion->id}}">
-                                            <button class="btn bg_secondary_grey py-1">Confirm</button>
-                                        </form>
-                                    </div>
-                                    <script>
-                                        $(document).ready(function() {
-                                            $(".<?php echo 'btn' . $counter ?>").click(function() {
-                                                $(".<?php echo 'modal' . $counter ?>").show('fadeOut');
+                                    <td style="width:120px;">
+                                        <p class="btn bg_p_primary p-1 mb-0 px-2 edit-promotion" data-promotionid="{{ $promotion->id }}" 
+                                        style="font-size: 13px;cursor:pointer;" title="Edit promotion">
+                                            <i class="fa fa-edit"></i>
+                                        </p>
+                                        <div class="del-modal {{ 'modal' . $counter }}">
+                                            <p><b>Record delete confirmation.</b></p>
+                                            <p>Are you sure you want to delete?</p>
 
+                                            <button class="btn bg_p_primary py-1 del-close" 
+                                                    style="background-color: #808080a6;border-color: #808080a6;">Cancel</button>
+                                            <form method="post" action="{{ route('admin.product.promotionDelete') }}" style="float:right;">
+                                                @csrf
+                                                <input type="hidden" name="id" value="{{ $promotion->id }}">
+                                                <button class="btn bg_secondary_grey py-1">Confirm</button>
+                                            </form>
+                                        </div>
+                                        <script>
+                                            $(document).ready(function() {
+                                                $(".{{ 'btn' . $counter }}").click(function() {
+                                                    $(".{{ 'modal' . $counter }}").show('fadeOut');
+                                                });
+                                                $(".del-close").click(function() {
+                                                    $(".del-modal").hide('fadeIn');
+                                                });
                                             });
-                                            $(".del-close").click(function() {
-                                                $(".del-modal").hide('fadeIn');
+                                        </script>
+                                        <p class="btn bg_secondary_grey mb-0 p-1 px-2 del-btn {{ 'btn' . $counter }}" 
+                                        data-store_id="{{ $promotion->id }}" 
+                                        style="font-size: 13px;cursor:pointer;" title="Delete product">
+                                            <i class="fa fa-trash"></i>
+                                        </p>
+                                    </td>
 
-                                            });
-                                        });
-                                    </script>
-                                    <p class="btn bg_secondary_grey mb-0 p-1 px-2 del-btn <?php echo 'btn' . $counter ?>" data-store_id="{{$promotion->id}}" style="font-size: 13px;relative;cursor:pointer;" title="Delete product"> <i class="fa fa-trash"></i></p>
-                                </td>
-                            </tr>
+                                    <td >
+                                        <ul class="ml-3">
+                                            @foreach($promotion->productNames as $productName)
+                                                <li>{{ $productName }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
+
                     </table>
                     <br>
 

@@ -368,65 +368,63 @@ class ProductController extends Controller
     //promotion  Module ADD
     public function promotionadd()
     {
-        $categories = Category::all();
-        $subcategories = SubCategory::all();
-        $products = Products::all();
-        // dd($subcategories);
-        return view('admin.modules.promotion.add_promotion')->with([
-            'categories' => $categories,
-            'subcategories' => $subcategories,
-            'products' => $products
-        ]);
+        return view('admin.modules.promotion.add_promotion');
     }
 
     public function promotionSave(Request $request)
     {
         $request->validate([
-            'status'                     => 'required',
-            'promotion_name'             => 'required',
-            'promotion_category_name'    => '',
-            'promotion_subcategory_name' => 'required',
-            'promotion_start_duration'   => 'required',
-            'promotion_end_duration'     => 'required',
-            'promotion_ammount'          => 'required',
-            'Promotion_product'          => 'required',
-            'Promotion_product_code'     => 'required',
-
+            'status'                   => 'required',
+            'promotion_name'           => 'required|string|max:255',
+            'promotion_start_duration' => 'required|date|before_or_equal:promotion_end_duration',
+            'promotion_end_duration'   => 'required|date|after_or_equal:promotion_start_duration',
+            'promotion_ammount'        => 'required',
+            'Promotion_product'        => 'required',
         ]);
-
-
-        $promotion = new promotion();
-        $promotion->status                      = $request->status;
-        $promotion->promotion_name              = $request->promotion_name;
-        $promotion->Promotion_product_code      = $request->Promotion_product_code;
-        $promotion->promotion_category_name     = $request->promotion_category_name;
-        $promotion->promotion_subcategory_name  = $request->promotion_subcategory_name;
-        $promotion->promotion_start_duration    = $request->promotion_start_duration;
-        $promotion->promotion_end_duration      = $request->promotion_end_duration;
-        $promotion->promotion_ammount           = $request->promotion_ammount;
-        $promotion->Promotion_product           = $request->Promotion_product;
-        $promotion->Promotion_product_code      = $request->Promotion_product_code;
-
-
+    
+        $promotion = new Promotion();
+        $promotion->status = $request->status;
+        $promotion->promotion_name = $request->promotion_name;
+        $promotion->promotion_start_duration = $request->promotion_start_duration;
+        $promotion->promotion_end_duration = $request->promotion_end_duration;
+        $promotion->promotion_ammount = $request->promotion_ammount;
+    
+        // Store the array as a JSON string in the Promotion_product column.
+        $promotion->Promotion_product = json_encode($request->Promotion_product);
+    
         try {
             $promotion->save();
-            Toastr::success('Promotion Added Successfully.');
+    
+            Toastr::success('Promotion added successfully.');
             return redirect()->route('admin.product.promotionlist');
         } catch (\Exception $e) {
             session()->flash('error-message', $e->getMessage());
             return redirect()->back();
         }
     }
-
+    
     public function promotionlist()
     {
-
-        $promotions = promotion::all();
-
+        // Fetch all promotions
+        $promotions = Promotion::all();
+    
+        // Iterate over promotions and retrieve associated product names
+        $promotionsWithProducts = $promotions->map(function ($promotion) {
+            $productIds = json_decode($promotion->Promotion_product, true); // Decode product IDs
+            $products = Products::whereIn('id', $productIds)->pluck('name'); // Fetch product names
+    
+            // Attach product names to the promotion object
+            $promotion->productNames = $products;
+            return $promotion;
+        });
+    
+        // Pass the modified collection to the view
         return view('admin.modules.promotion.lists_promostion')->with([
-            'promotions' => $promotions,
+            'promotions' => $promotionsWithProducts,
         ]);
     }
+    
+    
 
     public function deleteProomotion(Request $request)
     {
