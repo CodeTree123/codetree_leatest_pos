@@ -34,7 +34,7 @@ class ProductController extends Controller
         $categories = Category::all();
         $brands = Brands::all();
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
-
+    
         $products = Products::select('products.*', \DB::raw('summary.total_qty'))
             ->leftjoin(
                 \DB::raw('(SELECT pro_id, SUM(qty) AS total_qty FROM sales_products GROUP BY pro_id) AS summary'),
@@ -42,15 +42,12 @@ class ProductController extends Controller
                 '=',
                 'summary.pro_id'
             )
-            ->orderBy('summary.total_qty', 'desc')->paginate(10);
-
-
+            ->orderBy('summary.total_qty', 'desc')
+            ->paginate(20); // Change pagination to 20
+    
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
-        $lastId = @$lastId ? $lastId->id + 1 : 1;
-
-
-
-
+        $lastId = $lastId ? $lastId->id + 1 : 1;
+    
         return view('admin.modules.product.productlists')->with([
             'suppliers' => $suppliers,
             'units' => $units,
@@ -58,9 +55,10 @@ class ProductController extends Controller
             'brands' => $brands,
             'productCode' => $productCode,
             'products' => $products,
-            'lastId' => @$lastId,
+            'lastId' => $lastId,
         ]);
     }
+    
 
 
     public function productAddForm()

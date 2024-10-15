@@ -41,6 +41,22 @@ Sub category -Admin Dashboard
 			<div class="row">
 				<div class="col-lg-12">
 					<p class="introtext">Please use the table below to navigate or filter the results. You can download the table as excel and pdf.</p>
+					
+					<div class="row">
+                            @if (Session::has('error-message'))
+                                <p class="alert alert-danger">{{ Session::get('error-message') }}</p>
+                            @endif
+                            <div class="col-8">
+                                <p class="pt-2 mb-0">Showing {{ $subcategories->count() }} of {{ $subcategories->total() }}</p>
+                            </div>
+                            <div class="col-4 mt-1">
+                                <input type="text" class="col-10 m-1 mx-0" id="searchKey" style="float: right;"
+                                    placeholder="Search product by name or code ">
+                                <div id="search_list" class="col-10 px-0"
+                                    style="position: absolute; margin-top: 35px;float: right;right:0px;z-index: 1;background: white;box-shadow: 0 0 15px 1px #dee2e6;display: none;">
+                                </div>
+                            </div>
+                        </div>
 					<table class="table table-bordered table-hover">
 						<thead class="bg_p_primary">
 							<tr>
@@ -77,7 +93,7 @@ Sub category -Admin Dashboard
                     		</td>
                     		<td style="width:120px;">
                     			<!-- View Button -->
-                    			<p class="btn bg_secondary_teal p-1 px-2 mb-0 view" style="font-size: 13px; cursor:pointer;" title="Category Details" data-vid="{{ $category->id }}">
+                    			<p class="btn bg_secondary_teal p-1 px-2 mb-0 view" style="font-size: 13px; cursor:pointer;" title="SubCategory Details" data-vid="{{ $category->id }}">
                     				<i class="fa-fw fa fa-eye"></i>
                     			</p>
                     			
@@ -107,6 +123,9 @@ Sub category -Admin Dashboard
                     	</tr>
                     	@endforeach
                     </tbody>
+
+                </table>
+				<br>
                     
                     <script>
                     	$(document).ready(function() {
@@ -183,6 +202,38 @@ Sub category -Admin Dashboard
 
 <script>
 	$(document).ready(function(){
+
+		//search subcategory
+		$("#searchKey").on('keyup', function() {
+			var key = $(this).val();
+			//ajax
+			if (key == '') {
+				$("#search_list").html('');
+			} else {
+				$.ajax({
+					headers: {
+						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+					},
+					url: "{{ route('admin.setting.searchsubCategory') }}",
+					type: "POST",
+					data: {
+						'key': key
+					},
+					//dataType:'json',
+					success: function(data) {
+						$("#search_list").css('display', 'block');
+						$("#search_list").html(data);
+					},
+					error: function() {
+						// toastr.error("Something went Wrong, Please Try again.");
+					}
+				});
+
+				//end ajax
+			}
+		});
+
+
     	//edit product
        	$(".edit").click(function(){
          	var id=$(this).data('eid');
@@ -203,25 +254,26 @@ Sub category -Admin Dashboard
 		    });
        	}); 
 
-       //product details
-       $(".view").click(function(){
-        	var id=$(this).data('vid');
+		// Use event delegation to handle click events on dynamically generated elements
+		$(document).on('click', '.view', function () {
+			var id = $(this).data('vid');
 			$.ajax({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 				},
-				url:"{{route('admin.setting.subcategoryDetails')}}",
-				type:"POST",
-				data:{'id':id},
-		        success:function(data){
-		        	$(".modal-data").html(data);
-		          	$('.category-modal').modal('show'); 
-		        },
-		        error:function(){
-		          	toastr.error("Something went Wrong, Please Try again.");
-		        }
-		    });
-       });  
+				url: "{{ route('admin.setting.subcategoryDetails') }}",
+				type: "POST",
+				data: { 'id': id },
+				success: function (data) {
+					$(".modal-data").html(data);  // Inject the content into the modal
+					$('.category-modal').modal('show');  // Show the modal
+				},
+				error: function () {
+					toastr.error("Something went Wrong, Please Try again.");
+				}
+			});
+		});
+
 
 
 	   $('#subcategoryid').select2({

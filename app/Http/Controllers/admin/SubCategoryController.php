@@ -18,7 +18,7 @@ class SubCategoryController extends Controller
     {
         $categoryCode = DB::table('systems')->where('id', 1)->value('subCategoryCode');
         $categories = Category::all();
-        $subcategories = SubCategory::latest()->paginate(20); // moved latest() before paginate()
+        $subcategories = SubCategory::latest()->paginate(10); // moved latest() before paginate()
 
         $lastCategory = SubCategory::orderBy('id', 'desc')->first();
         $lastId = $lastCategory ? $lastCategory->id + 1 : 1;  // Extract the 'id' from the object.
@@ -170,4 +170,34 @@ class SubCategoryController extends Controller
       return redirect()->back();
     }
   }
+
+      //search product
+      public function searchsubCategory(Request $request)
+      {
+          $subCategories = DB::table('sub_categories')
+              ->where('id', 'like', '%' . $request->key . '%')
+              ->orWhere('name', 'like', '%' . $request->key . '%')
+              ->orWhere('code', 'like', '%' . $request->key . '%')
+              ->orWhere('description', 'like', '%' . $request->key . '%')
+              ->limit(10)
+              ->get();
+      
+          if (!$subCategories->isEmpty()) {
+              foreach ($subCategories as $subCategory) {
+                  // Render the HTML for each sub-category result.
+                  echo '
+                      <p class="list-group-item list-group-item-action  mx-0 py-2 view" 
+                         style="font-size: 13px; cursor:pointer;" 
+                         
+                         data-vid="' . $subCategory->id . '">
+                          <i class="fa-fw fa fa-eye"></i> ' . htmlspecialchars($subCategory->name) . '
+                      </p>
+                      
+                  ';
+              }
+          } else {
+              echo "<p>No product found.</p>";
+          }
+      }
+      
 }

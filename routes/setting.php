@@ -22,6 +22,8 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::post('/edit-category', 'CategoryController@editCategory')->name('admin.setting.editCategory');
 	Route::post('/update-category', 'CategoryController@updateCategory')->name('admin.category.updateCategory');
 	Route::post('/delate-category', 'CategoryController@deleteCategory')->name('admin.setting.deleteCategory');
+	Route::post('/search-category', 'CategoryController@searchCategory')->name('admin.setting.searchCategory');
+
 	//setting module /subcategory
 	Route::get('/sub-category', 'SubCategoryController@managesSubCategory')->name('admin.subcategory');
 	Route::post('/save-sub-Category', 'SubCategoryController@saveSubCategory')->name('admin.subcategory.subcategorySave');
@@ -31,6 +33,9 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 	Route::post('/edit-sub-category', 'SubCategoryController@editsubCategory')->name('admin.setting.editsubCategory');
 	Route::post('/update-sub-category', 'SubCategoryController@updateSubCategory')->name('admin.category.updateSubCategory');
 	Route::post('/delate-sub-category', 'SubCategoryController@deletesubCategory')->name('admin.setting.deletesubCategory');
+	Route::post('/search-sub-category', 'SubCategoryController@searchsubCategory')->name('admin.setting.searchsubCategory');
+
+
 
 	//setting/units
 	Route::get('/units', 'UnitsController@units')->name('admin.units');

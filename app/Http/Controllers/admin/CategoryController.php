@@ -18,8 +18,8 @@ class CategoryController extends Controller
       // Get the category code from the 'systems' table.
       $categoryCode = DB::table('systems')->where('id', '1')->value('categoryCode');
   
-      // Fetch all categories.
-      $categories = Category::all();
+      // Fetch all categories with pagination.
+      $categories = Category::paginate(20); // Correctly use paginate here
   
       // Get the last ID from the 'categories' table. Handle the case where the table is empty.
       $lastCategory = Category::orderBy('id', 'desc')->first();
@@ -161,5 +161,35 @@ class CategoryController extends Controller
       ->delete();
     Toastr::success('category Deleted');
     return redirect()->route('admin.category');
+  }
+
+
+  //search product
+  public function searchCategory(Request $request)
+  {
+      $Categories = DB::table('categories')
+          ->where('id', 'like', '%' . $request->key . '%')
+          ->orWhere('name', 'like', '%' . $request->key . '%')
+          ->orWhere('code', 'like', '%' . $request->key . '%')
+          ->orWhere('description', 'like', '%' . $request->key . '%')
+          ->limit(10)
+          ->get();
+  
+      if (!$Categories->isEmpty()) {
+          foreach ($Categories as $Category) {
+              // Render the HTML for each sub-category result.
+              echo '
+                  <p class="list-group-item list-group-item-action  mx-0 py-2 view" 
+                    style="font-size: 13px; cursor:pointer;" 
+                    
+                    data-vid="' . $Category->id . '">
+                      <i class="fa-fw fa fa-eye"></i> ' . htmlspecialchars($Category->name) . '
+                  </p>
+                  
+              ';
+          }
+      } else {
+          echo "<p>No  Category found.</p>";
+      }
   }
 }
