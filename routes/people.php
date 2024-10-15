@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 
 	//people/supplier
 	Route::get('/supplierList', 'SupplierController@supplierList')->name('admin.supplierList');
+	Route::get('/supplierList2', 'SupplierController@supplierList2')->name('admin.supplierList2');
 	Route::get('/supplierAdd', 'SupplierController@supplierAdd')->name('admin.supplierAdd');
 	Route::post('/supplier-save', 'SupplierController@supplierSave')->name('admin.supplier.supplierSave');
 	Route::post('/supplier-delete', 'SupplierController@supplierDelete')->name('admin.supplier.supplierDelete');

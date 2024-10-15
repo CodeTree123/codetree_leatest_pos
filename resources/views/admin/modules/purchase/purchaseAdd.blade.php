@@ -164,9 +164,6 @@ Add Purchase- Admin Dashboard
 								<label>Supplier *</label>
 								<select class="custom-select" name="supplier_id" id="supplier_id">
 									<option selected value="">Select Supplier</option>
-									{{-- @foreach($suppliers as $supplier)
-								<option value="{{$supplier->id}}">{{$supplier->company}}({{$supplier->name}})</option>
-									@endforeach --}}
 								</select>
 							</div>
 							<div class="form-group col-md-6">
@@ -245,25 +242,29 @@ Add Purchase- Admin Dashboard
 			}
 		});
 
-		$('#supplier_id').select2({
-			theme: "bootstrap",
-			ajax: {
-				url: "{{ route('admin.purchase.searchSupplier') }}",
-				dataType: 'json',
-				delay: 250,
-				processResults: function(data) {
-					return {
-						results: $.map(data, function(item) {
-							return {
-								text: item.company,
-								id: item.id
-							}
-						})
-					};
-				},
-				cache: true
-			}
-		});
+
+		
+	$('#supplier_id').select2({
+        theme: "bootstrap",
+        ajax: {
+            url: '/people/supplierList2',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term // search term
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data // select2 expects an array of {id, text} objects
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0 // start searching after 1 character
+    });
+
 
 		//update product qty
 		$(".pro_qty").on('change', function() {

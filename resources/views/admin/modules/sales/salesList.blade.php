@@ -183,6 +183,7 @@ Sales List- Admin Dashboard
 
 		function viewSale(code, billerName) {
 			//ajax
+			$("#loader").show();
 			$.ajax({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -196,9 +197,11 @@ Sales List- Admin Dashboard
 				//dataType:'json',
 				success: function(data) {
 					$(".modal-data").html(data);
+					$("#loader").hide();
 					$('.saleInfoModal').modal('show');
 				},
 				error: function() {
+					$("#loader").hide();
 					toastr.error("Something went Wrong, Please Try again.");
 				}
 			});

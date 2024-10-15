@@ -106,17 +106,29 @@ class CustomerController extends Controller
       return redirect()->route('admin.customerList');
    }
 
-   public function customerDelete(Request $request){
-      try{
-         DB::table('customers')->where('id',$request->id)->delete();
-         Toastr::success('Customer Deleted');
-         return redirect()->route('admin.modules.people.customer.customerList');
-       }catch(\Exception $e)
-       {
-         session()->flash('error-message',$e->getMessage());
-             return redirect()->back();
+   public function customerDelete(Request $request)
+   {
+       try {
+           // Check if the customer has any sales records
+           $salesCount = DB::table('sales')->where('customer_id', $request->id)->count();
+   
+           if ($salesCount > 0) {
+               // If sales records exist, don't allow deletion
+               Toastr::error('Customer cannot be deleted. Sales records are associated with this customer.');
+               return redirect()->back();
+           }
+   
+           // If no sales records found, proceed with deletion
+           DB::table('customers')->where('id', $request->id)->delete();
+           Toastr::success('Customer Deleted');
+           return redirect()->route('admin.modules.people.customer.customerList');
+       } catch (\Exception $e) {
+           // Handle any unexpected errors
+           session()->flash('error-message', $e->getMessage());
+           return redirect()->back();
        }
    }
+   
    public function customerGroup()
    {
       $customerGroups = CustomerGroup::paginate(10);

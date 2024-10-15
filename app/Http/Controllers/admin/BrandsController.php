@@ -20,6 +20,21 @@ class BrandsController extends Controller
     return view('admin.modules.setting.brands.brands')->with(['brands' => $brands, 'brandCode' => $brandCode]);
   }
 
+
+  public function brands2(Request $request)
+  {
+    $search = $request->input('q');
+    $products = Brands::where('name', 'like', "%$search%")
+      ->limit(5)
+      ->get();
+
+    $formattedProducts = $products->map(function ($product) {
+      return ['id' => $product->id, 'text' => $product->name];
+    });
+
+    return response()->json($formattedProducts);
+  }
+
   //uploads image
   protected function imageUpload($request)
   {

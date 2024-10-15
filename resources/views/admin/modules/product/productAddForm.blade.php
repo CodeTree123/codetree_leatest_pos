@@ -10,6 +10,27 @@ Add New Product- Admin Dashboard
 	input['text']{
 		border-radius: 0px;
 	}
+	#supplierid  + .select2-container .select2-selection {
+    height: 38px;
+    line-height: 38px;
+}
+
+   #categoryid + .select2-container .select2-selection {
+    height: 38px;
+    line-height: 38px;
+}
+
+   #subcategory + .select2-container .select2-selection {
+    height: 38px;
+    line-height: 38px;
+}
+
+#brandid + .select2-container .select2-selection {
+    height: 38px;
+    line-height: 38px;
+}
+
+ 
 </style>
 <div class="col-md-12 mt-5 pt-3 border-bottom">
 	<div class="text-dark px-0" >
@@ -61,12 +82,21 @@ Add New Product- Admin Dashboard
 						@csrf
 						<div class="form-row">
 							<div class="form-group col-6">
-								<label for="formGroupExampleInput2">Supplier<i class="fa-fw fa fa-plus-circle"></i></label>
+								<!-- <label for="formGroupExampleInput2">Supplier<i class="fa-fw fa fa-plus-circle"></i></label>
 								<select class="custom-select" name="supplier">
 									@foreach($suppliers as $supplier)
 									<option value="{{$supplier->id}}">{{$supplier->company}}({{$supplier->name}})</option>
 									@endforeach
-								</select>
+								</select> -->
+
+
+								<div class="form-group">
+									<label for="supplierid">Supplier <i class="fa-fw fa fa-plus-circle"></i></label>
+									<select class="form-control select2" name="supplier" id="supplierid" >
+										<option value="" disabled selected>Select a supplier</option>
+									</select>
+								</div>
+
 							</div>
 							<div class="form-group col-6">
 								<label>Product Name *</label>
@@ -101,16 +131,19 @@ Add New Product- Admin Dashboard
 							</div>
 							<div class="form-group col-6">
 								<label>Product Band</label>
-								<select class="custom-select" name="brand">
+								<!-- <select class="custom-select" name="brand">
 									<option value="">Select Brand</option>
 									@foreach($brands as $brand)
 									<option value="{{$brand->id}}">{{$brand->name}}</option>
 									@endforeach
+								</select> -->
+								<select class="select2 form-control" name="brand" id="brandid">
+								<option value="">Select Brand</option>
 								</select>
 							</div>
 							<div class="form-group col-6">
 								<label>Product Unit</label>
-								<select class="custom-select" name="unit">
+								<select class="custom-select" name="unit" id="supplierid">
 									@foreach($units as $unit)
 									<option value="{{$unit->id}}">{{$unit->name}}</option>
 									@endforeach
@@ -219,6 +252,50 @@ $(document).ready(function() {
         $('#subcategory').select2('open');
         $('#subcategory').select2('close');
     });
+
+
+	$('#supplierid').select2({
+        
+        ajax: {
+            url: '/people/supplierList2',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term // search term
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data // select2 expects an array of {id, text} objects
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0 // start searching after 1 character
+    });
+
+	$('#brandid').select2({
+        
+        ajax: {
+            url: '/setting/brands2',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term // search term
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data // select2 expects an array of {id, text} objects
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0 // start searching after 1 character
+    });
+
 });
 </script>
 @stop

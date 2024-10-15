@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin'], function ()
 
 	//setting/brands
 	Route::get('/brands', 'BrandsController@brands')->name('admin.brands');
+	Route::get('/brands2', 'BrandsController@brands2')->name('admin.brands2');
 	Route::post('/saveBrand', 'BrandsController@saveBrand')->name('admin.brands.brandSave');
 	Route::post('/brands-detaols', 'BrandsController@brandDetails')->name('admin.setting.brandDetails');
 	Route::post('/edit-brand', 'BrandsController@editBrand')->name('admin.setting.editBrand');

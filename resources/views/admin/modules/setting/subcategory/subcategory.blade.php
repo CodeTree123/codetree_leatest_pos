@@ -143,12 +143,9 @@ Sub category -Admin Dashboard
 			<form method="POST" action="{{route('admin.subcategory.subcategorySave')}}" enctype="multipart/form-data">
 				@csrf
 				<div class="form-group">
-					<label>Parent Category</label>
-					<select class="custom-select" name="parentId">
-						<option selected value="NULL">Select Parent category</option>
-						@foreach($categories as $category)
-						<option value="{{$category->id}}">{{$category->name}}</option>
-						@endforeach
+				<label class="d-block">Parent Category</label>
+					<select class="select2 form-control" name="parentId" id="subcategoryid">
+						<option selected value="" disabled>Select Parent category</option>
 					</select>
 				</div>
 				<div class="form-group">
@@ -225,6 +222,29 @@ Sub category -Admin Dashboard
 		        }
 		    });
        });  
+
+
+	   $('#subcategoryid').select2({
+        ajax: {
+            url: '/setting/category2',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return {
+                    q: params.term // search term
+                };
+            },
+            processResults: function(data) {
+                return {
+                    results: data // select2 expects an array of {id, text} objects
+                };
+            },
+            cache: true
+        },
+        minimumInputLength: 0 // start searching after 1 character
+    });
+
+
    });
 </script>
 @endsection

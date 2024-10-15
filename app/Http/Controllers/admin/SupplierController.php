@@ -17,6 +17,26 @@ class SupplierController extends Controller
     $suppliers = Supplier::paginate(10);
     return view('admin.modules.people.supplier.supplierList')->with(['suppliers' => $suppliers]);
   }
+
+
+  public function supplierList2(Request $request)
+  {
+      $search = $request->input('q');
+      $suppliers = Supplier::where('name', 'like', "%$search%")
+          ->orWhere('company', 'like', "%$search%")
+          ->limit(5)
+          ->get();
+  
+      $formattedSuppliers = $suppliers->map(function ($supplier) {
+          return [
+              'id' => $supplier->id,
+              'text' => "{$supplier->company} ({$supplier->name})"
+          ];
+      });
+  
+      return response()->json($formattedSuppliers);
+  }
+
   public function supplierAdd()
   {
     return view('admin.modules.people.supplier.supplierAdd');
@@ -50,17 +70,29 @@ class SupplierController extends Controller
   }
 
 
-  public function supplierDelete(Request $request){
-    try{
-       DB::table('suppliers')->where('id',$request->id)->delete();
-       Toastr::success('Supplier Deleted');
-       return redirect()->route('admin.supplierList');
-     }catch(\Exception $e)
-     {
-       session()->flash('error-message',$e->getMessage());
-           return redirect()->back();
-     }
- }
+  public function supplierDelete(Request $request)
+  {
+      try {
+          // Check if the supplier has any associated products
+          $productCount = DB::table('products')->where('supplier', $request->id)->count();
+  
+          if ($productCount > 0) {
+              // If products exist, don't allow deletion
+              Toastr::error('Supplier cannot be deleted. Products are associated with this supplier.');
+              return redirect()->back();
+          }
+  
+          // If no products found, proceed with deletion
+          DB::table('suppliers')->where('id', $request->id)->delete();
+          Toastr::success('Supplier Deleted');
+          return redirect()->route('admin.supplierList');
+      } catch (\Exception $e) {
+          // Handle any unexpected errors
+          session()->flash('error-message', $e->getMessage());
+          return redirect()->back();
+      }
+  }
+  
 
   //supplier details
   public function supplierDetails($id)

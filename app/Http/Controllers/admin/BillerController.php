@@ -43,17 +43,29 @@ class BillerController extends Controller
 }
 
 
-public function billerDelete(Request $request){
-    try{
-       DB::table('billers')->where('id',$request->id)->delete();
-       Toastr::success('Biller Deleted');
-       return redirect()->route('admin.people.listBiller');
-     }catch(\Exception $e)
-     {
-       session()->flash('error-message',$e->getMessage());
-           return redirect()->back();
-     }
- }
+public function billerDelete(Request $request)
+{
+    try {
+        // Check if the biller has any associated sales records
+        $salesCount = DB::table('sales')->where('biller_id', $request->id)->count();
+
+        if ($salesCount > 0) {
+            // If sales records exist, don't allow deletion
+            Toastr::error('Biller cannot be deleted. Sales records are associated with this biller.');
+            return redirect()->back();
+        }
+
+        // If no sales records found, proceed with deletion
+        DB::table('billers')->where('id', $request->id)->delete();
+        Toastr::success('Biller Deleted');
+        return redirect()->route('admin.people.listBiller');
+    } catch (\Exception $e) {
+        // Handle any unexpected errors
+        session()->flash('error-message', $e->getMessage());
+        return redirect()->back();
+    }
+}
+
 
 public function listBiller()
 {
