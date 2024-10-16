@@ -38,7 +38,7 @@ class PosController extends Controller
   public function index()
   {
     $customers = Customer::all();
-    $allProducts = Products::all();
+    $allProducts = Products::with('promotions')->get();
     $categories = Category::all();
     $brands = Brands::all();
     $expenseCats = ExpenseCategory::all();
@@ -49,6 +49,8 @@ class PosController extends Controller
     $billers = Biller::all();
     $productCode = DB::table('systems')->where('id', '1')->value('productCode');
     $stores = Store::all();
+
+    
     return view('admin.modules.pos.posScreen')->with([
       'allProducts' => $allProducts,
       'categories' => $categories,
@@ -105,28 +107,65 @@ class PosController extends Controller
 
   public function addToCart(Request $request)
   {
-    // Cart::setGlobalTax(0);
-    // Cart::setGlobalDiscount(0);
-    $product_name = DB::table('products')->where('id', $request->pro_id)->value('name');
-    $product_id = DB::table('products')->where('id', $request->pro_id)->value('id');
-    $purchase_price = DB::table('products')->where('id', $request->pro_id)->value('sell_price');
-    Cart::add($product_id, $product_name, 1, $purchase_price);
-    return view('admin.modules.pos.cartProduct');
+      // Fetch the product with its promotions using Eloquent relationships
+      $product = Products::with('promotions')->where('id', $request->pro_id)->first();
+  
+      // Default to the original price
+      $finalPrice = $product->sell_price;
+  
+      // Check if the product has promotions and calculate the discounted price
+      if ($product->promotions->isNotEmpty()) {
+          // Get the latest promotion based on the start date (if multiple exist)
+          $latestPromotion = $product->promotions
+          ->where('status', 'Active')  // Only consider active promotions
+          ->sortByDesc('created_at')
+          ->first();
+  
+          if ($latestPromotion) {
+              $promotionAmount = $latestPromotion->promotion_ammount; // Get the discount percentage
+              $finalPrice = $product->sell_price - ($product->sell_price * ($promotionAmount / 100));
+          }
+      }
+  
+      // Add the product to the cart with the discounted price (if applicable)
+      Cart::add($product->id, $product->name, 1, $finalPrice);
+  
+      // Return the updated cart view
+      return view('admin.modules.pos.cartProduct');
   }
+  
 
 
 
   public function addToCartWithBar(Request $request)
   {
-    // Cart::setGlobalTax(0);
-    // Cart::setGlobalDiscount(0);
-    $product_name = DB::table('products')->where('bar_code', $request->bar_id)->value('name');
-    $product_id = DB::table('products')->where('bar_code', $request->bar_id)->value('id');
-    $purchase_price = DB::table('products')->where('bar_code', $request->bar_id)->value('sell_price');
-    Cart::add($product_id, $product_name, 1, $purchase_price);
-    return view('admin.modules.pos.cartProduct');
+      // Fetch the product by barcode along with its promotions using Eloquent relationships
+      $product = Products::with('promotions')->where('bar_code', $request->bar_id)->first();
+  
+      // Default to the original price
+      $finalPrice = $product->sell_price;
+  
+      // Check if the product has promotions and calculate the discounted price
+      if ($product->promotions->isNotEmpty()) {
+          // Get the latest promotion based on the start date (if multiple exist)
+          $latestPromotion = $product->promotions
+          ->where('status', 'Active')  // Only consider active promotions
+          ->sortByDesc('created_at')
+          ->first();
+  
+          if ($latestPromotion) {
+              $promotionAmount = $latestPromotion->promotion_ammount; // Get the discount percentage
+              $finalPrice = $product->sell_price - ($product->sell_price * ($promotionAmount / 100));
+          }
+      }
+  
+      // Add the product to the cart with the discounted price (if applicable)
+      Cart::add($product->id, $product->name, 1, $finalPrice);
+  
+      // Return the updated cart view
+      return view('admin.modules.pos.cartProduct');
   }
-
+  
   public function removeItem(Request $request)
   {
     $rowId = $request->rowId;

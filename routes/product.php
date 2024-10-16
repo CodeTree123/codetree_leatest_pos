@@ -33,12 +33,4 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'prefix' => 
     Route::post('/delete/promotion', 'ProductController@deleteProomotion')->name('admin.product.promotionDelete');
     Route::post('/edit-Promotion', 'ProductController@PromotionEdit')->name('admin.product.PromotionEdit');
     Route::post('/update-Promotion-information', 'ProductController@updatePromotion')->name('admin.product.updatePromotion');
-
-    //product Promo code Module
-    Route::get('/promoCode/list', 'ProductController@promoCodelist')->name('admin.product.promoCodelist');
-    Route::get('/promoCode/Add', 'ProductController@promoCodeadd')->name('admin.product.promoCode');
-    Route::post('/promoCode-save', 'ProductController@promoCodeSave')->name('admin.product.promoCodeSave');
-    Route::post('/delete/promoCode', 'ProductController@deletepromoCode')->name('admin.product.promoCodeDelete');
-    Route::post('edit-promoCode', 'ProductController@promoCodeEdit')->name('admin.product.promoCodeEdit');
-    Route::post('/update-promoCode-information', 'ProductController@updatepromoCode')->name('admin.product.updatepromoCode');
 });

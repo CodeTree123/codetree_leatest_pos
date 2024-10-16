@@ -82,10 +82,8 @@ All Promotions- Admin Dashboard
                             <tr>
                                 <th class="font-weight-bold" scope="col">#</th>
                                 <th class="font-weight-bold" scope="col">Name</th>
-                                <th class="font-weight-bold" scope="col">Start Date</th>
-                                <th class="font-weight-bold" scope="col">End Date</th>
                                 <th class="font-weight-bold" scope="col">Status</th>
-                                <th class="font-weight-bold" scope="col">Amount</th>
+                                <th class="font-weight-bold" scope="col">Discount(%)</th>
                                 <th class="font-weight-bold" scope="col">Actions</th>
                                 <th class="font-weight-bold" scope="col">Products</th>
 
@@ -98,10 +96,9 @@ All Promotions- Admin Dashboard
                                 <tr>
                                     <td>{{ $counter }}</td>
                                     <td>{{ $promotion->promotion_name }}</td>
-                                    <td>{{ $promotion->promotion_start_duration }}</td>
-                                    <td>{{ $promotion->promotion_end_duration }}</td>
+
                                     <td>{{ $promotion->status }}</td>
-                                    <td>{{ $promotion->promotion_ammount }}</td>
+                                    <td>{{ $promotion->promotion_ammount }}%</td>
 
                                     <td style="width:120px;">
                                         <p class="btn bg_p_primary p-1 mb-0 px-2 edit-promotion" data-promotionid="{{ $promotion->id }}" 
@@ -132,16 +129,16 @@ All Promotions- Admin Dashboard
                                         </script>
                                         <p class="btn bg_secondary_grey mb-0 p-1 px-2 del-btn {{ 'btn' . $counter }}" 
                                         data-store_id="{{ $promotion->id }}" 
-                                        style="font-size: 13px;cursor:pointer;" title="Delete product">
+                                        style="font-size: 13px;cursor:pointer;" title="Delete promotion">
                                             <i class="fa fa-trash"></i>
                                         </p>
                                     </td>
 
                                     <td >
                                         <ul class="ml-3">
-                                            @foreach($promotion->productNames as $productName)
-                                                <li>{{ $productName }}</li>
-                                            @endforeach
+                                        @foreach($promotion->productDetails as $product)
+                                            <p id="{{ $product->id }}">{{ $product->name }}</p>
+                                        @endforeach
                                         </ul>
                                     </td>
                                 </tr>
@@ -166,28 +163,29 @@ All Promotions- Admin Dashboard
 </div>
 <script>
     //edit promotion
-       $(".edit-promotion").click(function(){
-         var promotionid=$(this).data('promotionid');
-        //ajax
-		 $.ajax({
-		   headers: {
-		    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-		  },
-		  url:"{{route('admin.product.PromotionEdit')}}",
-		  type:"POST",
-		  data:{'promotionid':promotionid},
-		        //dataType:'json',
-		        success:function(data){
-		        	$(".modal-data").html(data);
-		          $('.promotionModal').modal('show');
-		        },
-		        error:function(){
-		          toastr.error("Something went Wrong, Please Try again.");
-		        }
-		      });
+    $(document).ready(function () {
+    $(".edit-promotion").click(function () {
+        var promotionid = $(this).data('promotionid');
 
-		  //end ajax
-       });
+        // AJAX Request
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "{{ route('admin.product.PromotionEdit') }}",
+            type: "POST",
+            data: { 'promotionid': promotionid },
+            success: function (data) {
+                
+                $(".modal-data").html(data);
+                $('.promotionModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                toastr.error("Something went wrong, Please try again.");
+            }
+        });
+    });
+});
 
 
 

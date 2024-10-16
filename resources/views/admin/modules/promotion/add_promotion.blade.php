@@ -59,9 +59,6 @@ Add New Promotion- Admin Dashboard
                 <div class="col-lg-12">
                     <p class="introtext">Please fill in the information below. The field labels marked with * are required input fields.</p>
                 </div>
-                @if(Session::has('error-message'))
-                <p class="alert alert-danger">{{Session::get('error-message')}}</p>
-                @endif
                 <div class="offset-md-1 col-sm-12 col-md-10 col-xs-10 p-3  border">
                     <form method="post" action="{{route('admin.product.promotionSave')}}">
                         @csrf
@@ -81,16 +78,7 @@ Add New Promotion- Admin Dashboard
                             </div>
 
                             <div class="form-group col-6">
-                                <label>Starting Duration</label>
-                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promotion_start_duration" placeholder="Starting Time">
-                            </div>
-                            <div class="form-group col-6">
-                                <label>Ending Duration</label>
-                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promotion_end_duration" placeholder="Ending Time">
-
-                            </div>
-                            <div class="form-group col-6">
-                                <label>Promotion Price*</label>
+                                <label>Promotion Discount (%)*</label>
                                 <input type="number" class="form-control" name="promotion_ammount" placeholder="promotion  Price">
                             </div>
 
