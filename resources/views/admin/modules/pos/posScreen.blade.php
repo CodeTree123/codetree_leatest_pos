@@ -159,9 +159,9 @@ use App\Http\Controllers\admin\StockController;
             </td>
             <td class="text-right" style="padding: 5px 10px;font-size: 14px; font-weight:bold;"><span id="ttax2">{{Cart::tax()}}</span>
             </td>
-            <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
-            </td>
-            <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
+            <!-- <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
+            </td> -->
+            <!-- <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
                 @if(Session::has('saleDiscount'))
                 {{number_format(Session::get('saleDiscount'))}}
                 @else
@@ -169,7 +169,7 @@ use App\Http\Controllers\admin\StockController;
                 @endif
 
               </span>
-            </td>
+            </td> -->
           </tr>
           <tr>
             <td style="padding: 5px 10px; border-top: 1px solid #666;border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;" colspan="2">Total Payable<a href="#" id="pshipping"></a>
@@ -527,7 +527,7 @@ use App\Http\Controllers\admin\StockController;
   </div>
 </div>
 <!--Discount modal-->
-<div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
+<!-- <div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content p-3">
       <div class="modal-header">
@@ -559,7 +559,7 @@ use App\Http\Controllers\admin\StockController;
       </div>
     </div>
   </div>
-</div>
+</div> -->
 <!--Payment modal-->
 <div class="modal fade bd-example-modal-lg payment_modal" tabindex="-1" role="dialog" aria-labelledby="payment_modal" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -733,38 +733,38 @@ use App\Http\Controllers\admin\StockController;
       //end ajax
     });
     //discount add function
-    $(".discount_add_btn").click(function() {
-      var discount = $("#discount_input").val();
-      var discount_type = $("#discount_type").val();
-      if ($.isNumeric(discount)) {
-        $.ajax({
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          },
-          url: "{{route('admin.pos.updateDiscount')}}",
-          type: "POST",
-          data: {
-            'discount': discount,
-            'discount_type': discount_type
-          },
-          //dataType:'json',
-          success: function(data) {
-            $("#print").html(data);
-            $('.discount_modal').modal('hide');
-          },
-          error: function() {
-            toastr.error("Something went Wrong, Please Try again.");
-          }
-        });
-      } else {
-        toastr.error("Please Enter a correct number.");
+    // $(".discount_add_btn").click(function() {
+    //   var discount = $("#discount_input").val();
+    //   var discount_type = $("#discount_type").val();
+    //   if ($.isNumeric(discount)) {
+    //     $.ajax({
+    //       headers: {
+    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //       },
+    //       url: "{{route('admin.pos.updateDiscount')}}",
+    //       type: "POST",
+    //       data: {
+    //         'discount': discount,
+    //         'discount_type': discount_type
+    //       },
+    //       //dataType:'json',
+    //       success: function(data) {
+    //         $("#print").html(data);
+    //         $('.discount_modal').modal('hide');
+    //       },
+    //       error: function() {
+    //         toastr.error("Something went Wrong, Please Try again.");
+    //       }
+    //     });
+    //   } else {
+    //     toastr.error("Please Enter a correct number.");
 
-      }
-      //ajax
+    //   }
+    //   //ajax
 
 
-      //end ajax
-    });
+    //   //end ajax
+    // });
     //search product by name or id or code
     $("#posProduct").keyup(function() {
       var key = $(this).val();

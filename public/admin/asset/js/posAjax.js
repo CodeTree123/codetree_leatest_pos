@@ -56,34 +56,34 @@ var tax=$("#tax_input").val();
   //end ajax
 });
 //discount add function
-$(".discount_add_btn").click(function(){
-var discount=$("#discount_input").val();
-if($.isNumeric(discount)){
-  $.ajax({
-   headers: {
-    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-  },
-  url:"{{route('admin.pos.updateDiscount')}}",
-  type:"POST",
-  data:{'discount':discount},
-        //dataType:'json',
-        success:function(data){
-          $("#print").html(data);
-         //data-dismiss=".tax_modal";
-          $('.discount_modal').modal('hide');
-        },
-        error:function(){
-          alert("Something went wrong .Please try again.");
-        }
-      });
-}else{
-  alert('Please Enter Currect Number.');
-}
-//ajax
+// $(".discount_add_btn").click(function(){
+// var discount=$("#discount_input").val();
+// if($.isNumeric(discount)){
+//   $.ajax({
+//    headers: {
+//     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//   },
+//   url:"{{route('admin.pos.updateDiscount')}}",
+//   type:"POST",
+//   data:{'discount':discount},
+//         //dataType:'json',
+//         success:function(data){
+//           $("#print").html(data);
+//          //data-dismiss=".tax_modal";
+//           $('.discount_modal').modal('hide');
+//         },
+//         error:function(){
+//           alert("Something went wrong .Please try again.");
+//         }
+//       });
+// }else{
+//   alert('Please Enter Currect Number.');
+// }
+// //ajax
   
 
-  //end ajax
-});
+//   //end ajax
+// });
 //search product by name or id or code
 $("#posProduct").keyup(function(){
   var key=$(this).val();

@@ -310,16 +310,6 @@ class PosController extends Controller
     $prefix = System::where('id', 1)->value('invoiceCode');
     $code = $prefix . '-' . sprintf("%08d", $last_sale);
 
-    // $totalAmount=Cart::total();
-    // $totalAmount=(float) str_replace(',', '', $totalAmount);
-    // $tax=Cart::tax();
-    // $tax=(float) str_replace(',', '', $tax);
-    // $discount=Cart::discount();
-    // $discount=(float) str_replace(',', '', $discount);
-    // $totalValue=$totalAmount+$discount;
-    // $due=$totalAmount-$request->paid;
-
-
     if (Session::has('saleDiscount')) {
       $totalAmount = Cart::total();
       $totalAmount = (float) str_replace(',', '', $totalAmount);

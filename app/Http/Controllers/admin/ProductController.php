@@ -10,6 +10,7 @@ use App\Units;
 use App\Category;
 use App\Brands;
 use App\Products;
+use App\Promocode;
 use App\Stock;
 use Picqer;
 use Illuminate\Support\Facades\DB;
@@ -508,5 +509,119 @@ class ProductController extends Controller
             return redirect()->back();
         }
     }
+
+
+
+
+
+
+
+
+    //promo Code  Module ADD
+    public function promoCodeadd()
+    {
+        return view('admin.modules.promoCode.addpromoCode');
+    }
+
+    public function promoCodeSave(Request $request) 
+    {
+        $request->validate([
+          
+            'name'                     => 'required',
+            'discount'                 => 'required|numeric',
+            'promocode_start_duration' => 'required|date',
+            'promocode_end_duration'   => 'required|date|after_or_equal:promocode_start_duration',
+            'user_limit'               => 'required|integer|min:1',
+            'minimum_order_ammount'            => 'required|numeric|min:0'
+        ]);
+    
+        $promocode = new Promocode();
+      
+        $promocode->name                     = $request->name;
+        $promocode->discount                 = $request->discount;
+        $promocode->promocode_start_duration = $request->promocode_start_duration;
+        $promocode->promocode_end_duration   = $request->promocode_end_duration;
+        $promocode->user_limit               = $request->user_limit;
+        $promocode->minimum_order_ammount    = $request->minimum_order_ammount;
+    
+        try {
+            $promocode->save();
+            Toastr::success('Promo Code Added Successfully.');
+            return redirect()->route('admin.product.promoCodelist');
+        } catch (\Exception $e) {
+            session()->flash('error-message', $e->getMessage());
+            return redirect()->back();
+        }
+    }
+    public function promoCodelist()
+    {
+
+        $promocode = promocode::all();
+
+        return view('admin.modules.promoCode.list_promocode')->with([
+            'promocode' => $promocode,
+        ]);
+    }
+    public function deletepromoCode(Request $request)
+    {
+        $request->validate(
+            [
+                'id' => 'required|numeric'
+            ]
+        );
+        try {
+            $product_check = DB::table('promocodes')->where('id', $request->id)->first();
+            DB::table('promocodes')->where('id', $request->id)->delete();
+            Toastr::success('promo code deleted successfully');
+            return redirect()->route('admin.product.promoCodelist');
+        } catch (\Exception $e) {
+            session()->flash('error-message', $e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    //edit promotion
+    public function promoCodeEdit(Request $request)
+    {
+
+        $promoCode = DB::table('promocodes')->where('id', $request->promotionid)->first();
+        return view('admin.modules.promoCode.Editpromocode')->with([
+            'promoCode' => $promoCode,
+
+        ]);
+    }
+    //update product information
+    public function updatepromoCode(Request $request)
+    {
+        $request->validate([
+            
+            'name'                     => 'required',
+            'discount'                 => 'required|numeric',
+            'promocode_start_duration' => 'required|date',
+            'promocode_end_duration'   => 'required|date|after_or_equal:promocode_start_duration',
+            'user_limit'               => 'required|integer|min:1',
+            'minimum_order_ammount'    => 'required|numeric|min:0'
+        ]);
+    
+        try {
+            DB::table('promocodes')->where('id', $request->id)
+                ->update([
+                    'name'                     => $request->name,
+                    'discount'                 => $request->discount,
+                    'promocode_start_duration' => $request->promocode_start_duration,
+                    'promocode_end_duration'   => $request->promocode_end_duration,
+                    
+                    'user_limit'               => $request->user_limit,
+                    'minimum_order_ammount'    => $request->minimum_order_ammount,
+                ]);
+    
+            Toastr::success('Promo Code Updated Successfully.');
+            return redirect()->route('admin.product.promoCodelist');
+        } catch (\Exception $e) {
+            session()->flash('error-message', $e->getMessage());
+            return redirect()->back();
+        }
+    }
+    
     
 }

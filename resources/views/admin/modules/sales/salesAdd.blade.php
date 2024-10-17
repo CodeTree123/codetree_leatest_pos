@@ -202,7 +202,7 @@ Add Sale- Admin Dashboard
                             <td class="text-right" style="padding: 5px 10px;font-size: 14px; font-weight:bold;"><span
                                     id="ttax2">{{ Cart::tax() }}</span>
                             </td>
-                            <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i
+                            <!-- <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i
                                         class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
                             </td>
                             <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
@@ -212,7 +212,7 @@ Add Sale- Admin Dashboard
                                     {{ Cart::discount() }}
                                     @endif
                                 </span>
-                            </td>
+                            </td> -->
                         </tr>
                         <tr>
                             <td style="padding: 5px 10px; border-top: 1px solid #666;border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;"
@@ -328,7 +328,7 @@ Add Sale- Admin Dashboard
     </div>
 </div>
 <!--Discount modal-->
-<div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog"
+<!-- <div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog"
     aria-labelledby="discount_modal" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content p-3">
@@ -353,10 +353,10 @@ Add Sale- Admin Dashboard
             </div>
             <div class="modal-footer">
                 <p type="button" class="btn btn-primary discount_add_btn">Update</p>
-            </div>
-        </div>
+            </div> -->
+<!--         </div>
     </div>
-</div>
+</div> -->
 <!--Product update modal-->
 <div class="modal fade bd-example-modal-lg product_info" tabindex="-1" role="dialog"
     aria-labelledby="payment_modal" aria-hidden="true">
@@ -521,38 +521,38 @@ Add Sale- Admin Dashboard
             });
         });
         //set dicount
-        $(".discount_add_btn").click(function() {
-            var discount = $("#discount_input").val();
-            var discount_type = $("#discount_type").val();
-            if ($.isNumeric(discount)) {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: "{{ route('admin.sales.SalesDiscount') }}",
-                    type: "POST",
-                    data: {
-                        'discount': discount,
-                        'discount_type': discount_type
-                    },
-                    success: function(data) {
-                        $('.discount_modal').modal('hide');
-                        if (data == 1) {
-                            location.reload(true);
-                        } else {
-                            alert('Something Went wrong Please Try Again.');
-                        }
-                    },
-                    error: function() {
-                        toastr.error("Something went Wrong, Please Try again.");
-                    }
-                });
-            } else {
-                toastr.error("Please Enter a correct number.");
+        // $(".discount_add_btn").click(function() {
+        //     var discount = $("#discount_input").val();
+        //     var discount_type = $("#discount_type").val();
+        //     if ($.isNumeric(discount)) {
+        //         $.ajax({
+        //             headers: {
+        //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //             },
+        //             url: "{{ route('admin.sales.SalesDiscount') }}",
+        //             type: "POST",
+        //             data: {
+        //                 'discount': discount,
+        //                 'discount_type': discount_type
+        //             },
+        //             success: function(data) {
+        //                 $('.discount_modal').modal('hide');
+        //                 if (data == 1) {
+        //                     location.reload(true);
+        //                 } else {
+        //                     alert('Something Went wrong Please Try Again.');
+        //                 }
+        //             },
+        //             error: function() {
+        //                 toastr.error("Something went Wrong, Please Try again.");
+        //             }
+        //         });
+        //     } else {
+        //         toastr.error("Please Enter a correct number.");
 
-            }
+        //     }
 
-        });
+        // });
 
         //update product info
         $(".update-product").click(function() {
