@@ -72,19 +72,21 @@ Add New Promotion- Admin Dashboard
                                 <input type="number" class="form-control" name="discount" placeholder="Enter Discount  Price">
                             </div>
                             <div class="form-group col-6">
+                                <label>User Limit*</label>
+                                <input type="number" class="form-control" name="user_limit" placeholder="Enter User Limit">
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Minimum Order Ammount(bill)*</label>
+                                <input type="number" class="form-control" name="minimum_order_ammount" placeholder="Enter Minimum Order Ammount">
+                            </div>
+
+                            <div class="form-group col-6">
                                 <label>Starting Duration</label>
                                 <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promocode_start_duration" placeholder="Starting Time">
                             </div>
                             <div class="form-group col-6">
                                 <label>Ending Duration</label>
                                 <input type="date" value="{{ date('Y-m-d') }}" class="form-control" name="promocode_end_duration" placeholder="Ending Time">
-                            </div>
-                            <div class="form-group col-6">
-                                <label for="formGroupExampleInput2">Status <i class="fa-fw fa fa-plus-circle"></i></label>
-                                <select class="custom-select" name="status">
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
                             </div>
                             <div class="form-group col-12">
                                 <input type="submit" class="btn bg_p_primary col-12" value="Add Promo Code">

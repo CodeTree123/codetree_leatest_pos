@@ -86,7 +86,8 @@ All Products- Admin Dashboard
                                 <th class="font-weight-bold" scope="col">Discount</th>
                                 <th class="font-weight-bold" scope="col">Start Date</th>
                                 <th class="font-weight-bold" scope="col">End Date</th>
-                                <th class="font-weight-bold" scope="col">Status</th>
+                                <th class="font-weight-bold" scope="col">User Limit</th>
+                                <th class="font-weight-bold" scope="col">Minimum Ordered Price</th>
                                 <th class="font-weight-bold" scope="col">Actions</th>
 
                             </tr>
@@ -101,7 +102,8 @@ All Products- Admin Dashboard
                                 <td>{{$promo->discount}}</td>
                                 <td>{{$promo->promocode_start_duration}}</td>
                                 <td>{{$promo->promocode_end_duration}}</td>
-                                <td>{{$promo->status}}</td>
+                                <td>{{$promo->user_limit}}</td>
+                                <td>{{$promo->minimum_order_ammount}}</td>
 
                                 <td style="width:120px;">
                                     <p class="btn bg_p_primary p-1 mb-0 px-2 edit-promotion" data-promotionid="{{$promo->id}}" style="font-size: 13px;cursor:pointer;" title="Edit promotion"> <i class="fa fa-edit"></i></p>
@@ -159,7 +161,7 @@ All Products- Admin Dashboard
 		   headers: {
 		    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 		  },
-		  url:"{{route('admin.product.PromotionEdit')}}",
+		  url:"{{route('admin.product.promoCodeEdit')}}",
 		  type:"POST",
 		  data:{'promotionid':promotionid},
 		        //dataType:'json',

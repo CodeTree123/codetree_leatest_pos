@@ -139,7 +139,8 @@ Sub category -Admin Dashboard
                     		@endforeach
                     	});
                     </script>
-					<div class="d-flex justify-content-center mt-2">
+					</table>
+					<div class="d-flex justify-content-end mt-2">
                      {{ $subcategories->links() }}
                     </div>
 				</div>

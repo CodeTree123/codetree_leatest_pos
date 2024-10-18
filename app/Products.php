@@ -33,5 +33,9 @@ class Products extends Model
        return $this->hasMany(SalesProducts::class, 'pro_id', 'id');
    }
 
+   public function promotions()
+    {
+        return $this->belongsToMany(Promotion::class, 'promotion_product');
+    }
 
 }

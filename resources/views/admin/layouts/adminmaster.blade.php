@@ -467,7 +467,6 @@
                             <a href="{{ route('admin.product.promotionlist') }}" class="dropdown-item"
                                 href="">Promotion List</a>
                         </li>
-
                         <li>
                             <a href="{{ route('admin.product.promoCode') }}" class="dropdown-item"
                                 href="">Add Promo Code</a>

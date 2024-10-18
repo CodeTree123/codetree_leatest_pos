@@ -10,6 +10,7 @@ use App\Units;
 use App\Category;
 use App\Brands;
 use App\Products;
+use App\Promocode;
 use App\Stock;
 use Picqer;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,6 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\File;
 use Cart;
 use App\Exports\ProductsExport;
-use App\promocode;
 use App\promotion;
 use App\SubCategory;
 use Maatwebsite\Excel\Facades\Excel;
@@ -368,65 +368,75 @@ class ProductController extends Controller
     //promotion  Module ADD
     public function promotionadd()
     {
-        $categories = Category::all();
-        $subcategories = SubCategory::all();
-        $products = Products::all();
-        // dd($subcategories);
-        return view('admin.modules.promotion.add_promotion')->with([
-            'categories' => $categories,
-            'subcategories' => $subcategories,
-            'products' => $products
-        ]);
+        return view('admin.modules.promotion.add_promotion');
     }
 
     public function promotionSave(Request $request)
     {
         $request->validate([
-            'status'                     => 'required',
-            'promotion_name'             => 'required',
-            'promotion_category_name'    => '',
-            'promotion_subcategory_name' => 'required',
-            'promotion_start_duration'   => 'required',
-            'promotion_end_duration'     => 'required',
-            'promotion_ammount'          => 'required',
-            'Promotion_product'          => 'required',
-            'Promotion_product_code'     => 'required',
-
+            'status' => 'required',
+            'promotion_name' => 'required|unique:promotions,promotion_name',
+            'promotion_ammount' => 'required',
+            'Promotion_product' => 'required|array',
         ]);
-
-
-        $promotion = new promotion();
-        $promotion->status                      = $request->status;
-        $promotion->promotion_name              = $request->promotion_name;
-        $promotion->Promotion_product_code      = $request->Promotion_product_code;
-        $promotion->promotion_category_name     = $request->promotion_category_name;
-        $promotion->promotion_subcategory_name  = $request->promotion_subcategory_name;
-        $promotion->promotion_start_duration    = $request->promotion_start_duration;
-        $promotion->promotion_end_duration      = $request->promotion_end_duration;
-        $promotion->promotion_ammount           = $request->promotion_ammount;
-        $promotion->Promotion_product           = $request->Promotion_product;
-        $promotion->Promotion_product_code      = $request->Promotion_product_code;
-
-
+    
+        // Prepare promotion data
+        $promotion = new Promotion();
+        $promotion->status = $request->status;
+        $promotion->promotion_name = $request->promotion_name;
+        $promotion->promotion_ammount = $request->promotion_ammount;
+        $promotion->Promotion_product = json_encode($request->Promotion_product);
+    
+        // Get existing product IDs associated with any promotions
+        $existingProductIds = DB::table('promotion_product')->pluck('products_id')->toArray();
+    
+        // Check for duplicate product IDs
+        $duplicateProductIds = array_intersect($request->Promotion_product, $existingProductIds);
+        
+        if (!empty($duplicateProductIds)) {
+            // If duplicates are found, throw an error and don't save
+            Toastr::error('Some products are already associated with another promotion: ');
+            return redirect()->back();
+        }
+    
         try {
+            // Save promotion and attach products
             $promotion->save();
-            Toastr::success('Promotion Added Successfully.');
+            $promotion->products()->attach($request->Promotion_product);
+    
+            Toastr::success('Promotion added successfully.');
             return redirect()->route('admin.product.promotionlist');
         } catch (\Exception $e) {
             session()->flash('error-message', $e->getMessage());
             return redirect()->back();
         }
     }
-
+    
+    
+    
     public function promotionlist()
     {
-
-        $promotions = promotion::all();
-
+        // Fetch all promotions
+        $promotions = Promotion::all();
+    
+        // Iterate over promotions and retrieve associated product IDs and names
+        $promotionsWithProducts = $promotions->map(function ($promotion) {
+            $productIds = json_decode($promotion->Promotion_product, true); // Decode product IDs
+            $products = Products::whereIn('id', $productIds)->get(['id', 'name']); // Fetch product IDs and names
+    
+            // Attach product details (IDs and names) to the promotion object
+            $promotion->productDetails = $products;
+            return $promotion;
+        });
+    
+        // Pass the modified collection to the view
         return view('admin.modules.promotion.lists_promostion')->with([
-            'promotions' => $promotions,
+            'promotions' => $promotionsWithProducts,
         ]);
     }
+    
+    
+    
 
     public function deleteProomotion(Request $request)
     {
@@ -445,56 +455,66 @@ class ProductController extends Controller
             return redirect()->back();
         }
     }
+
     //edit promotion
     public function PromotionEdit(Request $request)
     {
-        // return "hello";
-        $categories = Category::all();
-        $subcategories = SubCategory::all();
-        $products = Products::all();
-        $promotion = DB::table('promotions')->where('id', $request->promotionid)->first();
-        return view('admin.modules.promotion.Editpromotion')->with([
-            'categories' => $categories,
-            'subcategories' => $subcategories,
-            'products' => $products,
-            'promotion' => $promotion,
-        ]);
+        $promotion = Promotion::findOrFail($request->promotionid);
+    
+        // Decode the product IDs associated with the promotion
+        $productIds = json_decode($promotion->Promotion_product, true);
+    
+        // Retrieve product details (IDs and names)
+        $products = Products::whereIn('id', $productIds)->get(['id', 'name']);
+    
+        // Attach product details to the promotion object
+        $promotion->productDetails = $products;
+        // return compact('promotion', 'products');
+        // Return the view or HTML content for the modal
+        return view('admin.modules.promotion.Editpromotion', compact('promotion', 'products'));
     }
-    //update product information
+    
+    
     public function updatePromotion(Request $request)
     {
+        // Validate incoming request data
         $request->validate([
-            'status'                     => 'required',
-            'promotion_name'             => 'required',
-            'promotion_category_name'    => '',
-            'promotion_subcategory_name' => 'required',
-            'promotion_start_duration'   => 'required',
-            'promotion_end_duration'     => 'required',
-            'promotion_ammount'          => 'required',
-            'Promotion_product'          => 'required',
-            'Promotion_product_code'     => 'required',
-
+            'status'                   => 'required',
+            'promotion_name'           => 'required|string|max:255|unique:promotions,promotion_name,' . $request->id,
+            'promotion_ammount'        => 'required|numeric',
+            'Promotion_product'        => 'required|array', // Ensure it's an array
         ]);
-        $product_check = DB::table('promotions')->where('id', $request->id)->first();
-
-        // try{
-        DB::table('promotions')->where('id', $request->id)
-            ->update([
-                'promotion_name'             =>  $request->promotion_name,
-                'Promotion_product_code'     => $request->Promotion_product_code,
-                'promotion_category_name'    =>  $request->promotion_category_name,
-                'promotion_subcategory_name' => $request->promotion_subcategory_name,
-                'promotion_start_duration'   => $request->promotion_start_duration,
-                'promotion_end_duration'     => $request->promotion_end_duration,
-                'promotion_ammount'          => $request->promotion_ammount,
-                'Promotion_product'          => $request->Promotion_product,
-                'Promotion_product_code'     => $request->Promotion_product_code,
-                'status'                     => $request->status,
-
-            ]);
-        Toastr::success('promotions  Updated Successfully.');
-        return redirect()->back();
+    
+        // Find the promotion to be updated
+        $promotion = Promotion::findOrFail($request->id); // Throw a 404 if not found
+    
+        // Update promotion attributes
+        $promotion->status = $request->status;
+        $promotion->promotion_name = $request->promotion_name;
+        $promotion->promotion_ammount = $request->promotion_ammount;
+    
+        // Store the array as a JSON string in the Promotion_product column (if needed)
+        $promotion->Promotion_product = json_encode($request->Promotion_product);
+    
+        try {
+            $promotion->save(); // Save updated promotion data
+    
+            // Sync the associated products in the pivot table
+            $promotion->products()->sync($request->Promotion_product);
+    
+            Toastr::success('Promotion updated successfully.');
+            return redirect()->route('admin.product.promotionlist'); // Redirect to the promotion list
+        } catch (\Exception $e) {
+            session()->flash('error-message', $e->getMessage()); // Flash any errors
+            return redirect()->back();
+        }
     }
+
+
+
+
+
+
 
 
     //promo Code  Module ADD
@@ -503,27 +523,29 @@ class ProductController extends Controller
         return view('admin.modules.promoCode.addpromoCode');
     }
 
-    public function promoCodeSave(Request $request)
+    public function promoCodeSave(Request $request) 
     {
         $request->validate([
-            'status'                   => 'required',
+          
             'name'                     => 'required',
-            'discount'                 => 'required',
-            'promocode_start_duration' => 'required',
-            'promocode_end_duration'   => 'required',
-
-
+            'discount'                 => 'required|numeric',
+            'promocode_start_duration' => 'required|date',
+            'promocode_end_duration'   => 'required|date|after_or_equal:promocode_start_duration',
+            'user_limit'               => 'required|integer|min:1',
+            'minimum_order_ammount'            => 'required|numeric|min:0'
         ]);
-
-        $pomocode = new promocode();
-        $pomocode->status                     = $request->status;
-        $pomocode->name                       = $request->name;
-        $pomocode->discount                   = $request->discount;
-        $pomocode->promocode_start_duration   = $request->promocode_start_duration;
-        $pomocode->promocode_end_duration     = $request->promocode_end_duration;
-
+    
+        $promocode = new Promocode();
+      
+        $promocode->name                     = $request->name;
+        $promocode->discount                 = $request->discount;
+        $promocode->promocode_start_duration = $request->promocode_start_duration;
+        $promocode->promocode_end_duration   = $request->promocode_end_duration;
+        $promocode->user_limit               = $request->user_limit;
+        $promocode->minimum_order_ammount    = $request->minimum_order_ammount;
+    
         try {
-            $pomocode->save();
+            $promocode->save();
             Toastr::success('Promo Code Added Successfully.');
             return redirect()->route('admin.product.promoCodelist');
         } catch (\Exception $e) {
@@ -572,28 +594,34 @@ class ProductController extends Controller
     public function updatepromoCode(Request $request)
     {
         $request->validate([
-            'status'                   => 'required',
+            
             'name'                     => 'required',
-            'discount'                 => 'required',
-            'promocode_start_duration' => 'required',
-            'promocode_end_duration'   => 'required',
-
-
+            'discount'                 => 'required|numeric',
+            'promocode_start_duration' => 'required|date',
+            'promocode_end_duration'   => 'required|date|after_or_equal:promocode_start_duration',
+            'user_limit'               => 'required|integer|min:1',
+            'minimum_order_ammount'    => 'required|numeric|min:0'
         ]);
-        $product_check = DB::table('promocodes')->where('id', $request->id)->first();
-
-        // try{
-        DB::table('promocodes')->where('id', $request->id)
-            ->update([
-                'name'                     =>  $request->name,
-                'discount'                 => $request->discount,
-                'promocode_start_duration' =>  $request->promocode_start_duration,
-                'promocode_end_duration'   => $request->promocode_end_duration,
-                'status'                   => $request->status,
-
-
-            ]);
-        Toastr::success('promo Code  Updated Successfully.');
-        return redirect()->back();
+    
+        try {
+            DB::table('promocodes')->where('id', $request->id)
+                ->update([
+                    'name'                     => $request->name,
+                    'discount'                 => $request->discount,
+                    'promocode_start_duration' => $request->promocode_start_duration,
+                    'promocode_end_duration'   => $request->promocode_end_duration,
+                    
+                    'user_limit'               => $request->user_limit,
+                    'minimum_order_ammount'    => $request->minimum_order_ammount,
+                ]);
+    
+            Toastr::success('Promo Code Updated Successfully.');
+            return redirect()->route('admin.product.promoCodelist');
+        } catch (\Exception $e) {
+            session()->flash('error-message', $e->getMessage());
+            return redirect()->back();
+        }
     }
+    
+    
 }

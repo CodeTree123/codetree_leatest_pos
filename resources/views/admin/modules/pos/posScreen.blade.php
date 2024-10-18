@@ -10,6 +10,26 @@ use App\Http\Controllers\admin\StockController;
 
 ?>
 
+<style>
+.productItem {
+    display: flex; /* Use flexbox to align content */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: space-between; /* Ensure even spacing */
+    min-height: 300px; /* Set a consistent height */
+    padding: 20px; /* Padding inside the product item */
+    margin: 0 5px; /* Adjust side margins */
+    text-align: center; /* Center text */
+    border: 1px solid #ddd; /* Optional: Add a border for better visibility */
+    border-radius: 5px; /* Optional: Rounded corners */
+    background-color: #f9f9f9; /* Optional: Background color */
+}
+
+.product_list {
+    display: flex;                /* Use flexbox layout */
+    flex-wrap: wrap;             /* Allow items to wrap to the next line */
+    justify-content: flex-start;  /* Align items to the start */
+}
+</style>
 <script>
   function dis(val) {
     document.getElementById("result").value += val
@@ -139,9 +159,9 @@ use App\Http\Controllers\admin\StockController;
             </td>
             <td class="text-right" style="padding: 5px 10px;font-size: 14px; font-weight:bold;"><span id="ttax2">{{Cart::tax()}}</span>
             </td>
-            <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
-            </td>
-            <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
+            <!-- <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
+            </td> -->
+            <!-- <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
                 @if(Session::has('saleDiscount'))
                 {{number_format(Session::get('saleDiscount'))}}
                 @else
@@ -149,7 +169,7 @@ use App\Http\Controllers\admin\StockController;
                 @endif
 
               </span>
-            </td>
+            </td> -->
           </tr>
           <tr>
             <td style="padding: 5px 10px; border-top: 1px solid #666;border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;" colspan="2">Total Payable<a href="#" id="pshipping"></a>
@@ -202,34 +222,61 @@ use App\Http\Controllers\admin\StockController;
     <!--End left-->
 
   </div>
-  <!-Product list start-->
-    <div class="col-sm-7 col-md-7 ml-4 rightdiv">
-      <div class="product_list pt-3">
+<!-- Product list start -->
+<div class="col-sm-7 col-md-7 ml-4 rightdiv">
+    <div class="product_list pt-3">
         @foreach($allProducts as $products)
         <?php
         $counter++;
         $stock = StockController::stock($products->id);
         $imgUrl = str_replace('public/', '', $products->image);
-        ?>
-        <button class="btn-prni btn-default product pos-tip productItem" title="{{$products->name}}" data-pro_id="{{$products->id}}" data-stock="{{$stock}}" >
-          @if(!empty($products->image))
-          <img src="{{ asset( $imgUrl ) }}" alt="{{$products->name}}" class="img-rounded">
-          @else
-          <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$products->name}}" class="img-rounded">
-          @endif
-          <p class="">{{$products->name}}</p>
-          <div class="">
-              @if($stock <= 0)
-                  <span style="color: red;">OutOfStock</span>
-              @else
-                  {{ $stock }}
-              @endif
-          </div>
+        $discountedPrice = $products->sell_price; // Initialize with the original price
+        $promotionAmount = 0; // Initialize promotion amount
 
+        // Check if promotions exist and get the latest promotion amount if any
+        if ($products->promotions->isNotEmpty()) {
+            // Assuming you want to consider the latest promotion (if there are multiple)
+            $latestPromotion = $products->promotions
+            ->where('status', 'Active')  // Only consider active promotions
+            ->sortByDesc('created_at')
+            ->first();
+            if ($latestPromotion) {
+                $promotionAmount = $latestPromotion->promotion_ammount; // Get the discount percentage
+                // Calculate the discounted price
+                $discountedPrice = $products->sell_price - ($products->sell_price * ($promotionAmount / 100));
+            }
+        }
+        ?>
+        <button class="btn-prni btn-default product pos-tip productItem m-1 p-1" title="{{$products->name}}" data-pro_id="{{$products->id}}" data-stock="{{$stock}}">
+            @if(!empty($products->image))
+            <img src="{{ asset($imgUrl) }}" alt="{{$products->name}}" class="img-rounded">
+            @else
+            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$products->name}}" class="img-rounded">
+            @endif
+            <p class="">{{$products->name}}</p>
+            <div class="">
+                @if($stock <= 0)
+                    <span class="badge badge-danger">Out Of Stock</span>
+                @else
+                    Stock : {{ $stock }}
+                @endif
+            </div>
+
+            @if($promotionAmount > 0)
+                <div>
+                    <span style="color: green;">Discounted Price: {{ number_format($discountedPrice, 2) }} (Original: {{ number_format($products->sell_price, 2) }})</span>
+                    <span class="badge badge-primary">(Discount: {{ $promotionAmount }}%)</span>
+                </div>
+            @else
+                <div>
+                    <span>Price: {{ number_format($products->sell_price, 2) }}</span>
+                </div>
+            @endif
         </button>
         @endforeach
-      </div>
     </div>
+</div>
+
     <!--End product list-->
     <div id="category_area">
       @foreach($categories as $category)
@@ -480,7 +527,7 @@ use App\Http\Controllers\admin\StockController;
   </div>
 </div>
 <!--Discount modal-->
-<div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
+<!-- <div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content p-3">
       <div class="modal-header">
@@ -512,7 +559,7 @@ use App\Http\Controllers\admin\StockController;
       </div>
     </div>
   </div>
-</div>
+</div> -->
 <!--Payment modal-->
 <div class="modal fade bd-example-modal-lg payment_modal" tabindex="-1" role="dialog" aria-labelledby="payment_modal" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -686,38 +733,38 @@ use App\Http\Controllers\admin\StockController;
       //end ajax
     });
     //discount add function
-    $(".discount_add_btn").click(function() {
-      var discount = $("#discount_input").val();
-      var discount_type = $("#discount_type").val();
-      if ($.isNumeric(discount)) {
-        $.ajax({
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          },
-          url: "{{route('admin.pos.updateDiscount')}}",
-          type: "POST",
-          data: {
-            'discount': discount,
-            'discount_type': discount_type
-          },
-          //dataType:'json',
-          success: function(data) {
-            $("#print").html(data);
-            $('.discount_modal').modal('hide');
-          },
-          error: function() {
-            toastr.error("Something went Wrong, Please Try again.");
-          }
-        });
-      } else {
-        toastr.error("Please Enter a correct number.");
+    // $(".discount_add_btn").click(function() {
+    //   var discount = $("#discount_input").val();
+    //   var discount_type = $("#discount_type").val();
+    //   if ($.isNumeric(discount)) {
+    //     $.ajax({
+    //       headers: {
+    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    //       },
+    //       url: "{{route('admin.pos.updateDiscount')}}",
+    //       type: "POST",
+    //       data: {
+    //         'discount': discount,
+    //         'discount_type': discount_type
+    //       },
+    //       //dataType:'json',
+    //       success: function(data) {
+    //         $("#print").html(data);
+    //         $('.discount_modal').modal('hide');
+    //       },
+    //       error: function() {
+    //         toastr.error("Something went Wrong, Please Try again.");
+    //       }
+    //     });
+    //   } else {
+    //     toastr.error("Please Enter a correct number.");
 
-      }
-      //ajax
+    //   }
+    //   //ajax
 
 
-      //end ajax
-    });
+    //   //end ajax
+    // });
     //search product by name or id or code
     $("#posProduct").keyup(function() {
       var key = $(this).val();
