@@ -2,7 +2,7 @@
        <div class="col-10 p-0">
         <form method="post" action="{{route('admin.pos.makeInvoice')}}">
           @csrf
-
+          <
           <div class="from-row row">
             <div class="form-group col-6">
               <label class="col-form-label">Biller</label>

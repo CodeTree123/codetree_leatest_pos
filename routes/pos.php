@@ -35,4 +35,8 @@ Route::group(['middleware' => 'auth:admin','namespace'=>'pos'], function()
 	Route::post('pos-product-info-update','PosController@productInfoUpdate')->name('admin.pos.productInfoUpdate');
 	//delete bill
 	Route::get('/pos-delete-sale/{id}','PosController@deleteSale')->name('admin.pos.deleteSale');
+
+
+
+	Route::get('/promoCode/available-list', 'PosController@promoCodeAvailableList')->name('admin.pos.promoCodeAvailableList');
 });

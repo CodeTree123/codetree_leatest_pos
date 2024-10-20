@@ -532,7 +532,7 @@ class ProductController extends Controller
             'promocode_start_duration' => 'required|date',
             'promocode_end_duration'   => 'required|date|after_or_equal:promocode_start_duration',
             'user_limit'               => 'required|integer|min:1',
-            'minimum_order_ammount'            => 'required|numeric|min:0'
+            'minimum_order_ammount'    => 'required|numeric|min:0'
         ]);
     
         $promocode = new Promocode();
@@ -562,6 +562,11 @@ class ProductController extends Controller
             'promocode' => $promocode,
         ]);
     }
+
+
+
+
+
     public function deletepromoCode(Request $request)
     {
         $request->validate(
