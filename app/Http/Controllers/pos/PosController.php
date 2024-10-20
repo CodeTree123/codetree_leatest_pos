@@ -183,24 +183,48 @@ class PosController extends Controller
 
   public function updateDiscount(Request $request)
   {
-    Cart::setGlobalDiscount(0);
-    $request->session()->forget('saleDiscount');
-
-    if ($request->discount_type == 'persentase') {
-      $total = Cart::subtotal();
-      $total = (float) str_replace(',', '', $total);
-      $discount = ($total * $request->discount) / 100;
-      Session::put('saleDiscount', $discount);
-
+      Cart::setGlobalDiscount(0);
+      $request->session()->forget('saleDiscount');
+  
+      // Calculate and store the discount in the session
+      if ($request->percentage == "true") {
+          $total = Cart::subtotal();
+          $total = (float) str_replace(',', '', $total);
+          $discount = ($total * $request->discount) / 100;
+          Session::put('saleDiscount', $discount);
+      } elseif ($request->percentage == "false") {
+          $discount = $request->discount;
+          Session::put('saleDiscount', $discount);
+      }
+  
+      // Save or update promo code usage in the `customer_promocode` table
+      $customer_id = session('customer');  // Retrieve the customer ID from the session
+      $promocode_id = $request->promocode_id;  // Get the promo code ID from the request
+  
+      // Check if the customer has already used this promo code
+      $existingRecord = DB::table('customer_promocode')
+          ->where('customer_id', $customer_id)
+          ->where('promocode_id', $promocode_id)
+          ->first();
+  
+      if ($existingRecord) {
+          // If record exists, increment the usage count
+          DB::table('customer_promocode')
+              ->where('id', $existingRecord->id)
+              ->increment('usage_count');
+      } else {
+          // If not, create a new record with usage_count = 1
+          DB::table('customer_promocode')->insert([
+              'customer_id' => $customer_id,
+              'promocode_id' => $promocode_id,
+              'usage_count' => 1,
+          ]);
+      }
+  
+      // Return the updated cart view
       return view('admin.modules.pos.cartProduct');
-    } elseif ($request->discount_type == 'total') {
-      $discount = $request->discount;
-      Session::put('saleDiscount', $discount);
-      return view('admin.modules.pos.cartProduct');
-    } else {
-      return view('admin.modules.pos.cartProduct');
-    }
   }
+  
   public function updateQty(Request $request)
   {
     $rowId = $request->rowId;
@@ -583,4 +607,145 @@ class PosController extends Controller
       return redirect()->back();
     }
   }
+
+
+
+  
+//   public function promoCodeAvailableList(Request $request) {
+//     $search = $request->input('q');
+//     $customer_id = session('customer'); // Retrieve the customer ID from the session
+//     $cartSubtotal = Cart::subtotal(); // e.g., "24,700.00"
+   
+
+//     // Convert to a float
+//     $cartSubtotalNumber = floatval($cartSubtotal);
+    
+
+//     // Step 1: Fetch all promocodes (initially unfiltered)
+//     $allPromocodes = DB::select(
+//         'SELECT * 
+//          FROM promocodes  
+//          WHERE name LIKE :search',
+//         [
+//             'search' => '%' . $search . '%',
+//         ]
+//     );
+
+//     // Step 2: Check for used promocodes by the customer
+//     $usedPromocodes = DB::select(
+//         'SELECT cp.promocode_id, cp.usage_count, p.user_limit
+//          FROM customer_promocode cp
+//          JOIN promocodes p ON cp.promocode_id = p.id
+//          WHERE cp.customer_id = :customer_id',
+//         [
+//             'customer_id' => $customer_id,
+//         ]
+//     );
+
+
+//     // return compact('allPromocodes','usedPromocodes');
+
+//     // Convert used promocodes to a map for easy lookup
+//     $usedPromocodesMap = collect($usedPromocodes)
+//         ->keyBy('promocode_id')
+//         ->filter(function ($promo) {
+//             // Only keep those where usage_count >= user_limit (invalid ones)
+//             return $promo->usage_count >= $promo->user_limit;
+//         });
+
+
+//     // Step 3: Filter out invalid promocodes
+//     $validPromocodes = collect($allPromocodes)
+//         ->filter(function ($promo) use ($usedPromocodesMap) {
+//             // Exclude only those that are in the usedPromocodesMap (invalid ones)
+//             return !$usedPromocodesMap->has($promo->id);
+//         })
+//         ->filter(function ($promo) use ($cartSubtotalNumber) {
+//             // Apply the minimum order amount filter
+//             // return $promo->minimum_order_ammount <= $cartSubtotalNumber;
+//             $minOrderAmount = floatval($promo->minimum_order_ammount);
+//             return $minOrderAmount <= $cartSubtotalNumber;
+//         });
+
+//         return compact('allPromocodes','usedPromocodes','usedPromocodesMap','validPromocodes','cartSubtotal','cartSubtotalNumber');
+
+//     // Format the valid promocodes for the frontend
+//     $formattedCategories = $validPromocodes->map(function ($promo) {
+//         return [
+//             'id' => $promo->id,
+//             'text' => $promo->name,
+//         ];
+//     });
+
+//     // Return the result as JSON
+//     return response()->json($formattedCategories);
+// }
+
+public function promoCodeAvailableList(Request $request) {
+  $search = $request->input('q');
+  $customer_id = session('customer'); // Retrieve the customer ID from the session
+  $cartSubtotal = Cart::subtotal(); // e.g., "24,700.00"
+ 
+  // Convert to a float, removing commas
+  $cartSubtotalNumber = floatval(str_replace(',', '', $cartSubtotal));
+
+  // Step 1: Fetch all promocodes (initially unfiltered)
+  $allPromocodes = DB::select(
+      'SELECT * 
+       FROM promocodes  
+       WHERE name LIKE :search',
+      [
+          'search' => '%' . $search . '%',
+      ]
+  );
+
+  // Step 2: Check for used promocodes by the customer
+  $usedPromocodes = DB::select(
+      'SELECT cp.promocode_id, cp.usage_count, p.user_limit
+       FROM customer_promocode cp
+       JOIN promocodes p ON cp.promocode_id = p.id
+       WHERE cp.customer_id = :customer_id',
+      [
+          'customer_id' => $customer_id,
+      ]
+  );
+
+  // Convert used promocodes to a map for easy lookup
+  $usedPromocodesMap = collect($usedPromocodes)
+      ->keyBy('promocode_id')
+      ->filter(function ($promo) {
+          // Only keep those where usage_count >= user_limit (invalid ones)
+          return $promo->usage_count >= $promo->user_limit;
+      });
+
+  // Step 3: Filter out invalid promocodes
+  $validPromocodes = collect($allPromocodes)
+      ->filter(function ($promo) use ($usedPromocodesMap) {
+          // Exclude only those that are in the usedPromocodesMap (invalid ones)
+          return !$usedPromocodesMap->has($promo->id);
+      })
+      ->filter(function ($promo) use ($cartSubtotalNumber) {
+          // Apply the minimum order amount filter
+          $minOrderAmount = floatval($promo->minimum_order_ammount);
+          return $minOrderAmount <= $cartSubtotalNumber;
+      });
+
+
+  // Format the valid promocodes for the frontend
+  $formattedCategories = $validPromocodes->map(function ($promo) {
+      return [
+          'id' => $promo->id,
+          'text' => $promo->name,
+          'discount' => $promo->discount,
+          'percentage' => $promo->percentage
+      ];
+  });
+
+  // Return the result as JSON
+  return response()->json($formattedCategories);
+
+  // Uncomment the following line for debugging
+  // return compact('allPromocodes', 'usedPromocodes', 'usedPromocodesMap', 'validPromocodes', 'cartSubtotal', 'cartSubtotalNumber');
+}
+
 }

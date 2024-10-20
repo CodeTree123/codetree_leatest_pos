@@ -154,14 +154,22 @@ use App\Http\Controllers\admin\StockController;
             <td class="text-right" style="padding: 5px 10px;font-size: 14px;font-weight:bold;border-top: 1px solid #DDD;"><span id="total">{{Cart::subtotal()}}</span>
             </td>
           </tr>
-          <tr>
+          <tr  style="height: 60px;">
             <td style="padding: 5px 10px;">VAT <a href="#" id="pptax2"><i class="fa fa-edit" data-toggle="modal" data-target=".tax_modal"></i></a>
             </td>
             <td class="text-right" style="padding: 5px 10px;font-size: 14px; font-weight:bold;"><span id="ttax2">{{Cart::tax()}}</span>
             </td>
-            <!-- <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
+
+            <!-- <td class="p-2">
+              
+              <select class="custom-select form-control" name="promo_code" id="promo_code_id">
+								<option value="">Select Promocode</option>
+								</select>
+              
             </td> -->
-            <!-- <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
+            <td style="padding: 5px 10px;">Use Promocode <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
+            </td> 
+             <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
                 @if(Session::has('saleDiscount'))
                 {{number_format(Session::get('saleDiscount'))}}
                 @else
@@ -169,7 +177,7 @@ use App\Http\Controllers\admin\StockController;
                 @endif
 
               </span>
-            </td> -->
+            </td>
           </tr>
           <tr>
             <td style="padding: 5px 10px; border-top: 1px solid #666;border-bottom: 1px solid #333; font-weight:bold; background:#333; color:#FFF;" colspan="2">Total Payable<a href="#" id="pshipping"></a>
@@ -527,11 +535,11 @@ use App\Http\Controllers\admin\StockController;
   </div>
 </div>
 <!--Discount modal-->
-<!-- <div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content p-3">
       <div class="modal-header">
-        <h2 class="modal-title" id="exampleModalLabel">Add Discount</h2>
+        <h2 class="modal-title" id="exampleModalLabel">Add Discount using Promocode</h2>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
       <div class="modal-body">
@@ -540,14 +548,20 @@ use App\Http\Controllers\admin\StockController;
 
           <div class="form-group">
             <label class="col-form-label">Discount Type</label>
-            <select class="form-control" id="discount_type">
-              <option value="persentase">%</option>
-              <option value="total">Total</option>
-            </select>
+            <input class="form-control" id="discount_type" readonly>
+            <!-- <select class=" form-control" id="discount_type">
+            <option value="total" >Total</option>
+            <option value="persentase">%</option>
+              
+            </select> -->
           </div>
           <div class="form-group">
-            <label class="col-form-label">Discount</label>
-            <input type="text" class="form-control" id="discount_input">
+            <label class="col-form-label">Available Promocode</label>
+            <select class="custom-select form-control" name="promo_code" id="promo_code_id">
+								<option value="">Useable Promocode</option>
+						</select>
+            <input type="text" class="form-control mt-3" id="discount_input" readonly>
+            <input type="hidden" id="used_promocode_id">
           </div>
 
 
@@ -559,7 +573,7 @@ use App\Http\Controllers\admin\StockController;
       </div>
     </div>
   </div>
-</div> -->
+</div>
 <!--Payment modal-->
 <div class="modal fade bd-example-modal-lg payment_modal" tabindex="-1" role="dialog" aria-labelledby="payment_modal" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -619,6 +633,53 @@ use App\Http\Controllers\admin\StockController;
       $("#subcategory_area").hide('slow');
       $("#brands_area").hide('slow');
     });
+
+
+    $('#promo_code_id').select2({
+    theme: 'bootstrap',
+    ajax: {
+        url: '/pos/promoCode/available-list',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                q: params.term // search term
+            };
+        },
+        processResults: function (data) {
+            // console.log('Returned Data:', data); // Print data to console
+
+            // Modify results to include id, text, and discount
+            const results = data.map(item => ({
+                id: item.id,
+                text: item.text,
+                discount: item.discount, // Include discount
+                percentage:item.percentage
+            }));
+
+            return {
+                results: results
+            };
+        },
+        cache: true
+    },
+    minimumInputLength: 1
+});
+
+// Handle selection and set the discount input value
+$('#promo_code_id').on('select2:select', function (e) {
+    const selectedData = e.params.data; // Get selected option data
+    // Set the discount in the input field
+    $('#discount_input').val(`${selectedData.discount}`);
+    $('#used_promocode_id').val(`${selectedData.id}`);
+    $('#discount_type').val(`${selectedData.percentage}`);
+
+    // session.put('used_promocode_id',selectedData.id);
+});
+
+
+
+
   });
   $(document).ready(function() {
     $(".subcat_btn").click(function() {
@@ -641,6 +702,13 @@ use App\Http\Controllers\admin\StockController;
       $("#category_area").hide('slow');
     });
   });
+
+
+
+
+
+
+
 
   $(document).ready(function() {
     $('#poscustomer').select2({
@@ -733,38 +801,44 @@ use App\Http\Controllers\admin\StockController;
       //end ajax
     });
     //discount add function
-    // $(".discount_add_btn").click(function() {
-    //   var discount = $("#discount_input").val();
-    //   var discount_type = $("#discount_type").val();
-    //   if ($.isNumeric(discount)) {
-    //     $.ajax({
-    //       headers: {
-    //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //       },
-    //       url: "{{route('admin.pos.updateDiscount')}}",
-    //       type: "POST",
-    //       data: {
-    //         'discount': discount,
-    //         'discount_type': discount_type
-    //       },
-    //       //dataType:'json',
-    //       success: function(data) {
-    //         $("#print").html(data);
-    //         $('.discount_modal').modal('hide');
-    //       },
-    //       error: function() {
-    //         toastr.error("Something went Wrong, Please Try again.");
-    //       }
-    //     });
-    //   } else {
-    //     toastr.error("Please Enter a correct number.");
+    $(".discount_add_btn").click(function() {
+      var discount = $("#discount_input").val();
+      var percentage = $("#discount_type").val();
+      
+      var promocode_id = $("#used_promocode_id").val();
+      console.log(promocode_id);
+      if ($.isNumeric(discount)) {
+        $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url: "{{route('admin.pos.updateDiscount')}}",
+          type: "POST",
+          data: {
+            'discount': discount,
+            'percentage': percentage,
+            'promocode_id': promocode_id
 
-    //   }
-    //   //ajax
+            
+          },
+          //dataType:'json',
+          success: function(data) {
+            $("#print").html(data);
+            $('.discount_modal').modal('hide');
+          },
+          error: function() {
+            toastr.error("Something went Wrong, Please Try again.");
+          }
+        });
+      } else {
+        toastr.error("Please Enter a correct number.");
+
+      }
+      //ajax
 
 
-    //   //end ajax
-    // });
+      //end ajax
+    });
     //search product by name or id or code
     $("#posProduct").keyup(function() {
       var key = $(this).val();
@@ -1049,7 +1123,7 @@ use App\Http\Controllers\admin\StockController;
         url: "{{route('admin.pos.paymentScreen')}}",
         type: "POST",
         data: {
-          'customer_id': customer_id
+          'customer_id': customer_id,
         },
         //dataType:'json',
         success: function(data) {
