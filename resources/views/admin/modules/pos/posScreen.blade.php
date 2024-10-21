@@ -11,24 +11,37 @@ use App\Http\Controllers\admin\StockController;
 ?>
 
 <style>
-.productItem {
-    display: flex; /* Use flexbox to align content */
-    flex-direction: column; /* Stack items vertically */
-    justify-content: space-between; /* Ensure even spacing */
-    min-height: 300px; /* Set a consistent height */
-    padding: 20px; /* Padding inside the product item */
-    margin: 0 5px; /* Adjust side margins */
-    text-align: center; /* Center text */
-    border: 1px solid #ddd; /* Optional: Add a border for better visibility */
-    border-radius: 5px; /* Optional: Rounded corners */
-    background-color: #f9f9f9; /* Optional: Background color */
-}
+  .productItem {
+    display: flex;
+    /* Use flexbox to align content */
+    flex-direction: column;
+    /* Stack items vertically */
+    justify-content: space-between;
+    /* Ensure even spacing */
+    min-height: 300px;
+    /* Set a consistent height */
+    padding: 20px;
+    /* Padding inside the product item */
+    margin: 0 5px;
+    /* Adjust side margins */
+    text-align: center;
+    /* Center text */
+    border: 1px solid #ddd;
+    /* Optional: Add a border for better visibility */
+    border-radius: 5px;
+    /* Optional: Rounded corners */
+    background-color: #f9f9f9;
+    /* Optional: Background color */
+  }
 
-.product_list {
-    display: flex;                /* Use flexbox layout */
-    flex-wrap: wrap;             /* Allow items to wrap to the next line */
-    justify-content: flex-start;  /* Align items to the start */
-}
+  .product_list {
+    display: flex;
+    /* Use flexbox layout */
+    flex-wrap: wrap;
+    /* Allow items to wrap to the next line */
+    justify-content: flex-start;
+    /* Align items to the start */
+  }
 </style>
 <script>
   function dis(val) {
@@ -154,7 +167,7 @@ use App\Http\Controllers\admin\StockController;
             <td class="text-right" style="padding: 5px 10px;font-size: 14px;font-weight:bold;border-top: 1px solid #DDD;"><span id="total">{{Cart::subtotal()}}</span>
             </td>
           </tr>
-          <tr  style="height: 60px;">
+          <tr style="height: 60px;">
             <td style="padding: 5px 10px;">VAT <a href="#" id="pptax2"><i class="fa fa-edit" data-toggle="modal" data-target=".tax_modal"></i></a>
             </td>
             <td class="text-right" style="padding: 5px 10px;font-size: 14px; font-weight:bold;"><span id="ttax2">{{Cart::tax()}}</span>
@@ -168,8 +181,8 @@ use App\Http\Controllers\admin\StockController;
               
             </td> -->
             <td style="padding: 5px 10px;">Use Promocode <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
-            </td> 
-             <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
+            </td>
+            <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
                 @if(Session::has('saleDiscount'))
                 {{number_format(Session::get('saleDiscount'))}}
                 @else
@@ -230,103 +243,103 @@ use App\Http\Controllers\admin\StockController;
     <!--End left-->
 
   </div>
-<!-- Product list start -->
-<div class="col-sm-7 col-md-7 ml-4 rightdiv">
+  <!-- Product list start -->
+  <div class="col-sm-7 col-md-7 ml-4 rightdiv">
     <div class="product_list pt-3">
-        @foreach($allProducts as $products)
-        <?php
-        $counter++;
-        $stock = StockController::stock($products->id);
-        $imgUrl = str_replace('public/', '', $products->image);
-        $discountedPrice = $products->sell_price; // Initialize with the original price
-        $promotionAmount = 0; // Initialize promotion amount
+      @foreach($allProducts as $products)
+      <?php
+      $counter++;
+      $stock = StockController::stock($products->id);
+      $imgUrl = str_replace('public/', '', $products->image);
+      $discountedPrice = $products->sell_price; // Initialize with the original price
+      $promotionAmount = 0; // Initialize promotion amount
 
-        // Check if promotions exist and get the latest promotion amount if any
-        if ($products->promotions->isNotEmpty()) {
-            // Assuming you want to consider the latest promotion (if there are multiple)
-            $latestPromotion = $products->promotions
-            ->where('status', 'Active')  // Only consider active promotions
-            ->sortByDesc('created_at')
-            ->first();
-            if ($latestPromotion) {
-                $promotionAmount = $latestPromotion->promotion_ammount; // Get the discount percentage
-                // Calculate the discounted price
-                $discountedPrice = $products->sell_price - ($products->sell_price * ($promotionAmount / 100));
-            }
+      // Check if promotions exist and get the latest promotion amount if any
+      if ($products->promotions->isNotEmpty()) {
+        // Assuming you want to consider the latest promotion (if there are multiple)
+        $latestPromotion = $products->promotions
+          ->where('status', 'Active')  // Only consider active promotions
+          ->sortByDesc('created_at')
+          ->first();
+        if ($latestPromotion) {
+          $promotionAmount = $latestPromotion->promotion_ammount; // Get the discount percentage
+          // Calculate the discounted price
+          $discountedPrice = $products->sell_price - ($products->sell_price * ($promotionAmount / 100));
         }
-        ?>
-        <button class="btn-prni btn-default product pos-tip productItem m-1 p-1" title="{{$products->name}}" data-pro_id="{{$products->id}}" data-stock="{{$stock}}">
-            @if(!empty($products->image))
-            <img src="{{ asset($imgUrl) }}" alt="{{$products->name}}" class="img-rounded">
+      }
+      ?>
+      <button class="btn-prni btn-default product pos-tip productItem m-1 p-1" title="{{$products->name}}" data-pro_id="{{$products->id}}" data-stock="{{$stock}}">
+        @if(!empty($products->image))
+        <img src="{{ asset($imgUrl) }}" alt="{{$products->name}}" class="img-rounded">
+        @else
+        <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$products->name}}" class="img-rounded">
+        @endif
+        <p class="">{{$products->name}}</p>
+        <div class="">
+          @if($stock <= 0)
+            <span class="badge badge-danger">Out Of Stock</span>
             @else
-            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$products->name}}" class="img-rounded">
+            Stock : {{ $stock }}
             @endif
-            <p class="">{{$products->name}}</p>
-            <div class="">
-                @if($stock <= 0)
-                    <span class="badge badge-danger">Out Of Stock</span>
-                @else
-                    Stock : {{ $stock }}
-                @endif
-            </div>
+        </div>
 
-            @if($promotionAmount > 0)
-                <div>
-                    <span style="color: green;">Discounted Price: {{ number_format($discountedPrice, 2) }} (Original: {{ number_format($products->sell_price, 2) }})</span>
-                    <span class="badge badge-primary">(Discount: {{ $promotionAmount }}%)</span>
-                </div>
-            @else
-                <div>
-                    <span>Price: {{ number_format($products->sell_price, 2) }}</span>
-                </div>
-            @endif
-        </button>
-        @endforeach
-    </div>
-</div>
-
-    <!--End product list-->
-    <div id="category_area">
-      @foreach($categories as $category)
-      <button class="btn-prni btn-default product pos-tip category_btn" title="{{$category->name}}" data-cat_id="{{$category->id}}">
-        <img src="{{ asset($category->image) }}" alt="acifix 250mg" class="img-rounded">
-        <p class="">{{$category->name}}</p>
+        @if($promotionAmount > 0)
+        <div>
+          <span style="color: green;">Discounted Price: {{ number_format($discountedPrice, 2) }} (Original: {{ number_format($products->sell_price, 2) }})</span>
+          <span class="badge badge-primary">(Discount: {{ $promotionAmount }}%)</span>
+        </div>
+        @else
+        <div>
+          <span>Price: {{ number_format($products->sell_price, 2) }}</span>
+        </div>
+        @endif
       </button>
       @endforeach
     </div>
+  </div>
 
-    <div id="subcategory_area">
-      @foreach($subcategories as $subcat)
-      <button class="btn-prni btn-default product pos-tip subcategoty_btn" title="{{$subcat->name}}" data-subcat_id="{{$subcat->id}}">
-        <img src="{{ asset($subcat->image) }}" alt="acifix 250mg" class="img-rounded">
-        <p class="">{{$subcat->name}}</p>
+  <!--End product list-->
+  <div id="category_area">
+    @foreach($categories as $category)
+    <button class="btn-prni btn-default product pos-tip category_btn" title="{{$category->name}}" data-cat_id="{{$category->id}}">
+      <img src="{{ asset($category->image) }}" alt="" class="img-rounded">
+      <p class="">{{$category->name}}</p>
+    </button>
+    @endforeach
+  </div>
+
+  <div id="subcategory_area">
+    @foreach($subcategories as $subcat)
+    <button class="btn-prni btn-default product pos-tip subcategoty_btn" title="{{$subcat->name}}" data-subcat_id="{{$subcat->id}}">
+      <img src="{{ asset($subcat->image) }}" alt="" class="img-rounded">
+      <p class="">{{$subcat->name}}</p>
+    </button>
+    @endforeach
+  </div>
+
+  <div id="brands_area">
+    @foreach($brands as $brand)
+    <button class="btn-prni btn-default product pos-tip brand_btn" title="{{$brand->name}}" data-brand_id="{{$brand->id}}">
+      <img src="{{ asset($brand->image) }}" alt="" class="img-rounded">
+      <p class="">{{$brand->name}}</p>
+    </button>
+    @endforeach
+  </div>
+
+  <div style="float: right;right:0px;min-height:500px;min-width: 40px;margin-right: 0px;position: fixed;margin-top:50px;">
+    <div class="btn-group-vertical mt-5" style="margin-right:-40px;">
+      <button class="btn bg_p_primary side_btn cat_btn" style="margin-bottom:28px">
+        Category
       </button>
-      @endforeach
-    </div>
-
-    <div id="brands_area">
-      @foreach($brands as $brand)
-      <button class="btn-prni btn-default product pos-tip brand_btn" title="{{$brand->name}}" data-brand_id="{{$brand->id}}">
-        <img src="{{ asset($brand->image) }}" alt="acifix 250mg" class="img-rounded">
-        <p class="">{{$brand->name}}</p>
+      <button class="btn bg_secondary_cyan mt-5 side_btn subcat_btn">
+        SubCategory
       </button>
-      @endforeach
+      <button class="btn bg_secondary_orange side_btn brands_btn" style="margin-top:76px">
+        Brands
+      </button>
     </div>
 
-    <div style="float: right;right:0px;min-height:500px;min-width: 40px;margin-right: 0px;position: fixed;margin-top:50px;">
-      <div class="btn-group-vertical mt-5" style="margin-right:-40px;">
-        <button class="btn bg_p_primary side_btn cat_btn" style="margin-bottom:28px">
-          Category
-        </button>
-        <button class="btn bg_secondary_cyan mt-5 side_btn subcat_btn">
-          SubCategory
-        </button>
-        <button class="btn bg_secondary_orange side_btn brands_btn" style="margin-top:76px">
-          Brands
-        </button>
-      </div>
-
-    </div>
+  </div>
 </div>
 <!--Customer Modal -->
 <div class="modal fade bd-example-modal-lg customer_modal" tabindex="-1" role="dialog" aria-labelledby="customer_modal" aria-hidden="true">
@@ -558,8 +571,8 @@ use App\Http\Controllers\admin\StockController;
           <div class="form-group">
             <label class="col-form-label">Available Promocode</label>
             <select class="custom-select form-control" name="promo_code" id="promo_code_id">
-								<option value="">Useable Promocode</option>
-						</select>
+              <option value="">Useable Promocode</option>
+            </select>
             <input type="text" class="form-control mt-3" id="discount_input" readonly>
             <input type="hidden" id="used_promocode_id">
           </div>
@@ -636,46 +649,46 @@ use App\Http\Controllers\admin\StockController;
 
 
     $('#promo_code_id').select2({
-    theme: 'bootstrap',
-    ajax: {
+      theme: 'bootstrap',
+      ajax: {
         url: '/pos/promoCode/available-list',
         dataType: 'json',
         delay: 250,
-        data: function (params) {
-            return {
-                q: params.term // search term
-            };
+        data: function(params) {
+          return {
+            q: params.term // search term
+          };
         },
-        processResults: function (data) {
-            // console.log('Returned Data:', data); // Print data to console
+        processResults: function(data) {
+          // console.log('Returned Data:', data); // Print data to console
 
-            // Modify results to include id, text, and discount
-            const results = data.map(item => ({
-                id: item.id,
-                text: item.text,
-                discount: item.discount, // Include discount
-                percentage:item.percentage
-            }));
+          // Modify results to include id, text, and discount
+          const results = data.map(item => ({
+            id: item.id,
+            text: item.text,
+            discount: item.discount, // Include discount
+            percentage: item.percentage
+          }));
 
-            return {
-                results: results
-            };
+          return {
+            results: results
+          };
         },
         cache: true
-    },
-    minimumInputLength: 1
-});
+      },
+      minimumInputLength: 1
+    });
 
-// Handle selection and set the discount input value
-$('#promo_code_id').on('select2:select', function (e) {
-    const selectedData = e.params.data; // Get selected option data
-    // Set the discount in the input field
-    $('#discount_input').val(`${selectedData.discount}`);
-    $('#used_promocode_id').val(`${selectedData.id}`);
-    $('#discount_type').val(`${selectedData.percentage}`);
+    // Handle selection and set the discount input value
+    $('#promo_code_id').on('select2:select', function(e) {
+      const selectedData = e.params.data; // Get selected option data
+      // Set the discount in the input field
+      $('#discount_input').val(`${selectedData.discount}`);
+      $('#used_promocode_id').val(`${selectedData.id}`);
+      $('#discount_type').val(`${selectedData.percentage}`);
 
-    // session.put('used_promocode_id',selectedData.id);
-});
+      // session.put('used_promocode_id',selectedData.id);
+    });
 
 
 
@@ -804,7 +817,7 @@ $('#promo_code_id').on('select2:select', function (e) {
     $(".discount_add_btn").click(function() {
       var discount = $("#discount_input").val();
       var percentage = $("#discount_type").val();
-      
+
       var promocode_id = $("#used_promocode_id").val();
       console.log(promocode_id);
       if ($.isNumeric(discount)) {
@@ -819,7 +832,7 @@ $('#promo_code_id').on('select2:select', function (e) {
             'percentage': percentage,
             'promocode_id': promocode_id
 
-            
+
           },
           //dataType:'json',
           success: function(data) {
@@ -905,9 +918,9 @@ $('#promo_code_id').on('select2:select', function (e) {
     $(".productItem").click(function() {
       var proId = $(this).data('pro_id');
       var stock = $(this).data('stock');
-      if(stock>0){
+      if (stock > 0) {
         addToCart(proId);
-      }else{
+      } else {
         toastr.error("Selected Product is out of stock.");
       }
     });
@@ -939,8 +952,8 @@ $('#promo_code_id').on('select2:select', function (e) {
       //end ajax
     }
 
-      //product add to cart 
-      function addToCartWithBar(bar_id) {
+    //product add to cart 
+    function addToCartWithBar(bar_id) {
       // $("#posProduct").val('');
       var barcode = "";
       //ajax
