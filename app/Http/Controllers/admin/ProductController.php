@@ -532,7 +532,8 @@ class ProductController extends Controller
             'promocode_start_duration' => 'required|date',
             'promocode_end_duration'   => 'required|date|after_or_equal:promocode_start_duration',
             'user_limit'               => 'required|integer|min:1',
-            'minimum_order_ammount'    => 'required|numeric|min:0'
+            'minimum_order_ammount'    => 'required|numeric|min:0',
+            'percentage'               => 'required'
         ]);
     
         $promocode = new Promocode();
@@ -543,6 +544,7 @@ class ProductController extends Controller
         $promocode->promocode_end_duration   = $request->promocode_end_duration;
         $promocode->user_limit               = $request->user_limit;
         $promocode->minimum_order_ammount    = $request->minimum_order_ammount;
+        $promocode->percentage    = $request->percentage;
     
         try {
             $promocode->save();

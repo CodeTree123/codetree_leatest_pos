@@ -540,8 +540,14 @@ use App\Http\Controllers\admin\StockController;
     <div class="modal-content p-3">
       <div class="modal-header">
         <h2 class="modal-title" id="exampleModalLabel">Add Discount using Promocode</h2>
+
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
+      <p class="bg-danger text-light">
+  
+      (If you add new products in bills after already applying a percentage discount, they will not be considered.)
+  
+  </p>
       <div class="modal-body">
 
         <form>

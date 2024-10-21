@@ -68,7 +68,15 @@ Add New Promotion- Admin Dashboard
                                 <input type="text" class="form-control" name="name" placeholder="Enter Promo Code Name">
                             </div>
                             <div class="form-group col-6">
-                                <label>Promo Code Price / Discount*</label>
+                                <label for="discount_type">Discount Type*</label>
+                                <select class="form-control" id="percentage" name="percentage" required>
+                                    <option value="">Select Discount Type</option>
+                                    <option value="true">Percentage (%)</option>
+                                    <option value="false">On Total</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Promo Code Discount*</label>
                                 <input type="number" class="form-control" name="discount" placeholder="Enter Discount  Price">
                             </div>
                             <div class="form-group col-6">
