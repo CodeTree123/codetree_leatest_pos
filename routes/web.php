@@ -90,6 +90,8 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     Route::post('/payroll/generate-all', 'PayrollController@generatePayrollForAllEmployees')->name('payroll.generate.all');
     Route::get('/payroll/bonus', 'PayrollController@bonus')->name('payroll.bonus');
     Route::post('/payroll/bonus/add', 'PayrollController@addBonus')->name('employeeBonus.add');
+    Route::get('/payroll/deduction', 'PayrollController@deduction')->name('payroll.deduction');
+    Route::get('/payroll/employee-working-details/{id}', 'PayrollController@employeeWorkingDetails')->name('payroll.employeeWorkingDetails');
 
 });
 
@@ -100,7 +102,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
 // });
 
 //store attendence
-Route::post('/attendance/toggle-status/{id}', 'AttendenceController@toggleStatus')->name('attendance.toggleStatus');
+Route::post('/attendance/toggle-status', 'AttendenceController@toggleStatus')->name('attendance.toggleStatus');
 Route::post('/admin/store/attendence', 'AttendenceController@storeAttendence')->name('storeAttend');
 
 

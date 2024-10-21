@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\StoreAttendence;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use App\Deduction;
+use App\Payroll;
+
 
 class AttendenceController extends Controller
 {
@@ -33,17 +37,59 @@ class AttendenceController extends Controller
             return back()->with('Success', 'data update successfully!');
         }
     }
-    public function toggleStatus($id)
-    {
-        $attendance = StoreAttendence::find($id);
 
+    public function toggleStatus(Request $request)
+    {
+        $attendanceId = $request->input('attendanceId');
+        $empId = $request->input('empId');
+        $attendance = StoreAttendence::find($attendanceId);
+    
         if ($attendance) {
+            $basic_salary = Payroll::where('employee_id', $empId)->value('basic_salary');
+            $daily_salary = $basic_salary / 30;
+    
+            // Get the current time and threshold (9:00 AM)
+            $currentTime = Carbon::now();
+            $lateThreshold = Carbon::createFromTime(9, 0, 0); // 9:00 AM
+    
+            // Check if current time is after 9:00 AM to calculate late time
+            if ($currentTime->greaterThan($lateThreshold)) {
+                $lateMinutes = $lateThreshold->diffInMinutes($currentTime);
+                $lateHours = $lateMinutes / 60; // Convert to decimal hours
+                $attendance->late_time = round($lateHours, 2); // Store late time
+            }
+    
+            // Toggle attendance status
             $attendance->status = $attendance->status == 1 ? 0 : 1;
             $attendance->save();
+    
+            // Check if a deduction for this employee and today already exists
+            $existingDeduction = Deduction::where('employee_id', $empId)
+                ->whereDate('created_at', Carbon::today())
+                ->first();
+    
+            if ($attendance->status == 1) {
+                // If attendance is marked as present, delete today's deduction if it exists
+                if ($existingDeduction) {
+                    $existingDeduction->delete();
+                }
+            } else {
+                // If marked as absent, add a deduction only if none exists for today
+                if (!$existingDeduction) {
+                    $deduction = new Deduction();
+                    $deduction->employee_id = $empId;
+                    $deduction->other_deductions = $daily_salary;
+                    $deduction->save();
+                }
+            }
 
+            
             return response()->json(['status' => 'success', 'newStatus' => $attendance->status]);
+    
+            // return response()->json(['status' => 'success', 'newStatus' => $attendance->status]);
         }
-
+    
         return response()->json(['status' => 'error', 'message' => 'Attendance record not found'], 404);
     }
+    
 }

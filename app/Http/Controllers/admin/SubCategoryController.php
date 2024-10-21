@@ -61,6 +61,7 @@ class SubCategoryController extends Controller
     $validdata = $request->validate([
       'name' => 'required',
       'code' => 'required',
+      'parentId'=>'required'
     ]);
     if ($request->file('image') !== null) {
       $image = $this->imageUpload($request);

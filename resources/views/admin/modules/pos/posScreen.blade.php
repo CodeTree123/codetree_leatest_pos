@@ -11,58 +11,34 @@ use App\Http\Controllers\admin\StockController;
 ?>
 
 <style>
-  .productItem {
-    display: flex;
-    /* Use flexbox to align content */
-    flex-direction: column;
-    /* Stack items vertically */
-    justify-content: space-between;
-    /* Ensure even spacing */
-    min-height: 300px;
-    /* Set a consistent height */
-    padding: 20px;
-    /* Padding inside the product item */
-    margin: 0 5px;
-    /* Adjust side margins */
-    text-align: center;
-    /* Center text */
-    border: 1px solid #ddd;
-    /* Optional: Add a border for better visibility */
-    border-radius: 5px;
-    /* Optional: Rounded corners */
-    background-color: #f9f9f9;
-    /* Optional: Background color */
-  }
+.productItem {
+    display: flex; /* Use flexbox to align content */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: space-between; /* Ensure even spacing */
+    min-height: 300px; /* Set a consistent height */
+    padding: 20px; /* Padding inside the product item */
+    margin: 0 5px; /* Adjust side margins */
+    text-align: center; /* Center text */
+    border: 1px solid #ddd; /* Optional: Add a border for better visibility */
+    border-radius: 5px; /* Optional: Rounded corners */
+    background-color: #f9f9f9; /* Optional: Background color */
+}
 
-  .product_list {
-    display: flex;
-    /* Use flexbox layout */
-    flex-wrap: wrap;
-    /* Allow items to wrap to the next line */
-    justify-content: flex-start;
-    /* Align items to the start */
-  }
+.product_list {
+    display: flex;                /* Use flexbox layout */
+    flex-wrap: wrap;             /* Allow items to wrap to the next line */
+    justify-content: flex-start;  /* Align items to the start */
+}
 
-  #category_area {
-    max-height: 400px;
-    /* Set the maximum height for the area */
-    overflow-y: auto;
-    /* Enables vertical scrolling */
-  }
 
-  #subcategory_area {
-    max-height: 400px;
-    /* Set the maximum height for the area */
-    overflow-y: auto;
-    /* Enables vertical scrolling */
-  }
-
-  #brands_area {
-    max-height: 400px;
-    /* Set the maximum height for the area */
-    overflow-y: auto;
-    /* Enables vertical scrolling */
-  }
+.scrollable-container {
+  max-height: 300px; 
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
 </style>
 <script>
   function dis(val) {
@@ -303,41 +279,46 @@ use App\Http\Controllers\admin\StockController;
             Stock : {{ $stock }}
             @endif
         </div>
-
-        @if($promotionAmount > 0)
-        <div>
-          <span style="color: green;">Discounted Price: {{ number_format($discountedPrice, 2) }} (Original: {{ number_format($products->sell_price, 2) }})</span>
-          <span class="badge badge-primary">(Discount: {{ $promotionAmount }}%)</span>
-        </div>
-        @else
-        <div>
-          <span>Price: {{ number_format($products->sell_price, 2) }}</span>
-        </div>
-        @endif
+    <!--End product list-->
+    <div id="category_area" class="scrollable-container">
+      @foreach($categories as $category)
+      <button class="btn-prni btn-default product pos-tip category_btn" title="{{$category->name}}" data-cat_id="{{$category->id}}">
+      @if(!empty($category->image))
+            <img src="{{ asset($category->image) }}" alt="{{$category->name}}" class="img-rounded">
+            @else
+            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$category->name}}" class="img-rounded">
+      @endif  
+     
+        <p class="">{{$category->name}}</p>
       </button>
       @endforeach
     </div>
   </div>
+    <div id="subcategory_area" class="scrollable-container">
+      @foreach($subcategories as $subcat)
+      <button class="btn-prni btn-default product pos-tip subcategoty_btn" title="{{$subcat->name}}" data-subcat_id="{{$subcat->id}}">
+      @if(!empty($subcat->image))
+            <img src="{{ asset($subcat->image) }}" alt="{{$subcat->name}}" class="img-rounded">
+            @else
+            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$subcat->name}}" class="img-rounded">
+      @endif  
+        <p class="">{{$subcat->name}}</p>
+      </button>
+      @endforeach
+    </div>
 
-  <!--End product list-->
-  <div id="category_area">
-    @foreach($categories as $category)
-    <button class="btn-prni btn-default product pos-tip category_btn" title="{{$category->name}}" data-cat_id="{{$category->id}}">
-      <img src="{{ asset($category->image) }}" alt="" class="img-rounded">
-      <p class="">{{$category->name}}</p>
-    </button>
-    @endforeach
-  </div>
-
-  <div id="subcategory_area">
-    @foreach($subcategories as $subcat)
-    <button class="btn-prni btn-default product pos-tip subcategoty_btn" title="{{$subcat->name}}" data-subcat_id="{{$subcat->id}}">
-      <img src="{{ asset($subcat->image) }}" alt="" class="img-rounded">
-      <p class="">{{$subcat->name}}</p>
-    </button>
-    @endforeach
-  </div>
-
+    <div id="brands_area" class="scrollable-container">
+      @foreach($brands as $brand)
+      <button class="btn-prni btn-default product pos-tip brand_btn" title="{{$brand->name}}" data-brand_id="{{$brand->id}}">
+      @if(!empty($brand->image))
+            <img src="{{ asset($brand->image) }}" alt="{{$brand->name}}" class="img-rounded">
+            @else
+            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$brand->name}}" class="img-rounded">
+      @endif  
+        <p class="">{{$brand->name}}</p>
+      </button>
+      @endforeach
+    </div>
   <div id="brands_area">
     @foreach($brands as $brand)
     <button class="btn-prni btn-default product pos-tip brand_btn" title="{{$brand->name}}" data-brand_id="{{$brand->id}}">
@@ -574,8 +555,14 @@ use App\Http\Controllers\admin\StockController;
     <div class="modal-content p-3">
       <div class="modal-header">
         <h2 class="modal-title" id="exampleModalLabel">Add Discount using Promocode</h2>
+
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
+      <p class="bg-danger text-light">
+  
+      (If you add new products in bills after already applying a percentage discount, they will not be considered.)
+  
+  </p>
       <div class="modal-body">
 
         <form>
