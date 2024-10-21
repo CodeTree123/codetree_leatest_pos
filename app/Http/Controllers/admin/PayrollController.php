@@ -19,6 +19,8 @@ class PayrollController extends Controller
             return redirect()->back()->with('error', 'Employee not found.');
         }
 
+
+
         $deduction = $employee->deductions;
         $basicSalary = $employee->basic_salary;
 
@@ -48,6 +50,24 @@ class PayrollController extends Controller
         $payrolls = Payroll::with('employee')->get();
         return view('admin.payroll.index', compact('payrolls'));
     }
+
+    public function deduction(){
+        $pageTitle = "Employee Data Track";
+        $employees = Employee::paginate(10);
+        $total = Employee::all()->count();
+        return view('admin.payroll.deduction', compact('pageTitle', 'employees', 'total'));
+    }
+
+    public function employeeWorkingDetails($id)
+    {
+        // Fetch employee along with related payrolls, deductions, and bonuses
+        $employee = Employee::with(['payrolls', 'deductions', 'bonuses'])->findOrFail($id);
+    
+        return compact('employee');
+        // Pass the data to the view
+        return view('admin.payroll.employeeWorkingDetails', compact('employee'));
+    }
+    
 
     public function generatePayrollForAllEmployees(Request $value)
     {

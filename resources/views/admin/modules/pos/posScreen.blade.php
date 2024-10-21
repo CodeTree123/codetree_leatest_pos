@@ -29,6 +29,17 @@ use App\Http\Controllers\admin\StockController;
     flex-wrap: wrap;             /* Allow items to wrap to the next line */
     justify-content: flex-start;  /* Align items to the start */
 }
+
+
+.scrollable-container {
+  max-height: 300px; 
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
 </style>
 <script>
   function dis(val) {
@@ -286,28 +297,41 @@ use App\Http\Controllers\admin\StockController;
 </div>
 
     <!--End product list-->
-    <div id="category_area">
+    <div id="category_area" class="scrollable-container">
       @foreach($categories as $category)
       <button class="btn-prni btn-default product pos-tip category_btn" title="{{$category->name}}" data-cat_id="{{$category->id}}">
-        <img src="{{ asset($category->image) }}" alt="acifix 250mg" class="img-rounded">
+      @if(!empty($category->image))
+            <img src="{{ asset($category->image) }}" alt="{{$category->name}}" class="img-rounded">
+            @else
+            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$category->name}}" class="img-rounded">
+      @endif  
+     
         <p class="">{{$category->name}}</p>
       </button>
       @endforeach
     </div>
 
-    <div id="subcategory_area">
+    <div id="subcategory_area" class="scrollable-container">
       @foreach($subcategories as $subcat)
       <button class="btn-prni btn-default product pos-tip subcategoty_btn" title="{{$subcat->name}}" data-subcat_id="{{$subcat->id}}">
-        <img src="{{ asset($subcat->image) }}" alt="acifix 250mg" class="img-rounded">
+      @if(!empty($subcat->image))
+            <img src="{{ asset($subcat->image) }}" alt="{{$subcat->name}}" class="img-rounded">
+            @else
+            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$subcat->name}}" class="img-rounded">
+      @endif  
         <p class="">{{$subcat->name}}</p>
       </button>
       @endforeach
     </div>
 
-    <div id="brands_area">
+    <div id="brands_area" class="scrollable-container">
       @foreach($brands as $brand)
       <button class="btn-prni btn-default product pos-tip brand_btn" title="{{$brand->name}}" data-brand_id="{{$brand->id}}">
-        <img src="{{ asset($brand->image) }}" alt="acifix 250mg" class="img-rounded">
+      @if(!empty($brand->image))
+            <img src="{{ asset($brand->image) }}" alt="{{$brand->name}}" class="img-rounded">
+            @else
+            <img src="{{ asset('admin/defaultIcon/no_image.png')}}" alt="{{$brand->name}}" class="img-rounded">
+      @endif  
         <p class="">{{$brand->name}}</p>
       </button>
       @endforeach

@@ -580,7 +580,7 @@
                             <a href="{{ route('admin.payroll.index') }}" class="dropdown-item">Data List</a>
                         </li>
                         <li>
-                            <a href="{{ route('admin.payroll.index') }}" class="dropdown-item">Deduction</a>
+                            <a href="{{ route('admin.payroll.deduction') }}" class="dropdown-item">Deduction</a>
                         </li>
                         <li>
                             <a href="{{ route('admin.payroll.bonus') }}" class="dropdown-item">Bonus</a>

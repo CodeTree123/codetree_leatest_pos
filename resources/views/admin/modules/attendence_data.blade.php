@@ -41,7 +41,7 @@ Attendence
           <td>{{$att->employee_name}}</td>
           <td>{{@$att->employee->em_id}}</td>
           <td>
-            <button class="btn toggle-attendance {{ $att->status == 1 ? 'bg_p_primary' : 'btn-danger' }}" data-id="{{ $att->id }}">
+            <button class="btn toggle-attendance {{ $att->status == 1 ? 'bg_p_primary' : 'btn-danger' }}" data-empid="{{@$att->employee->id}}" data-id="{{ $att->id }}">
               {{ $att->status == 1 ? 'Present' : 'Absent' }}
             </button>
           </td>
@@ -59,32 +59,40 @@ Attendence
     document.querySelectorAll('.toggle-attendance').forEach(function(button) {
       button.addEventListener('click', function() {
         var attendanceId = this.getAttribute('data-id');
+        var empId = this.getAttribute('data-empid');
         var button = this;
+        console.log(empId);
 
-        fetch('/attendance/toggle-status/' + attendanceId, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.status === 'success') {
-              if (data.newStatus == 1) {
-                button.textContent = 'Present';
-                button.classList.remove('btn-danger');
-                button.classList.add('bg_p_primary');
-              } else {
-                button.textContent = 'Absent';
-                button.classList.remove('bg_p_primary');
-                button.classList.add('btn-danger');
-              }
+        fetch('/attendance/toggle-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+          attendanceId: attendanceId,
+          empId: empId  // Include employee ID in the request body
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          if (data.status === 'success') {
+            if (data.newStatus == 1) {
+              button.textContent = 'Present';
+              button.classList.remove('btn-danger');
+              button.classList.add('bg_p_primary');
             } else {
-              alert(data.message);
+              button.textContent = 'Absent';
+              button.classList.remove('bg_p_primary');
+              button.classList.add('btn-danger');
             }
-          })
-          .catch(error => console.error('Error:', error));
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(error => console.error('Error:', error));
+
       });
     });
   });
