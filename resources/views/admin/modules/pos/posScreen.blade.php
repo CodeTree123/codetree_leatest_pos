@@ -42,6 +42,27 @@ use App\Http\Controllers\admin\StockController;
     justify-content: flex-start;
     /* Align items to the start */
   }
+
+  #category_area {
+    max-height: 400px;
+    /* Set the maximum height for the area */
+    overflow-y: auto;
+    /* Enables vertical scrolling */
+  }
+
+  #subcategory_area {
+    max-height: 400px;
+    /* Set the maximum height for the area */
+    overflow-y: auto;
+    /* Enables vertical scrolling */
+  }
+
+  #brands_area {
+    max-height: 400px;
+    /* Set the maximum height for the area */
+    overflow-y: auto;
+    /* Enables vertical scrolling */
+  }
 </style>
 <script>
   function dis(val) {

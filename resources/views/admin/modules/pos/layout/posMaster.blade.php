@@ -498,7 +498,7 @@
 
             </ul>
 
-            <p style="color:white;margin-right: 180px;float: right;height:20px;padding: 0px;">{{ date('l, jS F Y') }}
+            <p style="color:black;margin-right: 180px;float: right;height:20px;padding: 0px;">{{ date('l, jS F Y') }}
             </p>
 
             <!--user-profile--rightpart-->
