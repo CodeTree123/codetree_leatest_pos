@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Payroll;
 use App\Employee;
 use App\Bonus;
+use App\Deduction;
 use Brian2694\Toastr\Facades\Toastr;
 
 class PayrollController extends Controller
@@ -62,12 +63,85 @@ class PayrollController extends Controller
     {
         // Fetch employee along with related payrolls, deductions, and bonuses
         $employee = Employee::with(['payrolls', 'deductions', 'bonuses','store_attendances'])->findOrFail($id);
+
+        //HERE WE HAVE TO ADD deduction and bonuses calculation and show total deduction, total bonus .
     
         // return compact('employee');
         // Pass the data to the view
         return view('admin.payroll.employeeWorkingDetails', compact('employee'));
     }
     
+
+    public function bonusesStore(Request $request)
+{
+
+    try{
+        $request->validate([
+            'employee_id2' => 'required|exists:employees,id',
+            'amount' => 'required',
+            'date_given' => 'required|date',
+            'description' => 'nullable',
+        ]);
+    
+        Bonus::create([
+            'employee_id' => $request->employee_id2,
+            'amount' => $request->amount,
+            'date_given' => $request->date_given,
+            'description' => $request->description,
+        ]);
+    
+        Toastr::success('Employee Bonus Updated successfully.');
+        return redirect()->route('admin.payroll.employeeWorkingDetails',$request->employee_id2);
+    }catch (\Exception $e) {
+        // Error handling
+
+        Toastr::error('Something went wrong. Please try again.'.$e->getMessage());
+        return redirect()->back();
+    }
+   
+}
+
+public function deductionsStore(Request $request)
+{
+    $request->validate([
+        'employee_id' => 'required|exists:employees,id',
+        'tax' => 'nullable|numeric|min:0',
+        'social_security' => 'nullable|numeric|min:0',
+        'other_deductions' => 'nullable|numeric|min:0',
+        'deduction_date' => 'required|date'
+    ]);
+
+    // Ensure at least one field has a value
+    if (
+        is_null($request->tax) &&
+        is_null($request->social_security) &&
+        is_null($request->other_deductions)
+    ) {
+        Toastr::error('You must provide at least one deduction value.');
+        return redirect()->back();
+    }
+
+    try {
+        // Store the deduction in the database
+        Deduction::create([
+            'employee_id' => $request->employee_id,
+            'tax' => $request->tax ?? 0,
+            'social_security' => $request->social_security ?? 0,
+            'other_deductions' => $request->other_deductions ?? 0,
+            'deduction_date' => $request->deduction_date
+        ]);
+
+        // Success message using Toastr
+        Toastr::success('Deduction added successfully.');
+        return redirect()->route('admin.payroll.employeeWorkingDetails',$request->employee_id);
+
+    } catch (\Exception $e) {
+        // Error handling
+        Toastr::error('Something went wrong. Please try again.');
+        return redirect()->back();
+    }
+}
+
 
     public function generatePayrollForAllEmployees(Request $value)
     {
