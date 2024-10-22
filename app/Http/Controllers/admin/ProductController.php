@@ -18,7 +18,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\File;
 use Cart;
 use App\Exports\ProductsExport;
-use App\Promotion;
+use App\promotion;
 use App\SubCategory;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
@@ -34,7 +34,7 @@ class ProductController extends Controller
         $categories = Category::all();
         $brands = Brands::all();
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
-
+    
         $products = Products::select('products.*', \DB::raw('summary.total_qty'))
             ->leftjoin(
                 \DB::raw('(SELECT pro_id, SUM(qty) AS total_qty FROM sales_products GROUP BY pro_id) AS summary'),
@@ -44,10 +44,10 @@ class ProductController extends Controller
             )
             ->orderBy('summary.total_qty', 'desc')
             ->paginate(20); // Change pagination to 20
-
+    
         $lastId = Products::orderBy('id', 'desc')->take(1)->first();
         $lastId = $lastId ? $lastId->id + 1 : 1;
-
+    
         return view('admin.modules.product.productlists')->with([
             'suppliers' => $suppliers,
             'units' => $units,
@@ -58,7 +58,7 @@ class ProductController extends Controller
             'lastId' => $lastId,
         ]);
     }
-
+    
 
 
     public function productAddForm()
@@ -379,31 +379,31 @@ class ProductController extends Controller
             'promotion_ammount' => 'required',
             'Promotion_product' => 'required|array',
         ]);
-
+    
         // Prepare promotion data
         $promotion = new Promotion();
         $promotion->status = $request->status;
         $promotion->promotion_name = $request->promotion_name;
         $promotion->promotion_ammount = $request->promotion_ammount;
         $promotion->Promotion_product = json_encode($request->Promotion_product);
-
+    
         // Get existing product IDs associated with any promotions
         $existingProductIds = DB::table('promotion_product')->pluck('products_id')->toArray();
-
+    
         // Check for duplicate product IDs
         $duplicateProductIds = array_intersect($request->Promotion_product, $existingProductIds);
-
+        
         if (!empty($duplicateProductIds)) {
             // If duplicates are found, throw an error and don't save
             Toastr::error('Some products are already associated with another promotion: ');
             return redirect()->back();
         }
-
+    
         try {
             // Save promotion and attach products
             $promotion->save();
             $promotion->products()->attach($request->Promotion_product);
-
+    
             Toastr::success('Promotion added successfully.');
             return redirect()->route('admin.product.promotionlist');
         } catch (\Exception $e) {
@@ -411,32 +411,32 @@ class ProductController extends Controller
             return redirect()->back();
         }
     }
-
-
-
+    
+    
+    
     public function promotionlist()
     {
         // Fetch all promotions
         $promotions = Promotion::all();
-
+    
         // Iterate over promotions and retrieve associated product IDs and names
         $promotionsWithProducts = $promotions->map(function ($promotion) {
             $productIds = json_decode($promotion->Promotion_product, true); // Decode product IDs
             $products = Products::whereIn('id', $productIds)->get(['id', 'name']); // Fetch product IDs and names
-
+    
             // Attach product details (IDs and names) to the promotion object
             $promotion->productDetails = $products;
             return $promotion;
         });
-
+    
         // Pass the modified collection to the view
         return view('admin.modules.promotion.lists_promostion')->with([
             'promotions' => $promotionsWithProducts,
         ]);
     }
-
-
-
+    
+    
+    
 
     public function deleteProomotion(Request $request)
     {
@@ -460,21 +460,21 @@ class ProductController extends Controller
     public function PromotionEdit(Request $request)
     {
         $promotion = Promotion::findOrFail($request->promotionid);
-
+    
         // Decode the product IDs associated with the promotion
         $productIds = json_decode($promotion->Promotion_product, true);
-
+    
         // Retrieve product details (IDs and names)
         $products = Products::whereIn('id', $productIds)->get(['id', 'name']);
-
+    
         // Attach product details to the promotion object
         $promotion->productDetails = $products;
         // return compact('promotion', 'products');
         // Return the view or HTML content for the modal
         return view('admin.modules.promotion.Editpromotion', compact('promotion', 'products'));
     }
-
-
+    
+    
     public function updatePromotion(Request $request)
     {
         // Validate incoming request data
@@ -484,24 +484,24 @@ class ProductController extends Controller
             'promotion_ammount'        => 'required|numeric',
             'Promotion_product'        => 'required|array', // Ensure it's an array
         ]);
-
+    
         // Find the promotion to be updated
         $promotion = Promotion::findOrFail($request->id); // Throw a 404 if not found
-
+    
         // Update promotion attributes
         $promotion->status = $request->status;
         $promotion->promotion_name = $request->promotion_name;
         $promotion->promotion_ammount = $request->promotion_ammount;
-
+    
         // Store the array as a JSON string in the Promotion_product column (if needed)
         $promotion->Promotion_product = json_encode($request->Promotion_product);
-
+    
         try {
             $promotion->save(); // Save updated promotion data
-
+    
             // Sync the associated products in the pivot table
             $promotion->products()->sync($request->Promotion_product);
-
+    
             Toastr::success('Promotion updated successfully.');
             return redirect()->route('admin.product.promotionlist'); // Redirect to the promotion list
         } catch (\Exception $e) {
@@ -523,10 +523,10 @@ class ProductController extends Controller
         return view('admin.modules.promoCode.addpromoCode');
     }
 
-    public function promoCodeSave(Request $request)
+    public function promoCodeSave(Request $request) 
     {
         $request->validate([
-
+          
             'name'                     => 'required',
             'discount'                 => 'required|numeric',
             'promocode_start_duration' => 'required|date',
@@ -535,9 +535,9 @@ class ProductController extends Controller
             'minimum_order_ammount'    => 'required|numeric|min:0',
             'percentage'               => 'required'
         ]);
-
+    
         $promocode = new Promocode();
-
+      
         $promocode->name                     = $request->name;
         $promocode->discount                 = $request->discount;
         $promocode->promocode_start_duration = $request->promocode_start_duration;
@@ -545,7 +545,7 @@ class ProductController extends Controller
         $promocode->user_limit               = $request->user_limit;
         $promocode->minimum_order_ammount    = $request->minimum_order_ammount;
         $promocode->percentage    = $request->percentage;
-
+    
         try {
             $promocode->save();
             Toastr::success('Promo Code Added Successfully.');
@@ -601,7 +601,7 @@ class ProductController extends Controller
     public function updatepromoCode(Request $request)
     {
         $request->validate([
-
+            
             'name'                     => 'required',
             'discount'                 => 'required|numeric',
             'promocode_start_duration' => 'required|date',
@@ -609,7 +609,7 @@ class ProductController extends Controller
             'user_limit'               => 'required|integer|min:1',
             'minimum_order_ammount'    => 'required|numeric|min:0'
         ]);
-
+    
         try {
             DB::table('promocodes')->where('id', $request->id)
                 ->update([
@@ -617,11 +617,11 @@ class ProductController extends Controller
                     'discount'                 => $request->discount,
                     'promocode_start_duration' => $request->promocode_start_duration,
                     'promocode_end_duration'   => $request->promocode_end_duration,
-
+                    
                     'user_limit'               => $request->user_limit,
                     'minimum_order_ammount'    => $request->minimum_order_ammount,
                 ]);
-
+    
             Toastr::success('Promo Code Updated Successfully.');
             return redirect()->route('admin.product.promoCodelist');
         } catch (\Exception $e) {
@@ -629,4 +629,6 @@ class ProductController extends Controller
             return redirect()->back();
         }
     }
+    
+    
 }
