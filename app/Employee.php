@@ -15,11 +15,15 @@ class Employee extends Model
 
     public function deductions()
     {
-        return $this->hasOne(Deduction::class);
+        return $this->hasMany(Deduction::class);
     }
 
     public function bonuses()
     {
         return $this->hasMany(Bonus::class, 'employee_id', 'id');
+    }
+
+    public function store_attendances(){
+        return $this->hasMany(StoreAttendence::class, 'employee_id', 'id');
     }
 }
