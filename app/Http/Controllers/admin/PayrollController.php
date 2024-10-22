@@ -61,9 +61,9 @@ class PayrollController extends Controller
     public function employeeWorkingDetails($id)
     {
         // Fetch employee along with related payrolls, deductions, and bonuses
-        $employee = Employee::with(['payrolls', 'deductions', 'bonuses'])->findOrFail($id);
+        $employee = Employee::with(['payrolls', 'deductions', 'bonuses','store_attendances'])->findOrFail($id);
     
-        return compact('employee');
+        // return compact('employee');
         // Pass the data to the view
         return view('admin.payroll.employeeWorkingDetails', compact('employee'));
     }
