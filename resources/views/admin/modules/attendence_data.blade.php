@@ -61,8 +61,6 @@ Attendence
         var attendanceId = this.getAttribute('data-id');
         var empId = this.getAttribute('data-empid');
         var button = this;
-        console.log(empId);
-
         fetch('/attendance/toggle-status', {
         method: 'POST',
         headers: {
@@ -76,7 +74,7 @@ Attendence
       })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
+        
           if (data.status === 'success') {
             if (data.newStatus == 1) {
               button.textContent = 'Present';
