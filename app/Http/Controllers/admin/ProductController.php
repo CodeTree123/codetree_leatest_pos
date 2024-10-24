@@ -26,7 +26,6 @@ use Illuminate\Support\Str;
 class ProductController extends Controller
 {
 
-
     public function productList()
     {
         $suppliers = Supplier::all();
@@ -79,42 +78,56 @@ class ProductController extends Controller
     }
     protected function imageUpload($request)
     {
+        // Validate that the uploaded file is an image (jpg, png, gif, etc.)
+        $validatedData = $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:2048',  // 2MB max
+        ]);
+    
         $productImage = $request->file('image');
         $imageName = $productImage->getClientOriginalName();
         $directory = 'uploads/product_image/';
         $imageUrl = $directory . $imageName;
-
+    
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
-
+    
         Image::make($productImage)->resize(80, 80)->save($imageUrl);
-
+    
         return $imageUrl;
     }
+    
     public function productSave(Request $request)
     {
-        $request->validate([
+        // Check if the selected category has any subcategories
+        $hasSubCategory = SubCategory::where('parentId', $request->category)->exists();
+    
+        // Set validation rules dynamically
+        $validationRules = [
             'name' => 'required',
             'code' => 'required|unique:products',
             'purchase_price' => 'required',
             'sell_price' => 'required',
             'unit' => 'required',
             'category' => 'required',
-            'subcategory' => 'required'
-        ]);
-
-        if ($request->file('image') !== null) {
-            $image = $this->imageUpload($request);
-        } else {
-            $image = null;
+        ];
+    
+        if ($hasSubCategory) {
+            $validationRules['subcategory'] = 'required';
         }
-
+    
+        // Validate the request based on the dynamic rules
+        $request->validate($validationRules);
+    
+        // Handle image upload if provided
+        $image = $request->file('image') ? $this->imageUpload($request) : null;
+    
+        // Save the product data
         $product = new Products;
         $product->name = $request->name;
         $product->code = $request->code;
         $product->bar_code = $request->bar_code;
-        $product->slug = str::slug($request->name);
+        $product->slug = Str::slug($request->name);
         $product->supplier = $request->supplier;
         $product->unit = $request->unit;
         $product->brand = $request->brand;
@@ -128,13 +141,16 @@ class ProductController extends Controller
         $product->whole_sell = $request->whole_sell;
         $product->description = $request->description;
         $product->image = $image;
+    
         try {
             $product->save();
-            $proId = $product->id;
+    
+            // Create an entry in the stock table
             $stock = new Stock;
-            $stock->pro_id = $proId;
+            $stock->pro_id = $product->id;
             $stock->stock = 0;
             $stock->save();
+    
             Toastr::success('Product Added Successfully.');
             return redirect()->route('admin.productList');
         } catch (\Exception $e) {
@@ -142,6 +158,7 @@ class ProductController extends Controller
             return redirect()->back();
         }
     }
+    
     public function printBarcode()
     {
         $products = Products::all();
@@ -629,6 +646,19 @@ class ProductController extends Controller
             return redirect()->back();
         }
     }
+
+
+
     
     
 }
+
+
+
+
+
+
+
+
+
+

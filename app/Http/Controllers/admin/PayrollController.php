@@ -123,13 +123,15 @@ public function deductionsStore(Request $request)
 
     try {
         // Store the deduction in the database
-        Deduction::create([
+        $deduction=Deduction::create([
             'employee_id' => $request->employee_id,
             'tax' => $request->tax ?? 0,
             'social_security' => $request->social_security ?? 0,
             'other_deductions' => $request->other_deductions ?? 0,
-            'deduction_date' => $request->deduction_date
+            'deduction_date' => $request->deduction_date,
         ]);
+
+
 
         // Success message using Toastr
         Toastr::success('Deduction added successfully.');
