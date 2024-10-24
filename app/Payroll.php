@@ -9,6 +9,7 @@ class Payroll extends Model
 {
     use HasFactory;
     protected $fillable = ['employee_id', 'basic_salary', 'total_deductions', 'total_bonuses', 'net_salary', 'pay_date'];
+    
 
     public function employee()
     {

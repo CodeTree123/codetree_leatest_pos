@@ -3,6 +3,9 @@
 Employee Details
 @stop
 @section('adminContent')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 <div class="container-fluid py-4">
     <h1 class="mb-4">Employee Details</h1>
@@ -29,26 +32,27 @@ Employee Details
     <div class="row">
     <!-- Employee Information -->
     <div class="col-lg-6 mb-4">
-        <div class="card border-0 shadow">
-            <div class="card-header bg-primary text-white py-3">
-                <h5 class="mb-0">Personal Information</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <p><strong>Name:</strong> {{ $employee['name'] }}</p>
-                        <p><strong>Employee ID:</strong> {{ $employee['em_id'] }}</p>
-                        <p><strong>Position:</strong> {{ $employee['position'] }}</p>
-                    </div>
-                    <div class="col-sm-6">
-                        <p><strong>Email:</strong> {{ $employee['email'] }}</p>
-                        <p><strong>Hire Date:</strong> {{ $employee['hire_date'] }}</p>
-                        <p><strong>Basic Salary:</strong> ${{ number_format($employee['basic_salary'], 2) }}</p>
-                    </div>
+    <div class="card border-0 shadow" style="min-height: 270px;">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">Personal Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <p><strong>Name:</strong> {{ $employee['name'] }}</p>
+                    <p><strong>Employee ID:</strong> {{ $employee['em_id'] }}</p>
+                    <p><strong>Position:</strong> {{ $employee['position'] }}</p>
+                </div>
+                <div class="col-sm-6">
+                    <p><strong>Email:</strong> {{ $employee['email'] }}</p>
+                    <p><strong>Hire Date:</strong> {{ $employee['hire_date'] }}</p>
+                    <p><strong>Basic Salary:</strong> ${{ number_format($employee['basic_salary'], 2) }}</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
     <!-- Payroll Information -->
     <div class="col-lg-6 mb-4">
@@ -57,29 +61,18 @@ Employee Details
                 <h5 class="mb-0">Payroll Information(On going)</h5>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive" style="height: 150px;">
-                    <table class="table table-hover mb-0" id="payrollTable">
-                        <thead class="bg-light sticky-top">
-                            <tr>
-                                <th class="px-3">Pay Date</th>
-                                <th class="px-3">Basic Salary</th>
-                                <th class="px-3">Total Deductions</th>
-                                <th class="px-3">Total Bonus</th>
-                                <th class="px-3">Net Salary</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($employee['payrolls']->sortByDesc('id') as $payroll)
-                            <tr>
-                                <td class="px-3">{{ $payroll['pay_date'] }}</td>
-                                <td class="px-3">${{ number_format($payroll['basic_salary'], 2) }}</td>
-                                <td class="px-3">${{ number_format($payroll['total_deductions'], 2) }}</td>
-                                <td class="px-3">${{ number_format($payroll['total_bonuses'], 2) }}</td>
-                                <td class="px-3">${{ number_format($payroll['net_salary'], 2) }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="table-responsive p-2" >
+                <table class="table table-hover mb-0" id="payrollTable">
+                    <thead class="bg-light sticky-top">
+                        <tr>
+                            <th>Pay Date</th>
+                            <th>Basic Salary</th>
+                            <th>Total Deductions</th>
+                            <th>Total Bonus</th>
+                            <th>Net Salary</th>
+                        </tr>
+                    </thead>
+                </table>
                 </div>
             </div>
         </div>
@@ -97,27 +90,18 @@ Employee Details
                 </button>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive" style="height: 150px;">
-                    <table class="table table-hover mb-0" id="deductionTable">
-                        <thead class="bg-light sticky-top">
-                            <tr>
-                                <th class="px-3">Date</th>
-                                <th class="px-3">Tax</th>
-                                <th class="px-3">Social Security</th>
-                                <th class="px-3">Other</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($employee['deductions']->sortByDesc('id') as $deduction)
-                            <tr>
-                                <td class="px-3">{{ $deduction['deduction_date'] }}</td>
-                                <td class="px-3">${{ number_format($deduction['tax'] ?? 0, 2) }}</td>
-                                <td class="px-3">${{ number_format($deduction['social_security'] ?? 0, 2) }}</td>
-                                <td class="px-3">${{ number_format($deduction['other_deductions'] ?? 0, 2) }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                <div class="table-responsive p-2" >
+                <table class="table table-hover mb-0" id="deductionTable">
+                    <thead class="bg-light sticky-top">
+                        <tr>
+                            <th>Date</th>
+                            <th>Tax</th>
+                            <th>Social Security</th>
+                            <th>Other</th>
+                        </tr>
+                    </thead>
+                </table>
+
                 </div>
             </div>
         </div>
@@ -133,7 +117,7 @@ Employee Details
                 </button>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive" style="height: 150px;">
+                <div class="table-responsive p-2" >
                     <table class="table table-hover mb-0" id="bonusTable">
                         <thead class="bg-light sticky-top">
                             <tr>
@@ -142,15 +126,6 @@ Employee Details
                                 <th class="px-3">Description</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach($employee['bonuses']->sortByDesc('id') as $bonus)
-                            <tr>
-                                <td class="px-3">{{ $bonus['date_given'] }}</td>
-                                <td class="px-3">${{ number_format($bonus['amount'], 2) }}</td>
-                                <td class="px-3">{{ $bonus['description'] }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -164,7 +139,7 @@ Employee Details
         <h5 class="mb-0">Attendance</h5>
     </div>
     <div class="card-body p-0">
-        <div class="table-responsive" style="height: 150px;">
+        <div class="table-responsive p-2">
             <table class="table table-hover mb-0" id="attendanceTable">
                 <thead class="bg-light sticky-top">
                     <tr>
@@ -173,21 +148,6 @@ Employee Details
                         <th class="px-3">Late Time</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($employee['store_attendances']->sortByDesc('id') as $attendance)
-                    <tr>
-                        <td class="px-3">{{ $attendance['date'] }}</td>
-                        <td class="px-3">
-                            @if($attendance['status'] == 1)
-                                <span class="badge bg-success">Present</span>
-                            @else
-                                <span class="badge bg-danger">Absent</span>
-                            @endif
-                        </td>
-                        <td class="px-3">{{ $attendance['late_time'] }} minutes</td>
-                    </tr>
-                    @endforeach
-                </tbody>
             </table>
         </div>
     </div>
@@ -267,17 +227,6 @@ Employee Details
 </div>
 
 
-<style>
-    /* ... (previous styles remain the same) ... */
-    .show-more {
-        transition: all 0.3s ease-in-out;
-    }
-    .show-more:hover {
-        transform: translateY(-2px);
-    }
-    
-</style>
-
 
 
 <script>
@@ -295,8 +244,112 @@ Employee Details
       })
 </script>
 
-
 <script>
+$(document).ready(function () {
+    // Function to get the current month filter value
+    function getMonthFilter() {
+        return $('#monthFilter').val();
+    }
+
+    // Initialize the Deductions DataTable
+    const deductionTable = $('#deductionTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('admin.employeeWorkingDetails.employee.deductions') }}',
+            data: function(d) {
+                d.employee_id = '{{ $employee['id'] }}';
+                d.month = getMonthFilter();
+            }
+        },
+        columns: [
+            { data: 'deduction_date', name: 'deduction_date' },
+            { data: 'tax', name: 'tax' },
+            { data: 'social_security', name: 'social_security' },
+            { data: 'other_deductions', name: 'other_deductions' },
+        ],
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
+    });
+
+    // Initialize the Payroll DataTable
+    const payrollTable = $('#payrollTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('admin.employeeWorkingDetails.employee.payrolls') }}',
+            data: function(d) {
+                d.employee_id = '{{ $employee['id'] }}';
+                d.month = getMonthFilter();
+            }
+        },
+        columns: [
+            { data: 'pay_date', name: 'pay_date' },
+            { data: 'basic_salary', name: 'basic_salary' },
+            { data: 'total_deductions', name: 'total_deductions' },
+            { data: 'total_bonuses', name: 'total_bonuses' },
+            { data: 'net_salary', name: 'net_salary' },
+        ],
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
+    });
+
+    // Initialize the Bonuses DataTable
+    const bonusTable = $('#bonusTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('admin.employeeWorkingDetails.employee.bonuses') }}',
+            data: function(d) {
+                d.employee_id = '{{ $employee['id'] }}';
+                d.month = getMonthFilter();
+            }
+        },
+        columns: [
+            { data: 'date_given', name: 'date_given' },
+            { data: 'amount', name: 'amount' },
+            { data: 'description', name: 'description' },
+        ],
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
+    });
+
+    // Initialize the Attendance DataTable
+    const attendanceTable = $('#attendanceTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ route('admin.employeeWorkingDetails.employee.attendances') }}',
+            data: function(d) {
+                d.employee_id = '{{ $employee['id'] }}';
+                d.month = getMonthFilter();
+            }
+        },
+        columns: [
+            { data: 'date', name: 'date' },
+            { data: 'status', name: 'status', render: function (data) {
+                return data === 1
+                    ? '<span class="badge bg-success">Present</span>'
+                    : '<span class="badge bg-danger">Absent</span>';
+            }},
+            { data: 'late_time', name: 'late_time' },
+        ],
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
+    });
+
+    // Add change event listener to month filter
+    $('#monthFilter').on('change', function() {
+        // Reload all tables when month filter changes
+        deductionTable.ajax.reload();
+        payrollTable.ajax.reload();
+        bonusTable.ajax.reload();
+        attendanceTable.ajax.reload();
+    });
+});
+</script>
+
+<!-- <script>
     document.getElementById('monthFilter').addEventListener('change', function () {
         const selectedMonth = this.value;
         filterTableByMonth('deductionTable', selectedMonth);
@@ -317,7 +370,7 @@ Employee Details
             }
         });
     }
-</script>
+</script> -->
 
 @stop
 

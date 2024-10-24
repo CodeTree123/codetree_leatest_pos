@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 use App\Payroll;
 use App\Employee;
 use App\Bonus;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use App\Deduction;
+use App\StoreAttendence;
+use Yajra\DataTables\DataTables;
 use Brian2694\Toastr\Facades\Toastr;
 
 class PayrollController extends Controller
@@ -62,14 +66,125 @@ class PayrollController extends Controller
     public function employeeWorkingDetails($id)
     {
         // Fetch employee along with related payrolls, deductions, and bonuses
-        $employee = Employee::with(['payrolls', 'deductions', 'bonuses','store_attendances'])->findOrFail($id);
+        $employee = Employee::findOrFail($id);
 
-        //HERE WE HAVE TO ADD deduction and bonuses calculation and show total deduction, total bonus .
-    
-        // return compact('employee');
         // Pass the data to the view
         return view('admin.payroll.employeeWorkingDetails', compact('employee'));
     }
+
+
+    public function payrollData(Request $request)
+    {
+        $query = Payroll::where('employee_id', $request->employee_id);
+        
+        if ($request->month) {
+            $query->whereRaw('MONTH(pay_date) = ?', [$request->month]);
+        }
+    
+        return DataTables::of($query)
+            ->editColumn('pay_date', function ($payroll) {
+                return Carbon::parse($payroll->pay_date)->format('Y-m-d');
+            })
+            ->editColumn('basic_salary', function ($payroll) {
+                return number_format($payroll->basic_salary, 2);
+            })
+            ->editColumn('total_deductions', function ($payroll) {
+                return number_format($payroll->total_deductions, 2);
+            })
+            ->editColumn('total_bonuses', function ($payroll) {
+                return number_format($payroll->total_bonuses, 2);
+            })
+            ->editColumn('net_salary', function ($payroll) {
+                return number_format($payroll->net_salary, 2);
+            })
+            ->make(true);
+    }
+    
+    public function deductionData(Request $request)
+    {
+        $query = Deduction::where('employee_id', $request->employee_id);
+        
+        if ($request->month) {
+            $query->whereRaw('MONTH(deduction_date) = ?', [$request->month]);
+        }
+    
+        return DataTables::of($query)
+            ->editColumn('deduction_date', function ($deduction) {
+                return Carbon::parse($deduction->deduction_date)->format('Y-m-d');
+            })
+            ->editColumn('tax', function ($deduction) {
+                return number_format($deduction->tax, 2);
+            })
+            ->editColumn('social_security', function ($deduction) {
+                return number_format($deduction->social_security, 2);
+            })
+            ->editColumn('other_deductions', function ($deduction) {
+                return number_format($deduction->other_deductions, 2);
+            })
+            ->make(true);
+    }
+    
+    public function bonusData(Request $request)
+    {
+        $query = Bonus::where('employee_id', $request->employee_id);
+        
+        if ($request->month) {
+            $query->whereRaw('MONTH(date_given) = ?', [$request->month]);
+        }
+    
+        return DataTables::of($query)
+            ->editColumn('date_given', function ($bonus) {
+                return Carbon::parse($bonus->date_given)->format('Y-m-d');
+            })
+            ->editColumn('amount', function ($bonus) {
+                return number_format($bonus->amount, 2);
+            })
+            ->editColumn('description', function ($bonus) {
+                return $bonus->description;
+            })
+            ->make(true);
+    }
+    
+    public function attendanceData(Request $request)
+    {
+        $query = StoreAttendence::where('employee_id', $request->employee_id);
+    
+        if ($request->month) {
+            $query->whereRaw('MONTH(STR_TO_DATE(date, "%d/%m/%Y")) = ?', [$request->month]);
+        }
+    
+        // Log the query with bindings for debugging
+        Log::info($query->toSql(), $query->getBindings());
+    
+        return DataTables::of($query)
+            ->editColumn('date', function ($attendance) {
+                try {
+                    // Try to parse the date assuming it might be in different formats
+                    $date = Carbon::createFromFormat('d/m/Y', $attendance->date);
+                } catch (\Exception $e) {
+                    try {
+                        // Fallback to the standard format 'Y-m-d'
+                        $date = Carbon::createFromFormat('Y-m-d', $attendance->date);
+                    } catch (\Exception $ex) {
+                        // If parsing fails, return the raw date as-is
+                        Log::warning("Invalid date format for attendance ID {$attendance->id}: {$attendance->date}");
+                        return $attendance->date;
+                    }
+                }
+                return $date->format('Y-m-d');
+            })
+            ->editColumn('late_time', function ($attendance) {
+                return number_format($attendance->late_time, 2);
+            })
+            ->editColumn('status', function ($attendance) {
+                return $attendance->status;
+            })
+            ->make(true);
+    }
+    
+
+    // Repeat similar methods for deductions, bonuses, and attendances
+    
     
 
     public function bonusesStore(Request $request)

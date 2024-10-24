@@ -34,11 +34,13 @@ class HomeController extends Controller
       // Get the search input
       $searchTerm = $request->input('search');
 
-      // Query attendance records with related employees based on the search term
-      $data = StoreAttendence::whereHas('employee', function ($query) use ($searchTerm) {
-         $query->where('name', 'like', '%' . $searchTerm . '%')
-            ->orWhere('em_id', 'like', '%' . $searchTerm . '%');
-      })->orderBy('id', 'DESC')->paginate(20);
+      $data = DB::table('store_attendences')
+      ->join('employees', 'store_attendences.employee_id', '=', 'employees.id')
+      ->where('employees.name', 'like', '%' . $searchTerm . '%')
+      ->orWhere('employees.em_id', 'like', '%' . $searchTerm . '%')
+      ->orderBy('store_attendences.id', 'DESC')
+      ->paginate(20);
+  
 
       // Return the Blade file with search results
       return view('admin.modules.attendence_data', compact('data'));

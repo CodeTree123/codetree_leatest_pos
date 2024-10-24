@@ -16,7 +16,7 @@ class AttendenceController extends Controller
     {
 
         $count = count($request->employee_id);
-        $date = date("d/m/Y");
+        $date = date("Y/m/d");
         $check = StoreAttendence::where('date', $date)->first();
 
         if ($check) {
@@ -79,6 +79,7 @@ class AttendenceController extends Controller
                     $deduction = new Deduction();
                     $deduction->employee_id = $empId;
                     $deduction->other_deductions = $daily_salary;
+                    $deduction->deduction_date = Carbon::now()->toDateString();
                     $deduction->save();
                 }
             }
