@@ -44,7 +44,7 @@ class ProductController extends Controller
             ->orderBy('summary.total_qty', 'desc')
             ->paginate(20); // Change pagination to 20
     
-        $lastId = Products::orderBy('id', 'desc')->take(1)->first();
+        $lastId = Products::orderBy('id', 'desc')->first();
         $lastId = $lastId ? $lastId->id + 1 : 1;
     
         return view('admin.modules.product.productlists')->with([
@@ -65,7 +65,7 @@ class ProductController extends Controller
         $suppliers = Supplier::all();
         $units = Units::all();
         $brands = Brands::all();
-        $lastId = Products::orderBy('id', 'desc')->take(1)->first();
+        $lastId = Products::orderBy('id', 'desc')->first();
         $lastId = @$lastId->id + 1;
         $productCode = DB::table('systems')->where('id', '1')->value('productCode');
         return view('admin.modules.product.productAddForm')->with([
@@ -415,7 +415,7 @@ class ProductController extends Controller
             Toastr::error('Some products are already associated with another promotion: ');
             return redirect()->back();
         }
-    
+
         try {
             // Save promotion and attach products
             $promotion->save();
