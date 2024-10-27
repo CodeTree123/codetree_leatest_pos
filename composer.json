@@ -19,7 +19,10 @@
         "laravel/ui": "^4.5",
         "maatwebsite/excel": "^3.1",
         "picqer/php-barcode-generator": "^2.0",
-        "spatie/laravel-permission": "^6.0"
+        "spatie/laravel-permission": "^6.0",
+        "yajra/laravel-datatables": "^9.0",
+        "yajra/laravel-datatables-buttons": "^9.1",
+        "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
