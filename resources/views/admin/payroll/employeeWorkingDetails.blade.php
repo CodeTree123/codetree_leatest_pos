@@ -28,7 +28,12 @@ Employee Details
             <option value="12">December</option>
         </select>
     </div>
+
 </div>
+<button class="btn btn-primary btn-sm mb-2" id="finalizeDeductions">
+                    <i class="fas fa-check"></i> Finalize Payroll for the month
+</button>
+
     <div class="row">
     <!-- Employee Information -->
     <div class="col-lg-6 mb-4">
@@ -98,6 +103,7 @@ Employee Details
                             <th>Tax</th>
                             <th>Social Security</th>
                             <th>Other</th>
+                            <th>Is Excused?</th>
                         </tr>
                     </thead>
                 </table>
@@ -267,32 +273,97 @@ $(document).ready(function () {
             { data: 'tax', name: 'tax' },
             { data: 'social_security', name: 'social_security' },
             { data: 'other_deductions', name: 'other_deductions' },
+            {
+            data: null,
+            orderable: false,
+            render: function (data, type, row) {
+                let isExcused = row.is_excused ? 'checked' : '';
+                return `
+                    <input type="checkbox" class="excuse-check" data-id="${row.id}" ${isExcused}>
+                `;
+                }
+            }
         ],
         pageLength: 5,
         lengthMenu: [5, 10, 25, 50],
     });
 
+
+
+    $('#deductionTable').on('change', '.excuse-check', function () {
+    const deductionId = $(this).data('id');
+    const isExcused = $(this).is(':checked') ? 1 : 0;
+
+    $.ajax({
+        url: '{{ route('admin.employeeWorkingDetails.employee.deductions.toggleExcuse') }}',
+        method: 'POST',
+        data: {
+            deduction_id: deductionId,
+            is_excused: isExcused,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function (response) {
+        
+        },
+        error: function (xhr) {
+            alert('Failed to update status.');
+        }
+     });
+   });
+
+
+   $('#finalizeDeductions').on('click', function () {
+    const employeeId = '{{ $employee['id'] }}';
+    const month = getMonthFilter();
+
+    $.ajax({
+        url: '{{ route('admin.employeeWorkingDetails.employee.deductions.deductionFinalize') }}',
+        method: 'POST',
+        data: {
+            employee_id: employeeId,
+            month: month,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function (response) {
+            
+            deductionTable.ajax.reload(); // Reload the DataTable to reflect changes
+            payrollTable.ajax.reload();
+        },
+        error: function (xhr) {
+            alert('Failed to finalize deductions.');
+        }
+    });
+});
+
     // Initialize the Payroll DataTable
     const payrollTable = $('#payrollTable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: '{{ route('admin.employeeWorkingDetails.employee.payrolls') }}',
-            data: function(d) {
-                d.employee_id = '{{ $employee['id'] }}';
-                d.month = getMonthFilter();
+    processing: true,
+    serverSide: true,
+    ajax: {
+        url: '{{ route('admin.employeeWorkingDetails.employee.payrolls') }}',
+        data: function(d) {
+            d.employee_id = '{{ $employee['id'] }}';
+            d.month = getMonthFilter();
+        }
+    },
+    columns: [
+        {
+            data: 'pay_date',
+            name: 'pay_date',
+            render: function(data, type, row) {
+                // Check if pay_date is null or empty
+                return data ? data : "Not paid yet";
             }
         },
-        columns: [
-            { data: 'pay_date', name: 'pay_date' },
-            { data: 'basic_salary', name: 'basic_salary' },
-            { data: 'total_deductions', name: 'total_deductions' },
-            { data: 'total_bonuses', name: 'total_bonuses' },
-            { data: 'net_salary', name: 'net_salary' },
-        ],
-        pageLength: 5,
-        lengthMenu: [5, 10, 25, 50],
-    });
+        { data: 'basic_salary', name: 'basic_salary' },
+        { data: 'total_deductions', name: 'total_deductions' },
+        { data: 'total_bonuses', name: 'total_bonuses' },
+        { data: 'net_salary', name: 'net_salary' },
+    ],
+    pageLength: 5,
+    lengthMenu: [5, 10, 25, 50],
+});
+
 
     // Initialize the Bonuses DataTable
     const bonusTable = $('#bonusTable').DataTable({
@@ -346,9 +417,26 @@ $(document).ready(function () {
         bonusTable.ajax.reload();
         attendanceTable.ajax.reload();
     });
+
+    
 });
 </script>
 
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const monthFilter = document.getElementById('monthFilter');
+        const selectedMonth = localStorage.getItem('selectedMonth'); // Retrieve from localStorage
+
+        if (selectedMonth) {
+            monthFilter.value = selectedMonth; // Set the selected value
+        }
+
+        // Listen for changes in the dropdown
+        monthFilter.addEventListener('change', function() {
+            localStorage.setItem('selectedMonth', monthFilter.value); // Save selected month to localStorage
+        });
+    });
+</script>
 <!-- <script>
     document.getElementById('monthFilter').addEventListener('change', function () {
         const selectedMonth = this.value;

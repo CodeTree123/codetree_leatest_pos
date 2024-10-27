@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Payroll;
 use App\Employee;
 use App\Bonus;
+use App\BasicSalary;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Deduction;
@@ -75,18 +76,20 @@ class PayrollController extends Controller
 
     public function payrollData(Request $request)
     {
-        $query = Payroll::where('employee_id', $request->employee_id);
+        $query = Payroll::with('basicSalary')->where('employee_id', $request->employee_id);
+
         
         if ($request->month) {
-            $query->whereRaw('MONTH(pay_date) = ?', [$request->month]);
+            $query->whereRaw('MONTH(created_at) = ?', [$request->month]);
         }
     
         return DataTables::of($query)
             ->editColumn('pay_date', function ($payroll) {
-                return Carbon::parse($payroll->pay_date)->format('Y-m-d');
+                return $payroll->pay_date==NULL?NULL: Carbon::parse($payroll->pay_date)->format('Y-m-d');
+                
             })
             ->editColumn('basic_salary', function ($payroll) {
-                return number_format($payroll->basic_salary, 2);
+                return number_format($payroll->basicSalary->basic_salary, 2); 
             })
             ->editColumn('total_deductions', function ($payroll) {
                 return number_format($payroll->total_deductions, 2);
@@ -152,9 +155,7 @@ class PayrollController extends Controller
         if ($request->month) {
             $query->whereRaw('MONTH(STR_TO_DATE(date, "%d/%m/%Y")) = ?', [$request->month]);
         }
-    
-        // Log the query with bindings for debugging
-        Log::info($query->toSql(), $query->getBindings());
+
     
         return DataTables::of($query)
             ->editColumn('date', function ($attendance) {
@@ -258,6 +259,90 @@ public function deductionsStore(Request $request)
         return redirect()->back();
     }
 }
+
+
+public function toggleExcuse(Request $request){
+
+    $id=$request->deduction_id;
+    $is_excused=$request->is_excused;
+    $deduction=Deduction::find($id);
+    $deduction->is_excused=$is_excused==1?1:0;
+    $deduction->save();
+    return response()->json(['status' => 'success', 'newStatus' => $deduction->is_excused]);
+}
+
+public function deductionFinalize(Request $request)
+{
+    // Validate if the month is provided
+    if (!$request->month) {
+        Toastr::error('Please select the month.');
+        return redirect()->back();
+    }
+
+    // Fetch individual totals for each deduction column, excluding excused deductions
+    $tax_total = Deduction::where('employee_id', $request->employee_id)
+        ->whereRaw('MONTH(deduction_date) = ?', [$request->month])
+        ->where('is_excused', 0) // Only include non-excused deductions
+        ->sum('tax');
+
+    $social_security_total = Deduction::where('employee_id', $request->employee_id)
+        ->whereRaw('MONTH(deduction_date) = ?', [$request->month])
+        ->where('is_excused', 0) // Only include non-excused deductions
+        ->sum('social_security');
+
+    $other_deductions_total = Deduction::where('employee_id', $request->employee_id)
+        ->whereRaw('MONTH(deduction_date) = ?', [$request->month])
+        ->where('is_excused', 0) // Only include non-excused deductions
+        ->sum('other_deductions');
+        
+    // Calculate the total deductions for the month
+    $total_deductions = $tax_total + $social_security_total + $other_deductions_total;
+
+    // Fetch total bonuses for the given employee and month
+    $total_bonuses = Bonus::where('employee_id', $request->employee_id)
+        ->where('bonus_month', $request->month)
+        ->sum('amount');
+
+    // Get the employee's basic salary
+    $basic_salary = BasicSalary::where('employee_id', $request->employee_id)->value('basic_salary');
+
+    if (!$basic_salary) {
+        Toastr::error('No basic salary found for the employee.');
+        return redirect()->back();
+    }
+
+    // Calculate the net salary
+    $net_salary = $basic_salary + $total_bonuses - $total_deductions;
+
+
+
+    // Check if a payroll entry already exists for the employee and month
+    $payroll = Payroll::where('employee_id', $request->employee_id)
+        ->where('salary_month', $request->month)
+        ->first();
+
+    if ($payroll) {
+        // Update the existing payroll record
+        $payroll->total_deductions = $total_deductions;
+        $payroll->total_bonuses = $total_bonuses;
+        $payroll->net_salary = $net_salary;
+        
+        $payroll->save();
+    } else {
+        // Create a new payroll record
+        $newPayroll = new Payroll;
+        $newPayroll->employee_id = $request->employee_id;
+        $newPayroll->total_deductions = $total_deductions;
+        $newPayroll->total_bonuses = $total_bonuses;
+        $newPayroll->net_salary = $net_salary;
+        $newPayroll->salary_month = $request->month;
+        $newPayroll->save();
+    }
+
+    Toastr::success('Payroll has been finalized successfully.');
+    return redirect()->back();
+}
+
 
 
     public function generatePayrollForAllEmployees(Request $value)

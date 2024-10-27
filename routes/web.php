@@ -93,7 +93,12 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     Route::get('/payroll/deduction', 'PayrollController@deduction')->name('payroll.deduction');
     Route::get('/payroll/employee-working-details/{id}', 'PayrollController@employeeWorkingDetails')->name('payroll.employeeWorkingDetails');
     Route::get('/employee/payrolls', 'PayrollController@payrollData')->name('employeeWorkingDetails.employee.payrolls');
+
     Route::get('/employee/deductions', 'PayrollController@deductionData')->name('employeeWorkingDetails.employee.deductions');
+    Route::post('/employee/deductions/toggleExcuse', 'PayrollController@toggleExcuse')->name('employeeWorkingDetails.employee.deductions.toggleExcuse');
+    Route::post('/employee/deductions/deductionFinalize', 'PayrollController@deductionFinalize')->name('employeeWorkingDetails.employee.deductions.deductionFinalize');
+
+
     Route::get('/employee/bonuses', 'PayrollController@bonusData')->name('employeeWorkingDetails.employee.bonuses');
     Route::get('/employee/attendances', 'PayrollController@attendanceData')->name('employeeWorkingDetails.employee.attendances');
 
