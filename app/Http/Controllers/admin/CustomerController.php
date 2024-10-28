@@ -257,9 +257,12 @@ class CustomerController extends Controller
       $request->validate([
          'customer_id' => 'required|numeric',
          'current_due' => 'required|numeric',
-         'amount' => 'required|numeric',
-         'paid_date' => 'required',
-      ]);
+         'amount' => 'required|numeric|lte:current_due',
+         'paid_date' => 'required|date',
+     ], [
+         'amount.lte' => 'The amount must not exceed the current due.',
+     ]);
+     
 
       $amount = $request->amount;
       $dues = DB::table('sales')->where('customer_id', $request->customer_id)->where('sales.due', '>', 'sales.due_return')->get();
