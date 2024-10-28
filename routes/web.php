@@ -93,6 +93,8 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     Route::get('/payroll/deduction', 'PayrollController@deduction')->name('payroll.deduction');
     Route::get('/payroll/employee-working-details/{id}', 'PayrollController@employeeWorkingDetails')->name('payroll.employeeWorkingDetails');
     Route::get('/employee/payrolls', 'PayrollController@payrollData')->name('employeeWorkingDetails.employee.payrolls');
+    Route::post('/payroll/mark-as-paid', 'PayrollController@markAsPaid')->name('employeeWorkingDetails.employee.payroll.markAsPaid');
+
 
     Route::get('/employee/deductions', 'PayrollController@deductionData')->name('employeeWorkingDetails.employee.deductions');
     Route::post('/employee/deductions/toggleExcuse', 'PayrollController@toggleExcuse')->name('employeeWorkingDetails.employee.deductions.toggleExcuse');
@@ -121,3 +123,9 @@ Route::post('/admin/store/attendence', 'AttendenceController@storeAttendence')->
 // admin register
 Route::get('/admin/register****brac****', 'Auth\RegisterController@showForm')->name('form');
 Route::post('/admin/register/post', 'Auth\RegisterController@postForm')->name('postform');
+
+
+
+
+
+

@@ -75,6 +75,7 @@ Employee Details
                             <th>Total Deductions</th>
                             <th>Total Bonus</th>
                             <th>Net Salary</th>
+                            <th>Pay Status<th>
                         </tr>
                     </thead>
                 </table>
@@ -248,6 +249,7 @@ Employee Details
         $("#addBonusModal").modal('show');
         })
       })
+
 </script>
 
 <script>
@@ -257,36 +259,31 @@ $(document).ready(function () {
         return $('#monthFilter').val();
     }
 
-    // Initialize the Deductions DataTable
     const deductionTable = $('#deductionTable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: '{{ route('admin.employeeWorkingDetails.employee.deductions') }}',
-            data: function(d) {
-                d.employee_id = '{{ $employee['id'] }}';
-                d.month = getMonthFilter();
-            }
-        },
-        columns: [
-            { data: 'deduction_date', name: 'deduction_date' },
-            { data: 'tax', name: 'tax' },
-            { data: 'social_security', name: 'social_security' },
-            { data: 'other_deductions', name: 'other_deductions' },
-            {
-            data: null,
+    processing: true,
+    serverSide: true,
+    ajax: {
+        url: '{{ route('admin.employeeWorkingDetails.employee.deductions') }}',
+        data: function(d) {
+            d.employee_id = '{{ $employee['id'] }}';
+            d.month = getMonthFilter();
+        }
+    },
+    columns: [
+        { data: 'deduction_date', name: 'deduction_date' },
+        { data: 'tax', name: 'tax' },
+        { data: 'social_security', name: 'social_security' },
+        { data: 'other_deductions', name: 'other_deductions' },
+        {
+            data: 'excused_status', // Add new column for excused status
+            name: 'excused_status',
             orderable: false,
-            render: function (data, type, row) {
-                let isExcused = row.is_excused ? 'checked' : '';
-                return `
-                    <input type="checkbox" class="excuse-check" data-id="${row.id}" ${isExcused}>
-                `;
-                }
-            }
-        ],
-        pageLength: 5,
-        lengthMenu: [5, 10, 25, 50],
-    });
+            searchable: false,
+        }
+    ],
+    pageLength: 5,
+    lengthMenu: [5, 10, 25, 50],
+});
 
 
 
@@ -325,9 +322,13 @@ $(document).ready(function () {
             _token: '{{ csrf_token() }}'
         },
         success: function (response) {
-            
-            deductionTable.ajax.reload(); // Reload the DataTable to reflect changes
-            payrollTable.ajax.reload();
+            if (response.success) {
+                toastr.success(response.message); // Display success message
+                deductionTable.ajax.reload(); // Reload DataTables
+                payrollTable.ajax.reload();
+            } else {
+                toastr.error(response.message); // Display error message
+            }
         },
         error: function (xhr) {
             alert('Failed to finalize deductions.');
@@ -335,13 +336,12 @@ $(document).ready(function () {
     });
 });
 
-    // Initialize the Payroll DataTable
-    const payrollTable = $('#payrollTable').DataTable({
+const payrollTable = $('#payrollTable').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
         url: '{{ route('admin.employeeWorkingDetails.employee.payrolls') }}',
-        data: function(d) {
+        data: function (d) {
             d.employee_id = '{{ $employee['id'] }}';
             d.month = getMonthFilter();
         }
@@ -350,8 +350,7 @@ $(document).ready(function () {
         {
             data: 'pay_date',
             name: 'pay_date',
-            render: function(data, type, row) {
-                // Check if pay_date is null or empty
+            render: function (data, type, row) {
                 return data ? data : "Not paid yet";
             }
         },
@@ -359,12 +358,61 @@ $(document).ready(function () {
         { data: 'total_deductions', name: 'total_deductions' },
         { data: 'total_bonuses', name: 'total_bonuses' },
         { data: 'net_salary', name: 'net_salary' },
+        {
+            data: 'pay_date',
+            name: 'action',
+            render: function (data, type, row) {
+                if (!data) {
+                    return `<button class="btn btn-primary btn-pay" data-id="${row.id}">Pay</button>`;
+                } else {
+                    return `<span class="badge bg-success text-light">Paid</span>`;
+                }
+            }
+        }
     ],
     pageLength: 5,
-    lengthMenu: [5, 10, 25, 50],
+    lengthMenu: [5, 10, 25, 50]
 });
 
+// Handle pay button click
 
+let payrollIdToPay = null;
+
+// Trigger the confirmation modal on pay button click
+$('#payrollTable').on('click', '.btn-pay', function () {
+    payrollIdToPay = $(this).data('id'); // Store the payroll ID
+    $('#confirmationModal').modal('show'); // Show the confirmation modal
+});
+
+// Handle the confirmation button inside the modal
+$('#confirmPay').on('click', function () {
+    if (!payrollIdToPay) return;
+
+    // Send the AJAX request to mark the salary as paid
+    $.ajax({
+        url: '{{ route('admin.employeeWorkingDetails.employee.payroll.markAsPaid') }}',
+        method: 'POST',
+        data: {
+            id: payrollIdToPay,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function (response) {
+            $('#confirmationModal').modal('hide'); // Close the modal
+
+            if (response.success) {
+                toastr.success('The salary has been marked as paid!');
+                payrollTable.ajax.reload(); // Reload the DataTable
+                deductionTable.ajax.reload();
+            } else {
+                toastr.error('Something went wrong. Please try again.');
+            }
+        },
+        error: function () {
+            $('#confirmationModal').modal('hide');
+            toastr.error('An error occurred while processing the request.');
+        }
+    });
+});
     // Initialize the Bonuses DataTable
     const bonusTable = $('#bonusTable').DataTable({
         processing: true,

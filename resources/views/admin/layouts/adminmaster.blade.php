@@ -648,6 +648,26 @@
     <img src="/loader.gif" alt="Loading..."  style="position: fixed; top: 50%; left: 50%;"/>
     </div>
 
+
+    <!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmationModalLabel">Confirm Payment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to mark this salary as paid?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmPay">Yes, Pay Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!--Calculator modal-->
     <div class="modal fade calculator_modal" tabindex="-1" role="dialog" aria-labelledby="calculator_modal"
         aria-hidden="true">
