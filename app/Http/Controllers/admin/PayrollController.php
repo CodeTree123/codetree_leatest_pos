@@ -103,6 +103,22 @@ class PayrollController extends Controller
             ->make(true);
     }
     
+
+
+    public function markAsPaid(Request $request)
+    {
+        $payroll = Payroll::find($request->id);
+        
+        if ($payroll && !$payroll->pay_date) {
+            $payroll->pay_date = now(); // Mark it as paid
+            $payroll->save();
+    
+            return response()->json(['success' => true, 'message' => 'Salary marked as paid.']);
+        }
+        
+        return response()->json(['success' => false, 'message' => 'Payroll not found or already paid.']);
+    }
+    
     public function deductionData(Request $request)
     {
         $query = Deduction::where('employee_id', $request->employee_id);
@@ -110,6 +126,11 @@ class PayrollController extends Controller
         if ($request->month) {
             $query->whereRaw('MONTH(deduction_date) = ?', [$request->month]);
         }
+    
+        // Check if payroll is finalized for the employee and month
+        $check_payroll = Payroll::where('employee_id', $request->employee_id)
+            ->whereNotNull('pay_date')
+            ->first();
     
         return DataTables::of($query)
             ->editColumn('deduction_date', function ($deduction) {
@@ -124,6 +145,17 @@ class PayrollController extends Controller
             ->editColumn('other_deductions', function ($deduction) {
                 return number_format($deduction->other_deductions, 2);
             })
+            ->addColumn('excused_status', function ($deduction) use ($check_payroll) {
+                if ($check_payroll) {
+                    return $deduction->is_excused 
+                    ? '<span class="badge bg-success text-light">Excused</span>' 
+                    : '<span class="badge bg-danger text-light">Not Excused</span>';
+                } else {
+                    // If payroll is not finalized, return the editable checkbox
+                    return '<input type="checkbox" class="excuse-check" data-id="' . $deduction->id . '" ' . ($deduction->is_excused ? 'checked' : '') . '>';
+                }
+            })
+            ->rawColumns(['excused_status']) // Enable raw HTML rendering
             ->make(true);
     }
     
@@ -275,10 +307,23 @@ public function deductionFinalize(Request $request)
 {
     // Validate if the month is provided
     if (!$request->month) {
-        Toastr::error('Please select the month.');
-        return redirect()->back();
+        return response()->json([
+            'success' => false,
+            'message' => 'Please select both the employee and the month.'
+        ]);
     }
 
+    if($request->month){
+        $check_payroll = Payroll::where('employee_id', $request->employee_id)
+        ->whereNotNull('pay_date')
+        ->first();
+        if($check_payroll){
+            return response()->json([
+                'success' => false,
+                'message' => 'The salary for this month has already been finalized and Paid'
+            ]);
+        }
+    }
     // Fetch individual totals for each deduction column, excluding excused deductions
     $tax_total = Deduction::where('employee_id', $request->employee_id)
         ->whereRaw('MONTH(deduction_date) = ?', [$request->month])
@@ -307,8 +352,10 @@ public function deductionFinalize(Request $request)
     $basic_salary = BasicSalary::where('employee_id', $request->employee_id)->value('basic_salary');
 
     if (!$basic_salary) {
-        Toastr::error('No basic salary found for the employee.');
-        return redirect()->back();
+        return response()->json([
+            'success' => false,
+            'message' => 'No basic salary found for this employee.'
+        ]);
     }
 
     // Calculate the net salary
@@ -339,8 +386,10 @@ public function deductionFinalize(Request $request)
         $newPayroll->save();
     }
 
-    Toastr::success('Payroll has been finalized successfully.');
-    return redirect()->back();
+    return response()->json([
+        'success' => true,
+        'message' => 'Payroll has been finalized successfully.'
+    ]);
 }
 
 
