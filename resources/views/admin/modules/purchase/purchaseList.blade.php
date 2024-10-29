@@ -126,9 +126,9 @@ Purchase List- Admin Dashboard
 									@endif
 								</td>
 								<td style="width:120px;">
-									<p class="btn  bg_secondary_teal p-1 px-2 mb-0 purchaseDetails" data-purchase_id="{{$purchase->id}}" style="font-size: 13px;cursor:pointer;" title="Purchase Details"> <i class="fa-fw fa fa-eye"></i></p>
+									<p class="btn  bg_secondary_teal p-1 px-2 mb-0 purchaseDetails"  data-purchase_id="{{$purchase->id}}" style="font-size: 13px;cursor:pointer;" title="Purchase Details"> <i class="fa-fw fa fa-eye"></i></p>
 
-									<p class="btn bg_secondary_teal p-1 px-2 mb-0 editPurchase" data-purchase_id="{{$purchase->id}}" style="font-size: 13px; cursor: pointer;" title="Edit Purchase">
+									<p class="btn bg_secondary_teal p-1 px-2 mb-0 editPurchase" data-main_due="{{number_format($purchase->due)}}" data-purchase_id="{{$purchase->id}}" style="font-size: 13px; cursor: pointer;" title="Edit Purchase">
 										<i class="fa-fw fa fa-edit"></i> <!-- Edit icon -->
 									</p>
 
@@ -191,6 +191,7 @@ Purchase List- Admin Dashboard
 				@method('PUT')
 
 				<input type="hidden" name="purchase_id" id="editPurchaseId">
+				<input type="number" name="main_due" id="main_due" hidden>
 				<div class="form-group">
 					<label for="newlyPaidAmount">Newly Paid Amount</label>
 					<input type="number" class="form-control" id="newlyPaidAmount" name="newly_paid_amount" placeholder="Enter Newly Paid Amount" required>
@@ -232,6 +233,10 @@ Purchase List- Admin Dashboard
 
 		$(".editPurchase").click(function() {
 			var purchase_id = $(this).data('purchase_id');
+			var main_due = $(this).data('main_due').toString().replace(/,/g, '');
+			console.log(main_due);
+			$("#main_due").val(main_due);
+			console.log("Main Due Field Value: ", $("#main_due").val());
 
 			// AJAX call to fetch the purchase details
 			$.ajax({
@@ -244,9 +249,11 @@ Purchase List- Admin Dashboard
 					'purchase_id': purchase_id
 				},
 				success: function(data) {
-					console.log(data);
+					
 					// Assuming `data` contains purchase details
 					$("#editPurchaseId").val(purchase_id);
+					
+					
 
 					// Show the edit modal
 					$('.edit_purchase_modal').modal('show');
