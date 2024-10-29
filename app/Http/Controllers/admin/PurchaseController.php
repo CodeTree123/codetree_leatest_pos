@@ -249,10 +249,12 @@ class PurchaseController extends Controller
 
   public function updatePurchase(Request $request)
   {
+    
     // Validate the request
     $request->validate([
       'purchase_id' => 'required',
-      'newly_paid_amount' => 'required|numeric|min:0',
+      'main_due' => 'required',
+      'newly_paid_amount' => 'required|numeric|min:1|lte:main_due',
     ]);
 
     // Find the purchase record
