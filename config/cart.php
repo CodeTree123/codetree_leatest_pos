@@ -25,11 +25,9 @@ return [
     */
 
     'database' => [
-
         'connection' => null,
 
         'table' => 'shoppingcart',
-
     ],
 
     /*
