@@ -17,4 +17,8 @@ class BasicSalary extends Model
      return $this->hasMany(Payroll::class, 'employee_id', 'employee_id');
  }
     
+ public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'id');
+    }
 }

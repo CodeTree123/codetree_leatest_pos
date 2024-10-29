@@ -63,7 +63,7 @@ Employee Details
     <div class="col-lg-6 mb-4">
         <div class="card border-0 shadow">
             <div class="card-header bg-success text-white py-3">
-                <h5 class="mb-0">Payroll Information(On going)</h5>
+                <h5 class="mb-0">Payroll Information</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive p-2" >
@@ -101,9 +101,8 @@ Employee Details
                     <thead class="bg-light sticky-top">
                         <tr>
                             <th>Date</th>
-                            <th>Tax</th>
-                            <th>Social Security</th>
-                            <th>Other</th>
+                            <th>Amount</th>
+                            <th>Description</th>
                             <th>Is Excused?</th>
                         </tr>
                     </thead>
@@ -128,9 +127,10 @@ Employee Details
                     <table class="table table-hover mb-0" id="bonusTable">
                         <thead class="bg-light sticky-top">
                             <tr>
-                                <th class="px-3">Date</th>
-                                <th class="px-3">Amount</th>
-                                <th class="px-3">Description</th>
+                                <th >Date</th>
+                                <th >Amount</th>
+                                <th >Description</th>
+                                <th >Canceled</th>
                             </tr>
                         </thead>
                     </table>
@@ -141,6 +141,7 @@ Employee Details
 </div>
 
 <!-- Attendance -->
+<div class="col-lg-6 mb-4">
 <div class="card border-0 shadow mb-4">
     <div class="card-header bg-warning text-dark py-3">
         <h5 class="mb-0">Attendance</h5>
@@ -159,6 +160,8 @@ Employee Details
         </div>
     </div>
 </div>
+</div> 
+
 
 <!-- Add Deduction Modal -->
 <div class="modal fade" id="addDeductionModal" tabindex="-1" aria-labelledby="addDeductionModalLabel" aria-hidden="true">
@@ -173,16 +176,12 @@ Employee Details
                 <div class="modal-body">
                     <input name="employee_id" value="{{$employee['id']}}" hidden></input>
                     <div class="mb-3">
-                        <label for="tax" class="form-label">Tax Amount</label>
-                        <input type="number" step="0.01" class="form-control" id="tax" name="tax" >
+                        <label for="deduction_amount" class="form-label" required>Deduction Amount</label>
+                        <input type="number" step="0.01" class="form-control" id="deduction_amount" name="deduction_amount" >
                     </div>
                     <div class="mb-3">
-                        <label for="social_security" class="form-label">Social Security</label>
-                        <input type="number" step="0.01" class="form-control" id="social_security" name="social_security" >
-                    </div>
-                    <div class="mb-3">
-                        <label for="other_deductions" class="form-label">Other Deductions</label>
-                        <input type="number" step="0.01" class="form-control" id="other_deductions" name="other_deductions">
+                        <label for="description" class="form-label" required>Description</label>
+                        <textarea class="form-control" id="deduction_description" name="deduction_description" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
                         <label for="deduction_date" class="form-label">Deduction Date</label>
@@ -271,9 +270,8 @@ $(document).ready(function () {
     },
     columns: [
         { data: 'deduction_date', name: 'deduction_date' },
-        { data: 'tax', name: 'tax' },
-        { data: 'social_security', name: 'social_security' },
-        { data: 'other_deductions', name: 'other_deductions' },
+        { data: 'deduction_amount', name: 'deduction_amount' },
+        { data: 'description', name: 'description' },
         {
             data: 'excused_status', // Add new column for excused status
             name: 'excused_status',
@@ -403,6 +401,7 @@ $('#confirmPay').on('click', function () {
                 toastr.success('The salary has been marked as paid!');
                 payrollTable.ajax.reload(); // Reload the DataTable
                 deductionTable.ajax.reload();
+                bonusTable.ajax.reload();
             } else {
                 toastr.error('Something went wrong. Please try again.');
             }
@@ -428,10 +427,41 @@ $('#confirmPay').on('click', function () {
             { data: 'date_given', name: 'date_given' },
             { data: 'amount', name: 'amount' },
             { data: 'description', name: 'description' },
+            {
+            data: 'canceled_status', // Add new column for excused status
+            name: 'canceled_status',
+            orderable: false,
+            searchable: false,
+        }
         ],
         pageLength: 5,
         lengthMenu: [5, 10, 25, 50],
     });
+
+
+
+    $('#bonusTable').on('change', '.cancel-check', function () {
+    const bonusId = $(this).data('id');
+    const isCanceled = $(this).is(':checked') ? 1 : 0;
+
+    $.ajax({
+        url: '{{ route('admin.employeeWorkingDetails.employee.deductions.toggleCancel') }}',
+        method: 'POST',
+        data: {
+            bonus_id: bonusId,
+            is_canceled: isCanceled,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function (response) {
+        
+        },
+        error: function (xhr) {
+            alert('Failed to update status.');
+        }
+     });
+   });
+
+
 
     // Initialize the Attendance DataTable
     const attendanceTable = $('#attendanceTable').DataTable({
@@ -448,8 +478,8 @@ $('#confirmPay').on('click', function () {
             { data: 'date', name: 'date' },
             { data: 'status', name: 'status', render: function (data) {
                 return data === 1
-                    ? '<span class="badge bg-success">Present</span>'
-                    : '<span class="badge bg-danger">Absent</span>';
+                    ? '<span class="badge bg-success text-light">Present</span>'
+                    : '<span class="badge bg-danger text-light">Absent</span>';
             }},
             { data: 'late_time', name: 'late_time' },
         ],

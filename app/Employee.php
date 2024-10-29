@@ -24,6 +24,10 @@ class Employee extends Model
     }
 
     public function store_attendances(){
-        return $this->hasMany(StoreAttendence::class, 'employee_id', 'id');
+        return $this->hasMany(StoreAttendance::class, 'employee_id', 'id');
+    }
+
+    public function basic_salaries(){
+        return $this->hasOne(BasicSalary::class,'employee_id','id');
     }
 }

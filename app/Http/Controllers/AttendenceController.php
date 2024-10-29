@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\StoreAttendence;
+use App\StoreAttendance;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Deduction;
 use App\Payroll;
+use App\BasicSalary;
 
 
 class AttendenceController extends Controller
@@ -16,14 +17,14 @@ class AttendenceController extends Controller
     {
 
         $count = count($request->employee_id);
-        $date = date("Y/m/d");
-        $check = StoreAttendence::where('date', $date)->first();
+        $date = date("Y-m-d");
+        $check = StoreAttendance::where('date', $date)->first();
 
         if ($check) {
             return back()->with('error', 'data update already!');
         } else {
             for ($i = 0; $i < $count; $i++) {
-                $attend = new StoreAttendence();
+                $attend = new StoreAttendance();
 
                 $attend->attendence_owner = auth()->guard('admin')->id();
                 $attend->employee_name = $request->employee_name[$i];
@@ -32,6 +33,19 @@ class AttendenceController extends Controller
                 $attend->date = $date;
 
                 $attend->save();
+
+                if($request->status[$i] ==0){
+                  
+                    $basic_salary = BasicSalary::where('employee_id', $request->employee_id[$i])->value('basic_salary');
+                    $daily_salary = $basic_salary / 30;
+                    $deduction = new Deduction();
+                    $deduction->employee_id = $request->employee_id[$i];
+                    $deduction->deduction_amount = $daily_salary;
+                    $deduction->description="Deduction for absence";
+                    $deduction->deduction_date = Carbon::now()->toDateString();
+                    $deduction->save();
+
+                }
             }
 
             return back()->with('Success', 'data update successfully!');
@@ -42,10 +56,10 @@ class AttendenceController extends Controller
     {
         $attendanceId = $request->input('attendanceId');
         $empId = $request->input('empId');
-        $attendance = StoreAttendence::find($attendanceId);
+        $attendance = StoreAttendance::find($attendanceId);
     
         if ($attendance) {
-            $basic_salary = Payroll::where('employee_id', $empId)->value('basic_salary');
+            $basic_salary = BasicSalary::where('employee_id', $empId)->value('basic_salary');
             $daily_salary = $basic_salary / 30;
     
             // Get the current time and threshold (9:00 AM)
@@ -78,7 +92,8 @@ class AttendenceController extends Controller
                 if (!$existingDeduction) {
                     $deduction = new Deduction();
                     $deduction->employee_id = $empId;
-                    $deduction->other_deductions = $daily_salary;
+                    $deduction->deduction_amount = $daily_salary;
+                    $deduction->description="Deduction for absence";
                     $deduction->deduction_date = Carbon::now()->toDateString();
                     $deduction->save();
                 }
