@@ -11,7 +11,7 @@ use App\BasicSalary;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Deduction;
-use App\StoreAttendence;
+use App\StoreAttendance;
 use Yajra\DataTables\DataTables;
 use Brian2694\Toastr\Facades\Toastr;
 
@@ -59,9 +59,11 @@ class PayrollController extends Controller
 
     public function deduction(){
         $pageTitle = "Employee Data Track";
-        $employees = Employee::paginate(10);
+        $employees = Employee::with('basic_salaries')->paginate(10);
         $total = Employee::all()->count();
         return view('admin.payroll.deduction', compact('pageTitle', 'employees', 'total'));
+        //return  compact('pageTitle', 'employees', 'total');
+
     }
 
     public function employeeWorkingDetails($id)
@@ -130,20 +132,15 @@ class PayrollController extends Controller
         // Check if payroll is finalized for the employee and month
         $check_payroll = Payroll::where('employee_id', $request->employee_id)
             ->whereNotNull('pay_date')
+            ->where('salary_month',$request->month)
             ->first();
     
         return DataTables::of($query)
             ->editColumn('deduction_date', function ($deduction) {
                 return Carbon::parse($deduction->deduction_date)->format('Y-m-d');
             })
-            ->editColumn('tax', function ($deduction) {
-                return number_format($deduction->tax, 2);
-            })
-            ->editColumn('social_security', function ($deduction) {
-                return number_format($deduction->social_security, 2);
-            })
-            ->editColumn('other_deductions', function ($deduction) {
-                return number_format($deduction->other_deductions, 2);
+            ->editColumn('deduction_amount', function ($deduction) {
+                return number_format($deduction->deduction_amount, 2);
             })
             ->addColumn('excused_status', function ($deduction) use ($check_payroll) {
                 if ($check_payroll) {
@@ -166,7 +163,13 @@ class PayrollController extends Controller
         if ($request->month) {
             $query->whereRaw('MONTH(date_given) = ?', [$request->month]);
         }
-    
+
+        // Check if payroll is finalized for the employee and month
+        $check_payroll = Payroll::where('employee_id', $request->employee_id)
+        ->whereNotNull('pay_date')
+        ->where('salary_month',$request->month)
+        ->first();
+
         return DataTables::of($query)
             ->editColumn('date_given', function ($bonus) {
                 return Carbon::parse($bonus->date_given)->format('Y-m-d');
@@ -177,34 +180,34 @@ class PayrollController extends Controller
             ->editColumn('description', function ($bonus) {
                 return $bonus->description;
             })
+            ->addColumn('canceled_status', function ($deduction) use ($check_payroll) {
+                if ($check_payroll) {
+                    return $deduction->is_canceled 
+                    ? '<span class="badge bg-success text-light">Canceled</span>' 
+                    : '<span class="badge bg-danger text-light">Not Canceled</span>';
+                } else {
+                    // If payroll is not finalized, return the editable checkbox
+                    return '<input type="checkbox" class="cancel-check" data-id="' . $deduction->id . '" ' . ($deduction->is_canceled ? 'checked' : '') . '>';
+                }
+            })
+            ->rawColumns(['canceled_status']) // Enable raw HTML rendering
             ->make(true);
     }
     
     public function attendanceData(Request $request)
     {
-        $query = StoreAttendence::where('employee_id', $request->employee_id);
+        $query = StoreAttendance::where('employee_id', $request->employee_id);
+        
     
         if ($request->month) {
-            $query->whereRaw('MONTH(STR_TO_DATE(date, "%d/%m/%Y")) = ?', [$request->month]);
+            $query->whereRaw('MONTH(date) = ?', [$request->month]);
         }
+ 
 
     
         return DataTables::of($query)
             ->editColumn('date', function ($attendance) {
-                try {
-                    // Try to parse the date assuming it might be in different formats
-                    $date = Carbon::createFromFormat('d/m/Y', $attendance->date);
-                } catch (\Exception $e) {
-                    try {
-                        // Fallback to the standard format 'Y-m-d'
-                        $date = Carbon::createFromFormat('Y-m-d', $attendance->date);
-                    } catch (\Exception $ex) {
-                        // If parsing fails, return the raw date as-is
-                        Log::warning("Invalid date format for attendance ID {$attendance->id}: {$attendance->date}");
-                        return $attendance->date;
-                    }
-                }
-                return $date->format('Y-m-d');
+                return Carbon::parse($attendance->date)->format('Y-m-d');
             })
             ->editColumn('late_time', function ($attendance) {
                 return number_format($attendance->late_time, 2);
@@ -249,42 +252,52 @@ class PayrollController extends Controller
    
 }
 
+public function toggleCancel(Request $request){
+
+    $id=$request->bonus_id;
+    $is_canceled=$request->is_canceled;
+    $bonus=Bonus::find($id);
+    $bonus->is_canceled=$is_canceled==1?1:0;
+    $bonus->save();
+    return response()->json(['status' => 'success', 'newStatus' => $bonus->is_canceled]);
+}
+
 public function deductionsStore(Request $request)
 {
+    // Validate the incoming request
     $request->validate([
         'employee_id' => 'required|exists:employees,id',
-        'tax' => 'nullable|numeric|min:0',
-        'social_security' => 'nullable|numeric|min:0',
-        'other_deductions' => 'nullable|numeric|min:0',
+        'deduction_amount' => 'required|numeric|min:1',
+        'deduction_description' => 'required',
         'deduction_date' => 'required|date'
     ]);
 
-    // Ensure at least one field has a value
-    if (
-        is_null($request->tax) &&
-        is_null($request->social_security) &&
-        is_null($request->other_deductions)
-    ) {
-        Toastr::error('You must provide at least one deduction value.');
+    // Get the month from the deduction date
+    $deductionMonth = date('m', strtotime($request->deduction_date));
+
+    // Check if payroll is finalized for the employee and the month of the deduction date
+    $check_payroll = Payroll::where('employee_id', $request->employee_id)
+        ->whereNotNull('pay_date')
+        ->where('salary_month', $deductionMonth)
+        ->first();
+    // If payroll is finalized, do not allow adding a new deduction
+    if ($check_payroll) {
+        Toastr::error('Cannot add a new deduction. Payroll for this month is finalized.');
         return redirect()->back();
     }
 
     try {
         // Store the deduction in the database
-        $deduction=Deduction::create([
+        $deduction = Deduction::create([
             'employee_id' => $request->employee_id,
-            'tax' => $request->tax ?? 0,
-            'social_security' => $request->social_security ?? 0,
-            'other_deductions' => $request->other_deductions ?? 0,
+            'deduction_amount' => $request->deduction_amount ?? 0,
+            'description' => $request->deduction_description ?? "",
             'deduction_date' => $request->deduction_date,
         ]);
 
-
-
         // Success message using Toastr
         Toastr::success('Deduction added successfully.');
-        return redirect()->route('admin.payroll.employeeWorkingDetails',$request->employee_id);
-
+        return redirect()->route('admin.payroll.employeeWorkingDetails', $request->employee_id);
     } catch (\Exception $e) {
         // Error handling
         Toastr::error('Something went wrong. Please try again.');
@@ -325,27 +338,19 @@ public function deductionFinalize(Request $request)
         }
     }
     // Fetch individual totals for each deduction column, excluding excused deductions
-    $tax_total = Deduction::where('employee_id', $request->employee_id)
+    $deduction_total = Deduction::where('employee_id', $request->employee_id)
         ->whereRaw('MONTH(deduction_date) = ?', [$request->month])
         ->where('is_excused', 0) // Only include non-excused deductions
-        ->sum('tax');
+        ->sum('deduction_amount');
 
-    $social_security_total = Deduction::where('employee_id', $request->employee_id)
-        ->whereRaw('MONTH(deduction_date) = ?', [$request->month])
-        ->where('is_excused', 0) // Only include non-excused deductions
-        ->sum('social_security');
-
-    $other_deductions_total = Deduction::where('employee_id', $request->employee_id)
-        ->whereRaw('MONTH(deduction_date) = ?', [$request->month])
-        ->where('is_excused', 0) // Only include non-excused deductions
-        ->sum('other_deductions');
         
     // Calculate the total deductions for the month
-    $total_deductions = $tax_total + $social_security_total + $other_deductions_total;
+    $total_deductions = $deduction_total;
 
     // Fetch total bonuses for the given employee and month
     $total_bonuses = Bonus::where('employee_id', $request->employee_id)
         ->where('bonus_month', $request->month)
+        ->where('is_canceled',0)
         ->sum('amount');
 
     // Get the employee's basic salary

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class StoreAttendence extends Model
+class StoreAttendance extends Model
 {
     public function employee()
     {

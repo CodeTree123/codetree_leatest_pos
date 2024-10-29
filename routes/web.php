@@ -90,7 +90,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
     Route::post('/payroll/generate-all', 'PayrollController@generatePayrollForAllEmployees')->name('payroll.generate.all');
     Route::get('/payroll/bonus', 'PayrollController@bonus')->name('payroll.bonus');
     Route::post('/payroll/bonus/add', 'PayrollController@addBonus')->name('employeeBonus.add');
-    Route::get('/payroll/deduction', 'PayrollController@deduction')->name('payroll.deduction');
+    Route::get('/payroll/employee-management', 'PayrollController@deduction')->name('payroll.deduction');
     Route::get('/payroll/employee-working-details/{id}', 'PayrollController@employeeWorkingDetails')->name('payroll.employeeWorkingDetails');
     Route::get('/employee/payrolls', 'PayrollController@payrollData')->name('employeeWorkingDetails.employee.payrolls');
     Route::post('/payroll/mark-as-paid', 'PayrollController@markAsPaid')->name('employeeWorkingDetails.employee.payroll.markAsPaid');
@@ -102,6 +102,7 @@ Route::group(['middleware' => 'auth:admin', 'namespace' => 'admin', 'as' => 'adm
 
 
     Route::get('/employee/bonuses', 'PayrollController@bonusData')->name('employeeWorkingDetails.employee.bonuses');
+    Route::post('/employee/bonuses/toggleCancel', 'PayrollController@toggleCancel')->name('employeeWorkingDetails.employee.deductions.toggleCancel');
     Route::get('/employee/attendances', 'PayrollController@attendanceData')->name('employeeWorkingDetails.employee.attendances');
 
     Route::post('/payroll/deductionsStore', 'PayrollController@deductionsStore')->name('payroll.deductionsStore');

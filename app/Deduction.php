@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Deduction extends Model
 {
     use HasFactory;
-    protected $fillable = ['employee_id', 'tax', 'social_security', 'other_deductions','deduction_date','is_excused'];
+    protected $fillable = ['employee_id', 'deduction_amount', 'description','deduction_date','is_excused'];
     
 
     public function employee()

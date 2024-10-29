@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Webcat;
 use App\Webpro;
 use App\Employee;
-use App\StoreAttendence;
+use App\StoreAttendance;
 use DB;
 use Illuminate\Support\Str;
 use Brian2694\Toastr\Facades\Toastr;
@@ -25,7 +25,7 @@ class HomeController extends Controller
 
    public function attendenceData()
    {
-      $data = StoreAttendence::with('employee')->orderBy('id', 'DESC')->paginate(20);
+      $data = StoreAttendance::with('employee')->orderBy('id', 'DESC')->paginate(20);
       return view('admin.modules.attendence_data', compact('data'));
    }
 

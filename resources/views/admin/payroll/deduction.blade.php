@@ -58,7 +58,7 @@
                                 <td>{{$user->email}}</td>
                                 <td>{{$user->position}}</td>
                                 <td>{{$user->hire_date}}</td>
-                                <td>{{$user->basic_salary}}</td>
+                                <td>{{$user->basic_salaries->basic_salary}}</td>
                                 <td style="text-align: center;">
                                     @if($user->status==1)
                                     <p class="badge  bg_secondary_teal">Active</p>
