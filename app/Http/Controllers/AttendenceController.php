@@ -57,7 +57,19 @@ class AttendenceController extends Controller
         $attendanceId = $request->input('attendanceId');
         $empId = $request->input('empId');
         $attendance = StoreAttendance::find($attendanceId);
+        // Get the month from the deduction date
+        $Month = date('m'); // Returns the current month as '01', '02', ..., '12'
+        
+
+        // Check if payroll is finalized for the employee and month
+        $check_payroll = Payroll::where('employee_id', $empId)
+        ->whereNotNull('pay_date')
+        ->where('salary_month',$Month)
+        ->first();
     
+        if($check_payroll){
+            return response()->json(['status' => 'error', 'message' => 'Attendance can not be edited as payroll for this month is finalized'], 404);
+        }
         if ($attendance) {
             $basic_salary = BasicSalary::where('employee_id', $empId)->value('basic_salary');
             $daily_salary = $basic_salary / 30;

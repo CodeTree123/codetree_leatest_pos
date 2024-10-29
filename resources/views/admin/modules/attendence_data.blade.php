@@ -86,7 +86,7 @@ Attendence
               button.classList.add('btn-danger');
             }
           } else {
-            alert(data.message);
+            toastr.error(data.message);
           }
         })
         .catch(error => console.error('Error:', error));
