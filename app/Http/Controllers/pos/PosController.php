@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Category;
 use App\Products;
 use App\Brands;
@@ -225,6 +226,33 @@ class PosController extends Controller
       return view('admin.modules.pos.cartProduct');
   }
   
+
+
+
+
+  public function updateDiscount2(Request $request)
+  {
+      Cart::setGlobalDiscount(0);
+      $request->session()->forget('saleDiscount');
+
+      Log::info($request);
+  
+      // Calculate and store the discount in the session
+      if ($request->discount_type == "persentase") {
+          $total = Cart::subtotal();
+          $total = (float) str_replace(',', '', $total);
+          $discount = ($total * $request->discount_value) / 100;
+          Session::put('saleDiscount', $discount);
+      } elseif ($request->discount_type == "total") {
+          $discount = $request->discount_value;
+          Session::put('saleDiscount', $discount);
+      }
+  
+      // Return the updated cart view
+      return view('admin.modules.pos.cartProduct');
+  }
+
+
   public function updateQty(Request $request)
   {
     $rowId = $request->rowId;
@@ -411,7 +439,7 @@ class PosController extends Controller
       $request->session()->forget('customerName');
       $request->session()->forget('saleValue');
       $request->session()->forget('saleDiscount');
-      return redirect()->route('admin.pos.billView', $sales->id);
+      return redirect()->route('admin.sales.invoiceView', $sales->id);
     } catch (\Exception $e) {
       session()->flash('error-message', $e->getMessage());
       return redirect()->back();
