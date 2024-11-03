@@ -24,6 +24,7 @@ Route::group(['middleware' => 'auth:admin','namespace'=>'pos'], function()
 	Route::post('/payment-screen','PosController@paymentScreen')->name('admin.pos.paymentScreen');
 	Route::post('/update-tax','PosController@updateTax')->name('admin.pos.updateTax');
 	Route::post('/update-discount','PosController@updateDiscount')->name('admin.pos.updateDiscount');
+	Route::post('/update-discount2','PosController@updateDiscount2')->name('admin.pos.updateDiscount2');
 	Route::post('/update-Qty','PosController@updateQty')->name('admin.pos.updateQty');
 	Route::post('/make-invoice','PosController@makeInvoice')->name('admin.pos.makeInvoice');
 	Route::get('bill-view/{id}','PosController@billView')->name('admin.pos.billView');

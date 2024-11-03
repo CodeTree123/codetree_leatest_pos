@@ -178,7 +178,10 @@ use App\Http\Controllers\admin\StockController;
 								</select>
               
             </td> -->
-            <td style="padding: 5px 10px;">Use Promocode <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
+            <!--For Promocode only <td style="padding: 5px 10px;">Use Promocode <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
+            </td>  -->
+
+            <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
             </td> 
              <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
                 @if(Session::has('saleDiscount'))
@@ -381,7 +384,7 @@ use App\Http\Controllers\admin\StockController;
             </div>
             <div class="form-group col-md-6">
               <label>Name</label>
-              <input type="text" class="form-control" name="name" placeholder="Enter Customer Name">
+              <input type="text" class="form-control" name="name" placeholder="Enter Customer Name" required>
             </div>
             <div class="form-group col-md-6">
               <label>Email</label>
@@ -558,8 +561,8 @@ use App\Http\Controllers\admin\StockController;
     </div>
   </div>
 </div>
-<!--Discount modal-->
-<div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
+<!--Discount modal based on promo_code-->
+<!-- <div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content p-3">
       <div class="modal-header">
@@ -579,11 +582,6 @@ use App\Http\Controllers\admin\StockController;
           <div class="form-group">
             <label class="col-form-label">Discount Type</label>
             <input class="form-control" id="discount_type" readonly>
-            <!-- <select class=" form-control" id="discount_type">
-            <option value="total" >Total</option>
-            <option value="persentase">%</option>
-              
-            </select> -->
           </div>
           <div class="form-group">
             <label class="col-form-label">Available Promocode</label>
@@ -600,6 +598,49 @@ use App\Http\Controllers\admin\StockController;
       <div class="modal-footer">
 
         <p type="button" class="btn btn-primary discount_add_btn">Update</p>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+<!--Discount modal based on biller's wish no restriction-->
+<div class="modal fade bd-example-modal-lg discount_modal" tabindex="-1" role="dialog" aria-labelledby="discount_modal" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-3">
+      <div class="modal-header">
+        <h2 class="modal-title" id="exampleModalLabel">Add Discount</h2>
+
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+      <p class="bg-danger text-light">
+  
+  </p>
+      <div class="modal-body">
+
+        <form>
+
+          <div class="form-group">
+            <label class="col-form-label">Discount Type</label>
+            <select class=" form-control" id="discount_type">
+            <option value="total" >Total</option>
+            <option value="persentase">%</option>
+              
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label">Discount Amount</label>
+            <input type="number" class="form-control mt-3" id="discount_input" required>
+          </div>
+
+
+        </form>
+      </div>
+      <div class="modal-footer">
+
+        <p type="button" class="btn btn-primary discount_add_btn2">Update</p>
       </div>
     </div>
   </div>
@@ -869,6 +910,44 @@ $('#promo_code_id').on('select2:select', function (e) {
 
       //end ajax
     });
+
+
+
+
+
+    //Discount add function for no restriction
+    $(".discount_add_btn2").click(function() {
+      var discount_value = $("#discount_input").val();
+      var discount_type = $("#discount_type").val();
+    
+        $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url: "{{route('admin.pos.updateDiscount2')}}",
+          type: "POST",
+          data: {
+            'discount_value': discount_value,
+            'discount_type':  discount_type,
+            
+          },
+          //dataType:'json',
+          success: function(data) {
+            $("#print").html(data);
+            $('.discount_modal').modal('hide');
+          },
+          error: function() {
+            toastr.error("Something went Wrong, Please Try again.");
+          }
+        });
+      
+      //ajax
+
+
+      //end ajax
+    });
+
+
     //search product by name or id or code
     $("#posProduct").keyup(function() {
       var key = $(this).val();
