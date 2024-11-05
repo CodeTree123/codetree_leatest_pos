@@ -773,11 +773,21 @@
         @endif
     </script>
 
-    <script>
-        // document.addEventListener("contextmenu",function(hide){
-        // hide.preventDefault();
-        // });
-    </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Show loader on form submission
+        document.querySelector("form").addEventListener("submit", function () {
+            document.getElementById("loader").style.display = "block";
+            console.log("Fuck you.......")
+			
+        });
+    });
+
+    // Hide loader after response
+    window.addEventListener("load", function () {
+        document.getElementById("loader").style.display = "none";
+    });
+</script>
 
 </body>
 

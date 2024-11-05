@@ -54,7 +54,17 @@
     </td>
     <td class="text-right" style="padding: 5px 10px;font-size: 14px; font-weight:bold;"><span id="ttax2">{{Cart::tax()}}</span>
     </td>
-    <td style="padding: 5px 10px;">Discount <a href="#" id="ppdiscount"><i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i></a>
+    <td style="padding: 5px 10px;">
+                <div>Discount 
+                    <a href="#" id="ppdiscount2">
+                        <i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal2"></i>
+                    </a>
+                </div>
+                <div>Use Promocode 
+                    <a href="#" id="ppdiscount">
+                        <i class="fa fa-edit" data-toggle="modal" data-target=".discount_modal"></i>
+                    </a>
+                </div>
     </td>
     <td class="text-right" style="padding: 5px 10px;font-weight:bold;"><span id="tds">
       @if(Session::has('saleDiscount'))
