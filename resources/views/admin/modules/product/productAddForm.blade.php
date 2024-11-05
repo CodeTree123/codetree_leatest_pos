@@ -194,6 +194,8 @@ Add New Product- Admin Dashboard
 	</div>
 
 </div>
+
+
 <script>
 $(document).ready(function() {
     $('#categoryid').select2({

@@ -452,7 +452,7 @@ Add Sale- Admin Dashboard
             var cheque_number = $("#cheque_number").val();
             var bank_name = $("#bank_name_input").val();
             var payment_note = $("textarea#payment_note").val();
-
+            $("#loader").show();
             //ajax
             $.ajax({
                 headers: {
@@ -474,12 +474,16 @@ Add Sale- Admin Dashboard
                 },
                 //dataType:'json',
                 success: function(data) {
+                    $("#loader").hide();
 
                     window.location = data.url;
+
 
                 },
                 error: function(err) {
                     // Display error messages
+                    $("#loader").hide();
+
                     if (err.responseJSON.errors) {
                         $.each(err.responseJSON.errors, function(key, value) {
                             toastr.error(value);

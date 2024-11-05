@@ -342,7 +342,7 @@ class PosController extends Controller
     //$totalmsPayable=($total-$tax);
     $id = $request->customer_id;
     if (!empty($id)) {
-      return view('admin.modules.pos.paymentScreen')->with(['customerId' => $id, 'billers' => $billers, 'stores' => $stores]);
+      return view('admin.modules.pos.paymentScreen')->with(['customerId' => $id, 'stores' => $stores]);
     } else {
       echo "<center>
   <p class='alert alert-danger'>Please Select A Customer</p>
